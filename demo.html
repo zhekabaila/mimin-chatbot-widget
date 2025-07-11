@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mimin Chatbot Widget React Demo</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        margin-bottom: 100px;
+      }
+      h1 {
+        color: #0096a2;
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+      }
+      .demo-section {
+        margin: 20px 0;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        background: #f8f9fa;
+      }
+      .code-block {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+        margin: 10px 0;
+      }
+      .feature-list {
+        list-style: none;
+        padding: 0;
+      }
+      .feature-list li {
+        padding: 8px 0;
+        border-bottom: 1px solid #e9ecef;
+        color: #495057;
+      }
+      .feature-list li:last-child {
+        border-bottom: none;
+      }
+      .highlight {
+        background: #0096a2;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Mimin Chatbot Widget React Demo</h1>
+
+      <div class="demo-section">
+        <h2>🚀 Fitur React Version</h2>
+        <ul class="feature-list">
+          <li>
+            ✅ <span class="highlight">React Hooks</span> untuk state management
+          </li>
+          <li>
+            ✅ <span class="highlight">TypeScript</span> untuk type safety
+          </li>
+          <li>✅ <span class="highlight">Tailwind CSS</span> untuk styling</li>
+          <li>
+            ✅ <span class="highlight">Component-based</span> architecture
+          </li>
+          <li>✅ <span class="highlight">Props</span> untuk configuration</li>
+          <li>✅ <span class="highlight">Event handlers</span> React-style</li>
+        </ul>
+      </div>
+
+      <div class="demo-section">
+        <h2>📦 Struktur Komponen</h2>
+        <div class="code-block">
+          src/ ├── components/ │ ├── ChatWidget.tsx # Main widget component │
+          ├── ChatHeader.tsx # Header component │ ├── ChatInput.tsx # Input
+          component │ ├── Message.tsx # Message components │ └── CallWindow.tsx
+          # Call window component ├── types/ │ └── index.ts # TypeScript
+          interfaces ├── services/ │ └── api.ts # API service └── utils/ └──
+          styleInjector.ts # Style injection
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>💻 Cara Penggunaan</h2>
+
+        <h3>1. Import Component</h3>
+        <div class="code-block">
+          import { ChatWidget } from './components/ChatWidget'; import type {
+          ChatbotConfig } from './types';
+        </div>
+
+        <h3>2. Setup Configuration</h3>
+        <div class="code-block">
+          const config: ChatbotConfig = { theme: { button: { backgroundColor:
+          "#ffffff", textColor: "#0096a2", tooltip: "Ask Assistant" },
+          chatWindow: { backgroundColor: "#0096a2", title: "AI Assistant",
+          width: "350px", height: "600px" } } };
+        </div>
+
+        <h3>3. Render Component</h3>
+        <div class="code-block">
+          function App() { const handleSendMessage = (message: string) => {
+          console.log('Message:', message); }; return ( &lt;div
+          className="App"&gt; &lt;ChatWidget config={config}
+          onSendMessage={handleSendMessage} /&gt; &lt;/div&gt; ); }
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>🔄 Perbedaan dengan Vanilla JS</h2>
+        <ul class="feature-list">
+          <li>
+            <strong>State Management:</strong> React hooks vs DOM manipulation
+          </li>
+          <li>
+            <strong>Event Handling:</strong> React event handlers vs onclick
+            attributes
+          </li>
+          <li>
+            <strong>Styling:</strong> Tailwind + inline styles vs template
+            literals
+          </li>
+          <li><strong>Type Safety:</strong> Full TypeScript support</li>
+          <li>
+            <strong>Component Structure:</strong> Modular React components
+          </li>
+        </ul>
+      </div>
+
+      <div class="demo-section">
+        <h2>🎯 Keuntungan React Version</h2>
+        <ul class="feature-list">
+          <li>
+            🔥 <strong>Better Performance:</strong> Virtual DOM optimization
+          </li>
+          <li>🧩 <strong>Reusable Components:</strong> Modular architecture</li>
+          <li>🔒 <strong>Type Safety:</strong> Full TypeScript integration</li>
+          <li>🎨 <strong>Modern Styling:</strong> Tailwind CSS integration</li>
+          <li>⚡ <strong>Hot Reload:</strong> Fast development experience</li>
+          <li>📱 <strong>Responsive:</strong> Mobile-first design</li>
+        </ul>
+      </div>
+    </div>
+
+    <script type="module">
+      import { Chatbot } from "/dist/chat-widget.es.js";
+      Chatbot.init({
+        credentials: {
+          apiKey: "n51I1W5ZNIbyjb9Db35iBRFup",
+          username: "testmimin66",
+        },
+        theme: {
+          chatWindow: {
+            isActiveCall: true,
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mimin Chatbot Widget</title>
+  </head>
+  <body>
+    <div class="h-[200vh]">
+      <h1>Mimin Chatbot Widget Demo</h1>
+      <p>Open browser console and run: <code>Chatbot.init()</code></p>
+    </div>
+    <script type="module">
+      import { Chatbot } from "/src/index.tsx";
+      Chatbot.init({
+        credentials: {
+          apiKey: "n51I1W5ZNIbyjb9Db35iBRFup",
+          username: "testmimin66",
+        },
+        theme: {
+          chatWindow: {
+            isActiveCall: true,
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
