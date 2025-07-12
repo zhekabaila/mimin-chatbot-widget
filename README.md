@@ -65,6 +65,10 @@ import type { ChatbotConfig } from "./types";
 
 function App() {
   const config: ChatbotConfig = {
+    credentials: {
+      apiKey: "your-api-key",
+      username: "your-username",
+    },
     theme: {
       button: {
         backgroundColor: "#ffffff",
@@ -76,25 +80,113 @@ function App() {
         backgroundColor: "#0096a2",
         title: "AI Assistant",
         titleColor: "#ffffff",
+        titleAvatarSrc: "https://your-avatar.com/avatar.jpg",
         width: "350px",
         height: "600px",
         isActiveCall: true,
+        icon: {
+          phoneColor: "#ffffff",
+          refreshColor: "#ffffff",
+          closeColor: "#ffffff",
+        },
+        userMessage: {
+          backgroundColor: "#0096a2",
+          borderColor: "#0096a2",
+          textColor: "#ffffff",
+        },
+        botMessage: {
+          backgroundColor: "#ffffff",
+          borderColor: "#0096a2",
+          textColor: "#0096a2",
+        },
+        textInput: {
+          backgroundColor: "#0096a2",
+          borderColor: "#ffffff",
+          placeholder: "Ketik pertanyaan Anda...",
+          sendButtonColor: "#0096a2",
+        },
       },
     },
-  };
-
-  const handleSendMessage = (message: string) => {
-    console.log("Message sent:", message);
-    // Implement your message handling logic here
   };
 
   return (
     <div className="App">
       <h1>My Website</h1>
-      <ChatWidget config={config} onSendMessage={handleSendMessage} />
+      <ChatWidget config={config} signature="your-signature" />
     </div>
   );
 }
+```
+
+### CDN Usage
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mimin Chatbot Widget Demo</title>
+  </head>
+  <body>
+    <div>
+      <h1>Mimin Chatbot Widget Demo</h1>
+      <p>Widget akan muncul di pojok kanan bawah</p>
+    </div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script type="module">
+      import { Chatbot } from "/dist/chat-widget.es.js";
+
+      Chatbot.init({
+        credentials: {
+          apiKey: "your-api-key-here",
+          username: "your-username-here",
+        },
+        theme: {
+          button: {
+            backgroundColor: "#ffffff",
+            textColor: "#0096a2",
+            iconSrc: "https://appstaging.mimin.io/favicon.ico",
+            tooltip: "Ask Mimin",
+          },
+          chatWindow: {
+            backgroundColor: "#0096a2",
+            title: "Mimin AI",
+            titleColor: "#ffffff",
+            titleAvatarSrc:
+              "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg",
+            width: "330px",
+            height: "600px",
+            isActiveCall: true,
+            icon: {
+              phoneColor: "#ffffff",
+              refreshColor: "#ffffff",
+              closeColor: "#ffffff",
+            },
+            userMessage: {
+              backgroundColor: "#0096a2",
+              borderColor: "#0096a2",
+              textColor: "#ffffff",
+            },
+            botMessage: {
+              backgroundColor: "#ffffff",
+              borderColor: "#0096a2",
+              textColor: "#0096a2",
+            },
+            textInput: {
+              backgroundColor: "#0096a2",
+              borderColor: "#ffffff",
+              placeholder: "Ketik pertanyaan Anda...",
+              sendButtonColor: "#0096a2",
+            },
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
 ```
 
 ### Konfigurasi Tema
