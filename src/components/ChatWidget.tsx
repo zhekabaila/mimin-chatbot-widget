@@ -3,7 +3,6 @@ import type {
   ChatbotConfig,
   ConversationsResponse,
   IESResponse,
-  Interaction,
 } from "../types";
 import { ChatHeader } from "./ChatHeader";
 import { ChatInput } from "./ChatInput";
@@ -11,6 +10,7 @@ import { ChatContent } from "./Message";
 import { CallWindow } from "./CallWindow";
 import { useConfigStore } from "../hooks/config-store";
 import { ENV } from "../config/environment";
+import { useInteractionsStore } from "../hooks/interaction-store";
 
 interface ChatWidgetProps {
   config?: ChatbotConfig;
@@ -31,10 +31,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [loading, setLoading] = useState(false);
   const [fetching, _setFetching] = useState(false);
 
-  const [chatType, setChatType] = useState("");
+  // const [chatType, setChatType] = useState("");
   const [chatHistoryId, setChatHistoryId] = useState("");
   const [currentResponseMsg, setCurrentResponseMsg] = useState("");
-  const [messages, setMessages] = useState<Interaction[]>([]);
   const [pagination, setPagination] =
     useState<Omit<ConversationsResponse, "data">>(INIT_PAGINATION);
 
@@ -43,6 +42,16 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [isCallVisible, setIsCallVisible] = useState(false);
+
+  const {
+    interactions,
+    addInteraction,
+    clearInteractions,
+    setInteractions,
+    updateAiInteractionByIndex,
+    chatType,
+    setChatType,
+  } = useInteractionsStore();
 
   const handleToggleChatWindow = () => {
     setIsChatVisible(!isChatVisible);
@@ -131,15 +140,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
         events.forEach(async (res) => {
           if (res.event === "payload") {
-            setMessages((prev) => {
-              prev[0].ai = {
-                additional_kwargs: {},
-                content: res.message,
-                example: false,
-              };
+            const newInteraction = {
+              additional_kwargs: {},
+              content: res.message,
+              example: false,
+            };
 
-              return prev;
-            });
+            updateAiInteractionByIndex(0, newInteraction);
 
             if (!chatType) {
               setChatType(res.type);
@@ -169,14 +176,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     <div className="fixed bottom-6 right-6 z-[9999]">
       {/* Chat Button */}
       <button
-        className={`flex items-center gap-2.5 px-4 py-2 rounded-full border shadow-md transition-all duration-300 ease-in-out cursor-pointer ${
-          isChatVisible
-            ? "bg-[#0096a2]/80 text-[#ffffff] border-[#0096a2]"
-            : "bg-[#ffffff] text-[#0096a2] border-[#0096a2]/20"
-        }`}
+        className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#0096a2] shadow-md transition-all duration-300 ease-in-out cursor-pointer"
         style={{
           backgroundColor: isChatVisible
-            ? "#0096a2"
+            ? "#0096a299"
             : config?.theme?.button?.backgroundColor || "#ffffff",
           color: isChatVisible
             ? "#ffffff"
@@ -212,7 +215,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               onToggleChatWindow={handleToggleChatWindow}
             />
             <ChatContent
-              messages={messages}
+              messages={interactions}
               currentResponseMsg={currentResponseMsg}
               loading={loading}
               fetching={fetching}
@@ -221,18 +224,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               onSendMessage={(message) => {
                 setCurrentResponseMsg("");
                 message = message.trim().replaceAll(/\n\n+/g, "\n\n");
-
-                setMessages((prev) => [
-                  {
-                    human: {
-                      content: message,
-                      additional_kwargs: {},
-                      example: false,
-                    },
-                    date: new Date(),
+                const newInteraction = {
+                  human: {
+                    content: message,
+                    additional_kwargs: {},
+                    example: false,
                   },
-                  ...prev,
-                ]);
+                  date: new Date(),
+                  id: crypto.randomUUID(),
+                };
+
+                addInteraction(newInteraction);
+
                 handleSendMessage(message);
               }}
               loading={loading}
@@ -241,8 +244,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             <CallWindow
               isVisible={isCallVisible}
               onToggleCallWindow={handleToggleCallWindow}
-              onToggleMuteCall={handleToggleMuteCall}
-              onToggleSpeakerCall={handleToggleSpeakerCall}
+              // onToggleMuteCall={handleToggleMuteCall}
+              // onToggleSpeakerCall={handleToggleSpeakerCall}
             />
           </div>
         </div>

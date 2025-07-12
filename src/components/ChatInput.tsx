@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Send } from "lucide-react";
 import { useConfigStore } from "../hooks/config-store";
+import { RiSendPlane2Fill } from "react-icons/ri";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -56,15 +56,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         />
         <button
           className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={loading}
+          disabled={loading || message.trim().length === 0}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             handleSendMessage();
           }}
         >
-          <Send
-            className="w-4 h-4"
+          <RiSendPlane2Fill
+            className="w-4 h-4 text-[#0096a2]"
             color={
               config?.theme?.chatWindow?.textInput?.sendButtonColor || "#0096a2"
             }

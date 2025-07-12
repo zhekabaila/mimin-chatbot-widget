@@ -102,6 +102,7 @@ export interface Interaction {
   human?: Message;
   ai?: Message;
   date: string | Date;
+  id: string;
 }
 
 export interface Message {

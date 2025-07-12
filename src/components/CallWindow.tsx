@@ -1,32 +1,32 @@
-import { AudioLines, Mic, Phone, Volume2 } from "lucide-react";
+import { AudioLines } from "lucide-react";
 import React, { useState } from "react";
-import { cn } from "../utils";
+import { MdPhone } from "react-icons/md";
 
 interface CallWindowProps {
   isVisible: boolean;
   onToggleCallWindow: () => void;
-  onToggleMuteCall: () => void;
-  onToggleSpeakerCall: () => void;
+  // onToggleMuteCall: () => void;
+  // onToggleSpeakerCall: () => void;
 }
 
 export const CallWindow: React.FC<CallWindowProps> = ({
   isVisible,
   onToggleCallWindow,
-  onToggleMuteCall,
-  onToggleSpeakerCall,
+  // onToggleMuteCall,
+  // onToggleSpeakerCall,
 }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
 
-  const handleToggleMute = () => {
-    setIsMuted(!isMuted);
-    onToggleMuteCall();
-  };
+  // const handleToggleMute = () => {
+  //   setIsMuted(!isMuted);
+  //   onToggleMuteCall();
+  // };
 
-  const handleToggleSpeaker = () => {
-    setIsSpeakerOn(!isSpeakerOn);
-    onToggleSpeakerCall();
-  };
+  // const handleToggleSpeaker = () => {
+  //   setIsSpeakerOn(!isSpeakerOn);
+  //   onToggleSpeakerCall();
+  // };
 
   if (!isVisible) return null;
 
@@ -52,10 +52,10 @@ export const CallWindow: React.FC<CallWindowProps> = ({
                 className="cursor-pointer bg-gradient-to-br from-[#0096a2]/30 to-[#f26075]/30 rounded-full w-[60px] h-[60px] p-4 aspect-square flex items-center justify-center"
                 onClick={onToggleCallWindow}
               >
-                <Phone className="w-full h-full text-[#f26075]/90 fill-[#f26075]/90" />
+                <MdPhone className="w-full h-full text-[#f26075]/90 rotate-90" />
               </button>
             </div>
-            <div className="flex items-center justify-center">
+            {/* <div className="flex items-center justify-center">
               <button
                 type="button"
                 className={cn(
@@ -82,7 +82,7 @@ export const CallWindow: React.FC<CallWindowProps> = ({
               >
                 <Volume2 className={cn("w-full h-full text-[#0096a2]/90")} />
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
