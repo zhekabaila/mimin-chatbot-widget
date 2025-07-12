@@ -134,8 +134,6 @@ function App() {
       <p>Widget akan muncul di pojok kanan bawah</p>
     </div>
 
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script type="module">
       import { Chatbot } from "/dist/chat-widget.es.js";
 
