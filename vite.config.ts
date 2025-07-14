@@ -18,7 +18,11 @@ export default defineConfig({
           react: "React",
           "react-dom": "ReactDOM",
         },
+        // Memastikan external modules di-resolve dengan benar
+        exports: "named",
       },
     },
+    // Memastikan source maps tersedia untuk debugging
+    sourcemap: true,
   },
 });

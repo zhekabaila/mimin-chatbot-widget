@@ -4,13 +4,14 @@ import type {
   ConversationsResponse,
   IESResponse,
 } from "../types";
-import { ChatHeader } from "./ChatHeader";
-import { ChatInput } from "./ChatInput";
-import { ChatContent } from "./Message";
-import { CallWindow } from "./CallWindow";
 import { useConfigStore } from "../hooks/config-store";
 import { ENV } from "../config/environment";
 import { useInteractionsStore } from "../hooks/interaction-store";
+import AuthWindow from "./AuthWindow";
+import { ChatHeader } from "./ChatHeader";
+import { ChatContent } from "./Message";
+import { ChatInput } from "./ChatInput";
+import { CallWindow } from "./CallWindow";
 
 interface ChatWidgetProps {
   config?: ChatbotConfig;
@@ -42,12 +43,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [isCallVisible, setIsCallVisible] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const {
     interactions,
     addInteraction,
-    clearInteractions,
-    setInteractions,
     updateAiInteractionByIndex,
     chatType,
     setChatType,
@@ -210,43 +210,51 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               height: config?.theme?.chatWindow?.height || "600px",
             }}
           >
-            <ChatHeader
-              onToggleCallWindow={handleToggleCallWindow}
-              onToggleChatWindow={handleToggleChatWindow}
-            />
-            <ChatContent
-              messages={interactions}
-              currentResponseMsg={currentResponseMsg}
-              loading={loading}
-              fetching={fetching}
-            />
-            <ChatInput
-              onSendMessage={(message) => {
-                setCurrentResponseMsg("");
-                message = message.trim().replaceAll(/\n\n+/g, "\n\n");
-                const newInteraction = {
-                  human: {
-                    content: message,
-                    additional_kwargs: {},
-                    example: false,
-                  },
-                  date: new Date(),
-                  id: crypto.randomUUID(),
-                };
+            {(config?.theme?.chatWindow.needAuthentication || false) &&
+              !isAuthenticated && <AuthWindow />}
+            {(isAuthenticated ||
+              !(config?.theme?.chatWindow.needAuthentication || false)) && (
+              <>
+                <ChatHeader
+                  onToggleCallWindow={handleToggleCallWindow}
+                  onToggleChatWindow={handleToggleChatWindow}
+                />
+                <ChatContent
+                  messages={interactions}
+                  currentResponseMsg={currentResponseMsg}
+                  loading={loading}
+                  fetching={fetching}
+                />
+                <ChatInput
+                  onSendMessage={(message) => {
+                    setCurrentResponseMsg("");
+                    message = message.trim().replaceAll(/\n\n+/g, "\n\n");
+                    const newInteraction = {
+                      human: {
+                        content: message,
+                        additional_kwargs: {},
+                        example: false,
+                      },
+                      date: new Date(),
+                      id: crypto.randomUUID(),
+                    };
 
-                addInteraction(newInteraction);
+                    addInteraction(newInteraction);
 
-                handleSendMessage(message);
-              }}
-              loading={loading}
-              fetching={fetching}
-            />
-            <CallWindow
-              isVisible={isCallVisible}
-              onToggleCallWindow={handleToggleCallWindow}
-              // onToggleMuteCall={handleToggleMuteCall}
-              // onToggleSpeakerCall={handleToggleSpeakerCall}
-            />
+                    handleSendMessage(message);
+                  }}
+                  loading={loading}
+                  fetching={fetching}
+                />
+                <CallWindow
+                  isVisible={isCallVisible}
+                  onToggleCallWindow={handleToggleCallWindow}
+                  // onToggleMuteCall={handleToggleMuteCall}
+                  // onToggleSpeakerCall={handleToggleSpeakerCall}
+                />
+              </>
+            )}
+            {/* <StartChatSection onClickStartChat={() => {}} /> */}
           </div>
         </div>
       )}

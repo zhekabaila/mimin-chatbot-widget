@@ -4,6 +4,7 @@ export interface ChatWindowConfig {
   titleColor?: string;
   title?: string;
   isActiveCall?: boolean;
+  needAuthentication?: boolean;
   width?: string;
   height?: string;
   icon?: {

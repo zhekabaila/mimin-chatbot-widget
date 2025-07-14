@@ -162,17 +162,104 @@
 
     <script type="module">
       import { Chatbot } from "/dist/chat-widget.es.js";
+      // import { Chatbot } from "https://2c25fe73.widget-gen-ai.pages.dev/chat-widget.es.js";
+
       Chatbot.init({
         credentials: {
           apiKey: "n51I1W5ZNIbyjb9Db35iBRFup",
           username: "testmimin66",
         },
         theme: {
+          button: {
+            backgroundColor: "#ffffff",
+            textColor: "#0096a2",
+            iconSrc: "https://appstaging.mimin.io/favicon.ico",
+            tooltip: "Tanya Mimin",
+          },
           chatWindow: {
+            backgroundColor: "#0096a2",
+            title: "Mimin AI",
+            titleColor: "#ffffff",
+            titleAvatarSrc:
+              "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg",
+            width: "330px",
+            height: "600px",
             isActiveCall: true,
+            needAuthentication: true,
+            icon: {
+              phoneColor: "#ffffff",
+              refreshColor: "#ffffff",
+              closeColor: "#ffffff",
+            },
+            userMessage: {
+              backgroundColor: "#0096a2",
+              borderColor: "#0096a2",
+              textColor: "#ffffff",
+            },
+            botMessage: {
+              backgroundColor: "#ffffff",
+              borderColor: "#0096a2",
+              textColor: "#0096a2",
+            },
+            textInput: {
+              backgroundColor: "#0096a2",
+              borderColor: "#ffffff",
+              placeholder: "Ketik pertanyaan Anda...",
+              sendButtonColor: "#0096a2",
+            },
           },
         },
       });
     </script>
+
+    <!-- <script type="module">
+      import { Chatbot } from "/dist/chat-widget.es.js";
+
+      Chatbot.init({
+        credentials: {
+          apiKey: "n51I1W5ZNIbyjb9Db35iBRFup",
+          username: "testmimin66",
+        },
+        theme: {
+          button: {
+            backgroundColor: "#ff0000", // Merah untuk testing
+            textColor: "#ffffff", // Putih
+            iconSrc: "https://appstaging.mimin.io/favicon.ico",
+            tooltip: "TEST BUTTON", // Text berbeda untuk testing
+          },
+          chatWindow: {
+            backgroundColor: "#00ff00", // Hijau untuk testing
+            title: "TEST WIDGET", // Title berbeda
+            titleColor: "#000000", // Hitam
+            titleAvatarSrc:
+              "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg",
+            width: "400px", // Lebar berbeda
+            height: "700px", // Tinggi berbeda
+            isActiveCall: true,
+            icon: {
+              phoneColor: "#ff00ff", // Magenta
+              refreshColor: "#ffff00", // Kuning
+              closeColor: "#00ffff", // Cyan
+            },
+            userMessage: {
+              backgroundColor: "#ff6600", // Orange
+              borderColor: "#cc0000", // Merah gelap
+              textColor: "#ffffff", // Putih
+            },
+            botMessage: {
+              backgroundColor: "#6600ff", // Ungu
+              borderColor: "#330099", // Ungu gelap
+              textColor: "#ffffff", // Putih
+            },
+            textInput: {
+              backgroundColor: "#0066ff", // Biru
+              borderColor: "#ff0000", // Merah
+              placeholder: "TEST INPUT PLACEHOLDER", // Placeholder berbeda
+              sendButtonColor: "#000000", // Kuning
+            },
+          },
+        },
+      });
+    </script> -->
   </body>
 </html>
