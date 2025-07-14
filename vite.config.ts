@@ -12,12 +12,14 @@ export default defineConfig({
       fileName: (format) => `chat-widget.${format}.js`,
     },
     rollupOptions: {
-      external: ["react", "react-dom"],
+      // Hapus external untuk React dan ReactDOM agar di-bundle
+      // external: ["react", "react-dom"],
       output: {
-        globals: {
-          react: "React",
-          "react-dom": "ReactDOM",
-        },
+        // Hapus globals karena React akan di-bundle
+        // globals: {
+        //   react: "React",
+        //   "react-dom": "ReactDOM",
+        // },
         // Memastikan external modules di-resolve dengan benar
         exports: "named",
       },
