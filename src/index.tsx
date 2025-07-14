@@ -13,6 +13,7 @@ export interface ChatbotInterface {
 const Chatbot: ChatbotInterface = {
   init: async function (config: ChatbotConfig = {}) {
     try {
+      console.log("INIT V2");
       // Inject required styles
       injectStyle();
 
