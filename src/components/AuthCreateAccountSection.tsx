@@ -20,8 +20,6 @@ const AuthCreateAcoountSection = ({ onClickSignin }: IProps) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  console.log(form);
-
   return (
     <div className="mt-10">
       <div className="space-y-2">

@@ -9,14 +9,16 @@ const AuthWindow = () => {
 
   return (
     <div className="p-4 h-full overflow-y-auto">
-      <img
-        src="https://res.cloudinary.com/dctqloe37/image/upload/v1752455653/undraw_chat_qmyo_1_wwzcjj.svg"
-        alt=" "
-        width={1000}
-        height={1000}
-        loading="lazy"
-        className="w-full h-auto object-contain object-center"
-      />
+      <div className="flex justify-center items-center w-full h-auto">
+        <img
+          src="https://res.cloudinary.com/dctqloe37/image/upload/v1752455653/undraw_chat_qmyo_1_wwzcjj.svg"
+          alt=" "
+          width={1000}
+          height={1000}
+          loading="lazy"
+          className="w-full h-auto object-contain object-center"
+        />
+      </div>
       {step === "landing-section" && (
         <div className="text-center mt-10">
           <h1 className="text-[#0096A2] text-base font-bold">

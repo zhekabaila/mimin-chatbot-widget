@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useConfigStore } from "../hooks/config-store";
 import { RiSendPlane2Fill } from "react-icons/ri";
 
@@ -16,6 +16,17 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [message, setMessage] = useState("");
   const { config } = useConfigStore();
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Fungsi untuk auto resize
+  const autoResize = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
+
   const handleSendMessage = () => {
     if (!fetching && !loading && message.length > 0) {
       onSendMessage(message);
@@ -32,10 +43,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         overflowAnchor: "none",
       }}
     >
-      <div className="relative flex items-center gap-2">
-        <input
-          type="text"
-          className="flex-1 border rounded-md p-2 bg-white pr-10 focus:outline focus:outline-[#ffa100]"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleSendMessage();
+        }}
+        className="relative flex items-center gap-2"
+      >
+        <textarea
+          className="flex-1 border rounded-md p-2 max-h-[80px] bg-white pr-10 focus:outline focus:outline-[#ffa100] resize-none"
           style={{
             borderColor:
               config?.theme?.chatWindow?.textInput?.borderColor || "#ffffff",
@@ -44,24 +61,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             config?.theme?.chatWindow?.textInput?.placeholder ||
             "Ketik pertanyaan Anda..."
           }
+          rows={1}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              e.stopPropagation();
-              handleSendMessage();
-            }
-          }}
+          onInput={autoResize}
+          ref={textareaRef}
         />
         <button
           className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading || message.trim().length === 0}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleSendMessage();
-          }}
         >
           <RiSendPlane2Fill
             className="w-4 h-4 text-[#0096a2]"
@@ -70,7 +78,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             }
           />
         </button>
-      </div>
+      </form>
       <p className="text-white text-[10px] font-medium text-center mt-1">
         Powered by{" "}
         <a href="https://mimin.io" className="underline">

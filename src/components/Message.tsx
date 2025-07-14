@@ -2,6 +2,7 @@ import React from "react";
 import { useConfigStore } from "../hooks/config-store";
 import type { Interaction } from "../types";
 import { cn } from "../utils";
+import { UserCircle } from "lucide-react";
 
 interface UserMessageProps {
   message: string;
@@ -150,10 +151,10 @@ export const MessageBubble: React.FC<{
   return (
     <div
       className={cn(
-        "relative flex w-fit max-w-[90%] border rounded-t-2xl py-3 px-3.5",
+        "relative flex w-fit max-w-[90%] border rounded-t-3xl py-3 px-3.5",
         !isUser
-          ? "rounded-br-2xl bg-white text-[#0096a2] border-[#0096a2] mr-auto justify-start"
-          : "rounded-bl-2xl bg-white text-[#0096a2] border-[#0096a2] ml-auto justify-end"
+          ? "rounded-br-3xl bg-white text-[#0096a2] border-[#0096a2] mr-auto justify-start"
+          : "rounded-bl-3xl bg-white text-[#0096a2] border-[#0096a2] ml-auto justify-end"
       )}
       style={{
         backgroundColor: isUser
@@ -165,16 +166,43 @@ export const MessageBubble: React.FC<{
       }}
     >
       <div
-        className="text-sm"
-        style={{
-          color: isUser
-            ? config?.theme?.chatWindow?.userMessage?.textColor || "#ffffff"
-            : config?.theme?.chatWindow?.botMessage?.textColor || "#0096a2",
-        }}
-        dangerouslySetInnerHTML={{
-          __html: processMessage(message, isUser),
-        }}
-      />
+        className={cn(
+          "flex items-end gap-3",
+          isUser ? "flex-row-reverse" : "flex-row"
+        )}
+      >
+        <div className="flex items-end justify-center w-3 h-3">
+          {isUser ? (
+            <UserCircle
+              width={100}
+              height={100}
+              className="w-3 h-3 aspect-square text-white"
+            />
+          ) : (
+            <img
+              src={
+                config?.theme?.button?.iconSrc ||
+                "https://appstaging.mimin.io/favicon.ico"
+              }
+              alt=" "
+              width={100}
+              height={100}
+              className="w-3 h-3 aspect-square"
+            />
+          )}
+        </div>
+        <div
+          className="text-sm flex-1 pb-2"
+          style={{
+            color: isUser
+              ? config?.theme?.chatWindow?.userMessage?.textColor || "#ffffff"
+              : config?.theme?.chatWindow?.botMessage?.textColor || "#0096a2",
+          }}
+          dangerouslySetInnerHTML={{
+            __html: processMessage(message, isUser),
+          }}
+        />
+      </div>
       <div
         className={cn(
           "absolute top-full mt-0.5 w-fit",

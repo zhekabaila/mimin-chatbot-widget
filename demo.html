@@ -160,14 +160,10 @@
       </div>
     </div>
 
-    <!-- Hanya load 1 file widget - self-contained -->
-    <!-- <script src="https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.umd.js"></script> -->
-
     <script type="module">
-      import { Chatbot } from "https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.js";
+      import { Chatbot } from "https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@latest/dist/chat-widget.js";
       // import { Chatbot } from "./dist/chat-widget.js";
 
-      // Widget sudah self-contained, tidak perlu external dependencies
       Chatbot.init({
         credentials: {
           apiKey: "n51I1W5ZNIbyjb9Db35iBRFup",
@@ -189,7 +185,7 @@
             width: "330px",
             height: "600px",
             isActiveCall: true,
-            needAuthentication: true,
+            needAuthentication: false,
             icon: {
               phoneColor: "#ffffff",
               refreshColor: "#ffffff",

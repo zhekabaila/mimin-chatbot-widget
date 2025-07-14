@@ -61,14 +61,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     setIsCallVisible(!isCallVisible);
   };
 
-  const handleToggleMuteCall = () => {
-    console.log("Toggle mute call");
-  };
-
-  const handleToggleSpeakerCall = () => {
-    console.log("Toggle speaker call");
-  };
-
   const getClientInfo = async () => {
     try {
       const ipRes = await fetch("https://api.ipify.org?format=json");
@@ -85,6 +77,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   const handleSendMessage = async (message: string) => {
     const { isError, errorMessage, ip, userAgent } = await getClientInfo();
+
     if (isError) {
       console.error(errorMessage);
       return;
@@ -179,7 +172,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#0096a2] shadow-md transition-all duration-300 ease-in-out cursor-pointer"
         style={{
           backgroundColor: isChatVisible
-            ? "#0096a299"
+            ? "#0096a2"
             : config?.theme?.button?.backgroundColor || "#ffffff",
           color: isChatVisible
             ? "#ffffff"

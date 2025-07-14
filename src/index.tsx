@@ -3,6 +3,7 @@ import type { ChatbotConfig } from "./types";
 import { injectStyle } from "./utils/styleInjector";
 import { ENV } from "./config/environment";
 import { ChatWidget } from "./components/ChatWidget";
+// import "./index.css";
 
 // Export main Chatbot interface for React
 export interface ChatbotInterface {
@@ -39,7 +40,6 @@ const Chatbot: ChatbotInterface = {
         }
       );
       const { signature }: { signature: string } = await response.json();
-      console.log("signature", signature);
       if (!signature) {
         throw new Error("Failed to get signature");
       }
@@ -68,7 +68,7 @@ const Chatbot: ChatbotInterface = {
         </>
       );
 
-      console.log("Mimin Chatbot React initialized successfully");
+      // console.log("Mimin Chatbot React initialized successfully");
     } catch (error) {
       console.error("Failed to initialize Mimin Chatbot React:", error);
     }
