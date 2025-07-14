@@ -160,12 +160,16 @@
       </div>
     </div>
 
-    <script type="module">
-      // import { Chatbot } from "/dist/chat-widget.es.js";
-      import { Chatbot } from "https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.es.js";
-      // import { Chatbot } from "https://2c25fe73.widget-gen-ai.pages.dev/chat-widget.es.js";
+    <!-- Load React dan ReactDOM untuk UMD format -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
-      Chatbot.init({
+    <!-- Load widget menggunakan UMD format -->
+    <script src="https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.umd.js"></script>
+
+    <script>
+      // Gunakan ChatWidget dari global scope
+      ChatWidget.Chatbot.init({
         credentials: {
           apiKey: "n51I1W5ZNIbyjb9Db35iBRFup",
           username: "testmimin66",
@@ -213,54 +217,24 @@
       });
     </script>
 
-    <!-- <script type="module">
-      import { Chatbot } from "/dist/chat-widget.es.js";
-
+    <!-- Alternatif: ES Module dengan Import Map -->
+    <!--
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://unpkg.com/react@18/esm/react.development.js",
+        "react-dom": "https://unpkg.com/react-dom@18/esm/react-dom.development.js"
+      }
+    }
+    </script>
+    
+    <script type="module">
+      import { Chatbot } from "https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.es.js";
+      
       Chatbot.init({
-        credentials: {
-          apiKey: "n51I1W5ZNIbyjb9Db35iBRFup",
-          username: "testmimin66",
-        },
-        theme: {
-          button: {
-            backgroundColor: "#ff0000", // Merah untuk testing
-            textColor: "#ffffff", // Putih
-            iconSrc: "https://appstaging.mimin.io/favicon.ico",
-            tooltip: "TEST BUTTON", // Text berbeda untuk testing
-          },
-          chatWindow: {
-            backgroundColor: "#00ff00", // Hijau untuk testing
-            title: "TEST WIDGET", // Title berbeda
-            titleColor: "#000000", // Hitam
-            titleAvatarSrc:
-              "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg",
-            width: "400px", // Lebar berbeda
-            height: "700px", // Tinggi berbeda
-            isActiveCall: true,
-            icon: {
-              phoneColor: "#ff00ff", // Magenta
-              refreshColor: "#ffff00", // Kuning
-              closeColor: "#00ffff", // Cyan
-            },
-            userMessage: {
-              backgroundColor: "#ff6600", // Orange
-              borderColor: "#cc0000", // Merah gelap
-              textColor: "#ffffff", // Putih
-            },
-            botMessage: {
-              backgroundColor: "#6600ff", // Ungu
-              borderColor: "#330099", // Ungu gelap
-              textColor: "#ffffff", // Putih
-            },
-            textInput: {
-              backgroundColor: "#0066ff", // Biru
-              borderColor: "#ff0000", // Merah
-              placeholder: "TEST INPUT PLACEHOLDER", // Placeholder berbeda
-              sendButtonColor: "#000000", // Kuning
-            },
-          },
-        },
+        // ... config
       });
-    </script> -->
+    </script>
+    -->
   </body>
 </html>

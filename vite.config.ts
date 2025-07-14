@@ -12,19 +12,20 @@ export default defineConfig({
       fileName: (format) => `chat-widget.${format}.js`,
     },
     rollupOptions: {
-      // Hapus external untuk React dan ReactDOM agar di-bundle
-      // external: ["react", "react-dom"],
+      // Bundle semua dependencies termasuk React
+      external: [], // Tidak ada external dependencies
       output: {
-        // Hapus globals karena React akan di-bundle
-        // globals: {
-        //   react: "React",
-        //   "react-dom": "ReactDOM",
-        // },
-        // Memastikan external modules di-resolve dengan benar
+        // Memastikan semua exports tersedia
         exports: "named",
+        // Memastikan format ES module bekerja dengan baik
+        format: "es",
+        // Memastikan nama global untuk UMD
+        globals: {},
       },
     },
     // Memastikan source maps tersedia untuk debugging
     sourcemap: true,
+    // Memastikan minification tidak menghilangkan exports
+    minify: "terser",
   },
 });
