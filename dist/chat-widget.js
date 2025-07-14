@@ -13949,7 +13949,7 @@ const Iu = ({ message: f, isUser: o = !1, thinking: d = !1 }) => {
   const r = jl.useRef(null);
   return jl.useEffect(() => {
     setTimeout(() => {
-      console.log("scroll to bottom ------>>>>>>"), r.current?.scrollIntoView({
+      r.current?.scrollIntoView({
         behavior: "smooth",
         block: "end"
       });
@@ -14241,7 +14241,7 @@ const cv = ({
 }, rv = {
   init: async function(f = {}) {
     try {
-      if (Lh(), !f.credentials)
+      if (console.log("INIT V2"), Lh(), !f.credentials)
         throw new Error("credentials are required");
       if (!f.credentials.username)
         throw new Error("username is required");

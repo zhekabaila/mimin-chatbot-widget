@@ -226,7 +226,6 @@ export const ChatContent: React.FC<{
   React.useEffect(() => {
     // Scroll to the bottom whenever messages change
     setTimeout(() => {
-      console.log("scroll to bottom ------>>>>>>");
       bottomRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "end",
