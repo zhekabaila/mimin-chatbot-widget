@@ -1,7 +1,10 @@
 {
   "name": "mimin-chatbot-widget-react",
-  "private": true,
-  "version": "0.0.0",
+  "exports": {
+    "default": "./dist/chat-widget.js"
+  },
+  "private": false,
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
