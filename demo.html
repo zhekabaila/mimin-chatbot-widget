@@ -160,16 +160,12 @@
       </div>
     </div>
 
-    <!-- Load React dan ReactDOM untuk UMD format -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-    <!-- Load widget menggunakan UMD format -->
+    <!-- Hanya load 1 file widget - self-contained -->
     <script src="https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.umd.js"></script>
 
     <script>
-      // Gunakan ChatWidget dari global scope
-      ChatWidget.Chatbot.init({
+      // Widget sudah self-contained, tidak perlu external dependencies
+      window.Chatbot.init({
         credentials: {
           apiKey: "n51I1W5ZNIbyjb9Db35iBRFup",
           username: "testmimin66",
@@ -217,17 +213,8 @@
       });
     </script>
 
-    <!-- Alternatif: ES Module dengan Import Map -->
+    <!-- Alternatif: ES Module self-contained -->
     <!--
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://unpkg.com/react@18/esm/react.development.js",
-        "react-dom": "https://unpkg.com/react-dom@18/esm/react-dom.development.js"
-      }
-    }
-    </script>
-    
     <script type="module">
       import { Chatbot } from "https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.es.js";
       

@@ -134,10 +134,11 @@ function App() {
       <p>Widget akan muncul di pojok kanan bawah</p>
     </div>
 
-    <script type="module">
-      import { Chatbot } from "/dist/chat-widget.es.js";
+    <!-- Hanya 1 file CDN - self-contained, tidak perlu React/ReactDOM -->
+    <script src="https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.umd.js"></script>
 
-      Chatbot.init({
+    <script>
+      ChatWidget.Chatbot.init({
         credentials: {
           apiKey: "your-api-key-here",
           username: "your-username-here",
@@ -185,6 +186,22 @@ function App() {
     </script>
   </body>
 </html>
+```
+
+### ES Module Usage (Self-Contained)
+
+```html
+<script type="module">
+  import { Chatbot } from "https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.es.js";
+
+  Chatbot.init({
+    credentials: {
+      apiKey: "your-api-key-here",
+      username: "your-username-here",
+    },
+    // ... theme config
+  });
+</script>
 ```
 
 ### Konfigurasi Tema

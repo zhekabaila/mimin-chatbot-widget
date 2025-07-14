@@ -12,8 +12,8 @@ export default defineConfig({
       fileName: (format) => `chat-widget.${format}.js`,
     },
     rollupOptions: {
-      // Bundle semua dependencies termasuk React
-      external: [], // Tidak ada external dependencies
+      // Bundle SEMUA dependencies ke dalam satu file
+      external: [], // Tidak ada external dependencies sama sekali
       output: {
         // Memastikan semua exports tersedia
         exports: "named",
@@ -21,11 +21,17 @@ export default defineConfig({
         format: "es",
         // Memastikan nama global untuk UMD
         globals: {},
+        // Bundle semua dependencies ke dalam satu file
+        inlineDynamicImports: true,
       },
     },
     // Memastikan source maps tersedia untuk debugging
     sourcemap: true,
     // Memastikan minification tidak menghilangkan exports
     minify: "terser",
+    // Memastikan semua dependencies di-bundle
+    commonjsOptions: {
+      include: [/node_modules/],
+    },
   },
 });
