@@ -8,8 +8,9 @@ export default defineConfig({
     lib: {
       entry: "src/index.tsx",
       name: "ChatWidget",
-      formats: ["es", "umd"],
-      fileName: (format) => `chat-widget.${format}.js`,
+      formats: ["es"],
+      // fileName: (format) => `chat-widget.${format}.js`,
+      fileName: `chat-widget`,
     },
     rollupOptions: {
       // Bundle SEMUA dependencies ke dalam satu file
@@ -18,8 +19,7 @@ export default defineConfig({
         // Memastikan semua exports tersedia
         exports: "named",
         // Memastikan format ES module bekerja dengan baik
-        format: "es",
-        // Memastikan nama global untuk UMD
+
         globals: {},
         // Bundle semua dependencies ke dalam satu file
         inlineDynamicImports: true,
@@ -27,8 +27,7 @@ export default defineConfig({
     },
     // Memastikan source maps tersedia untuk debugging
     sourcemap: true,
-    // Memastikan minification tidak menghilangkan exports
-    minify: "terser",
+
     // Memastikan semua dependencies di-bundle
     commonjsOptions: {
       include: [/node_modules/],
