@@ -1,12 +1,18 @@
 export interface ChatWindowConfig {
-  backgroundColor?: string;
-  titleAvatarSrc?: string;
-  titleColor?: string;
-  title?: string;
   isActiveCall?: boolean;
   needAuthentication?: boolean;
   width?: string;
   height?: string;
+  header?: {
+    backgroundColor?: string;
+    color?: string;
+    title?: string;
+    description?: string;
+    avatarSrc?: string;
+  };
+  body?: {
+    backgroundColor?: string;
+  };
   icon?: {
     phoneColor?: string;
     refreshColor?: string;
@@ -16,11 +22,13 @@ export interface ChatWindowConfig {
     backgroundColor?: string;
     borderColor?: string;
     textColor?: string;
+    iconUrl?: string;
   };
   botMessage?: {
     backgroundColor?: string;
     borderColor?: string;
     textColor?: string;
+    iconUrl?: string;
   };
   textInput?: {
     backgroundColor?: string;

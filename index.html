@@ -9,7 +9,6 @@
   <body>
     <div class="h-[200vh]">
       <h1>Mimin Chatbot Widget Demo</h1>
-      <p>Open browser console and run: <code>Chatbot.init()</code></p>
     </div>
     <script type="module">
       import { Chatbot } from "/src/index.tsx";
@@ -22,6 +21,30 @@
           chatWindow: {
             isActiveCall: true,
             needAuthentication: false,
+            header: {
+              // backgroundColor: "#FFA100",
+              // color: "#F26075",
+              title: "MINAAAA",
+              description: "Ngobrol langsung dengan AI, cepat & mudaeeh.",
+              avatarSrc:
+                "https://res.cloudinary.com/dctqloe37/image/upload/v1750336554/PORTFOLIO_MAKER/PROFILES/1750336551832.png",
+            },
+            body: {
+              // backgroundColor: "#F26075",
+            },
+            botMessage: {
+              // backgroundColor: "#FFA100",
+              // borderColor: "#F26075",
+              // textColor: "#ffffff",
+              iconUrl: "https://appstaging.mimin.io/favicon.ico",
+            },
+            userMessage: {
+              // backgroundColor: "#F26075",
+              // borderColor: "#FFA100",
+              // textColor: "#ffffff",
+              iconUrl:
+                "https://res.cloudinary.com/dctqloe37/image/upload/v1752570930/circle-user-round_1_ja2oac.svg",
+            },
           },
         },
       });

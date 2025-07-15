@@ -263,6 +263,34 @@ Widget menggunakan React hooks untuk state management:
 - FontAwesome untuk icons
 - Responsive design dengan Tailwind breakpoints
 
+## Styling Unik dengan Prefix Tailwind CSS
+
+> **Catatan:** Fitur prefix Tailwind CSS (misal: `mimin-`) <b>belum digunakan pada versi ini</b>. Semua class Tailwind pada widget ini masih menggunakan class default tanpa prefix. Fitur prefix akan tersedia pada versi berikutnya untuk menghindari bentrok style dengan website client.
+
+### Rencana Penggunaan Prefix (Next Version)
+
+- Nantinya, semua class Tailwind akan diawali prefix (misal: <code>mimin-bg-[#0096A2]</code>, <code>mimin-rounded-md</code>, dst).
+- Akan ada instruksi build dan contoh penggunaannya setelah fitur ini dirilis.
+
+### Cara Setting Prefix
+
+1. Tambahkan di `tailwind.config.js`:
+   ```js
+   module.exports = {
+     prefix: "mimin-",
+     // ...config lain
+   };
+   ```
+2. Ubah semua className di kode menjadi diawali `mimin-`, contoh:
+   ```jsx
+   <div className="mimin-bg-[#0096A2] mimin-rounded-md mimin-text-white">
+     ...
+   </div>
+   ```
+3. Build ulang CSS, lalu inject hasil build ke widget.
+
+> **Catatan:** Jika menggunakan CDN Tailwind standar, fitur prefix tidak tersedia. Solusi: build CSS sendiri lalu host di CDN kamu.
+
 ## Development Notes
 
 - Widget menggunakan React 19 dengan TypeScript

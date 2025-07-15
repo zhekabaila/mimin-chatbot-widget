@@ -13,14 +13,18 @@ export interface IAuthCookie {
 
 interface AuthStore {
   user: IAuthCookie | null;
+  isFirstTime: boolean;
   setUser: (user: IAuthCookie | null) => void;
+  setIsFirstTime: (isFirstTime: boolean) => void;
 }
 
-export const useConfigStore = create<AuthStore>()(
+export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       user: null,
+      isFirstTime: true,
       setUser: (user) => set({ user }),
+      setIsFirstTime: (isFirstTime) => set({ isFirstTime }),
     }),
     {
       name: "auth-store",
