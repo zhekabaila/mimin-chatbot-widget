@@ -18,26 +18,26 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const { setChatType, clearInteractions } = useInteractionsStore();
   return (
     <div
-      className="flex items-center justify-between gap-2 px-4 py-2"
+      className="mimin-flex mimin-items-center mimin-justify-between mimin-gap-2 mimin-px-4 mimin-py-2"
       style={{
         backgroundColor:
           config?.theme?.chatWindow?.header?.backgroundColor || "#0096a2",
       }}
     >
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-white">
+      <div className="mimin-flex mimin-items-center mimin-gap-3">
+        <div className="mimin-flex mimin-items-center mimin-justify-center mimin-w-9 mimin-h-9 mimin-rounded-full mimin-bg-white">
           <img
             src={
               config?.theme?.chatWindow?.header?.avatarSrc ||
               "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg"
             }
             alt="ICON"
-            className="w-6 h-6 rounded-full"
+            className="mimin-w-6 mimin-h-6 mimin-rounded-full"
           />
         </div>
-        <div className="flex-1">
+        <div className="mimin-flex-1">
           <h3
-            className="text-base font-bold"
+            className="mimin-text-base mimin-font-bold"
             style={{
               color: config?.theme?.chatWindow?.header?.color || "#ffffff",
             }}
@@ -45,7 +45,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             {config?.theme?.chatWindow?.header?.title || "MINA"}
           </h3>
           <p
-            className="text-white font-light text-[9px]"
+            className="mimin-text-white mimin-font-light mimin-text-[9px]"
             style={{
               color: config?.theme?.chatWindow?.header?.color || "#ffffff",
             }}
@@ -55,27 +55,27 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="mimin-flex mimin-items-center mimin-gap-4">
         {config?.theme?.chatWindow?.isActiveCall && (
           <button
             style={{
               color: config?.theme?.chatWindow?.header?.color || "#ffffff",
             }}
-            onClick={onToggleCallWindow}
-            className="relative cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mimin-relative mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
             // disabled={true}
+            onClick={onToggleCallWindow}
           >
             <MdPhone
-              className="w-5 h-5"
+              className="mimin-w-5 mimin-h-5"
               color={config?.theme?.chatWindow?.header?.color || "#ffffff"}
             />
-            <div className="absolute -top-0 -right-0">
-              <p className="text-[8px] font-medium">AI</p>
+            <div className="mimin-absolute mimin--top-0 mimin--right-0">
+              <p className="mimin-text-[8px] mimin-font-medium">AI</p>
             </div>
           </button>
         )}
         <button
-          className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
           style={{
             color: config?.theme?.chatWindow?.header?.color || "#ffffff",
           }}
@@ -85,19 +85,19 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           }}
         >
           <BiRotateLeft
-            className="w-5 h-5"
+            className="mimin-w-5 mimin-h-5"
             color={config?.theme?.chatWindow?.header?.color || "#ffffff"}
           />
         </button>
         <button
-          className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
           style={{
             color: config?.theme?.chatWindow?.header?.color || "#ffffff",
           }}
           onClick={onToggleChatWindow}
         >
           <X
-            className="w-5 h-5"
+            className="mimin-w-5 mimin-h-5"
             color={config?.theme?.chatWindow?.header?.color || "#ffffff"}
           />
         </button>

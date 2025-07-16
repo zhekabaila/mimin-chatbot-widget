@@ -1,9 +1,9 @@
 import ReactDOM from "react-dom/client";
 import type { ChatbotConfig } from "./types";
-import { injectStyle } from "./utils/styleInjector";
 import { ENV } from "./config/environment";
 import { ChatWidget } from "./components/ChatWidget";
 // import "./index.css";
+import { injectStyle } from "./utils/styleInjector";
 
 // Export main Chatbot interface for React
 export interface ChatbotInterface {
@@ -13,7 +13,7 @@ export interface ChatbotInterface {
 const Chatbot: ChatbotInterface = {
   init: async function (config: ChatbotConfig = {}) {
     try {
-      console.log("INIT V2");
+      console.log("INIT V2 INDEX>TSX");
       // Inject required styles
       injectStyle();
 
