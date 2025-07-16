@@ -169,10 +169,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   }, []);
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999]">
+    <div className="mimin-fixed mimin-bottom-6 mimin-right-6 mimin-z-[9999]">
       {/* Chat Button */}
       <button
-        className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#0096a2] shadow-md transition-all duration-300 ease-in-out cursor-pointer"
+        className="mimin-flex mimin-items-center mimin-gap-2.5 mimin-px-4 mimin-py-2 mimin-rounded-full mimin-border mimin-border-[#0096a2] mimin-shadow-md mimin-transition-all mimin-duration-300 mimin-ease-in-out mimin-cursor-pointer"
         style={{
           backgroundColor: isChatVisible
             ? "#0096a2"
@@ -189,18 +189,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             "https://appstaging.mimin.io/favicon.ico"
           }
           alt="ICON"
-          className="w-4 h-auto"
+          className="mimin-w-4 mimin-h-auto"
         />
-        <span className="text-sm font-bold">
+        <span className="mimin-text-sm mimin-font-bold">
           {config?.theme?.button?.tooltip || "Ask Mimin"}
         </span>
       </button>
 
       {/* Chat Window */}
       {isChatVisible && (
-        <div className="absolute bottom-full mb-4 right-0">
+        <div className="mimin-absolute mimin-bottom-full mimin-mb-4 mimin-right-0">
           <div
-            className="relative flex flex-col border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+            className="mimin-relative mimin-flex mimin-flex-col mimin-border mimin-border-gray-200 mimin-rounded-lg mimin-shadow-lg mimin-overflow-hidden"
             style={{
               width: config?.theme?.chatWindow?.width || "330px",
               height: config?.theme?.chatWindow?.height || "600px",

@@ -11,5 +11,6 @@ export default {
     },
   },
   plugins: [],
-  // prefix: "mimin-",
+  prefix: "mimin-",
+  // important: true
 };

@@ -22,13 +22,13 @@ export const ChatContent: React.FC<{
 
   return (
     <div
-      className="relative flex-1 h-full px-4 py-6 max-h-full overflow-y-scroll"
+      className="mimin-relative mimin-flex-1 mimin-h-full mimin-px-4 mimin-py-6 mimin-max-h-full mimin-overflow-y-scroll"
       style={{ overflowAnchor: "none" }}
     >
-      <div className="flex flex-col gap-9">
-        <div className="flex flex-col-reverse gap-9">
+      <div className="mimin-flex mimin-flex-col mimin-gap-9">
+        <div className="mimin-flex mimin-flex-col-reverse mimin-gap-9">
           {messages.map((msg, index) => (
-            <div key={index} className="flex flex-col gap-6">
+            <div key={index} className="mimin-flex mimin-flex-col mimin-gap-6">
               {msg.human && msg.human.content && (
                 <BubbleChat
                   message={msg.human.content}
@@ -60,7 +60,7 @@ export const ChatContent: React.FC<{
           <BubbleChat thinking={true} date={new Date()} />
         )}
       </div>
-      <div ref={bottomRef} id="bottom-ref" className="pb-9" />
+      <div ref={bottomRef} id="bottom-ref" className="mimin-pb-9" />
     </div>
   );
 };

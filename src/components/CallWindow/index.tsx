@@ -31,56 +31,75 @@ export const CallWindow: React.FC<CallWindowProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="absolute inset-0 bg-white z-10">
-      <div className="h-full px-6 py-10 overflow-y-auto">
-        <div className="flex flex-col items-center justify-center">
-          <h4 className="text-[#0096a2] text-xl font-bold mb-6">IN CALL</h4>
-          <div className="flex items-center justify-center p-4 rounded-full w-[204px] h-[204px] bg-gradient-to-br from-[#0096a2]/30 to-[#f26075]/30">
-            <div className="flex items-center justify-center p-4 rounded-full w-full h-full bg-gradient-to-br from-[#0096a2]/40 to-[#f26075]/40">
-              <div className="flex items-center justify-center p-4 rounded-full w-full h-full bg-gradient-to-br from-[#0096a2]/50 to-[#f26075]/50">
-                <AudioLines className="w-14 h-14 text-white/80" />
+    <div className="mimin-absolute mimin-inset-0 mimin-bg-white mimin-z-10">
+      <div className="mimin-h-full mimin-px-6 mimin-py-10 mimin-overflow-y-auto">
+        <div className="mimin-flex mimin-flex-col mimin-items-center mimin-justify-center">
+          <h4 className="mimin-text-[#0096a2] mimin-text-xl mimin-font-bold mimin-mb-6">
+            IN CALL
+          </h4>
+          <div className="mimin-flex mimin-items-center mimin-justify-center mimin-p-4 mimin-rounded-full mimin-w-[204px] mimin-h-[204px] mimin-bg-gradient-to-br mimin-from-[#0096a2]/30 mimin-to-[#f26075]/30">
+            <div className="mimin-flex mimin-items-center mimin-justify-center mimin-p-4 mimin-rounded-full mimin-w-full mimin-h-full mimin-bg-gradient-to-br mimin-from-[#0096a2]/40 mimin-to-[#f26075]/40">
+              <div className="mimin-flex mimin-items-center mimin-justify-center mimin-p-4 mimin-rounded-full mimin-w-full mimin-h-full mimin-bg-gradient-to-br mimin-from-[#0096a2]/50 mimin-to-[#f26075]/50">
+                <AudioLines className="mimin-w-14 mimin-h-14 mimin-text-white/80" />
               </div>
             </div>
           </div>
-          <p className="text-[#0096a2] text-base font-bold mt-5">MIMIN AI</p>
-          <p className="text-[#0096a2] text-sm font-medium mt-0">09:00</p>
-          <div className="h-[1.5px] w-full bg-gray-200 my-6"></div>
-          <div className="grid grid-cols-2 gap-4 w-full">
-            <div className="col-span-2 flex items-center justify-center">
+          <p className="mimin-text-[#0096a2] mimin-text-base mimin-font-bold mimin-mt-5">
+            MIMIN AI
+          </p>
+          <p className="mimin-text-[#0096a2] mimin-text-sm mimin-font-medium mimin-mt-0">
+            09:00
+          </p>
+          <div className="mimin-h-[1.5px] mimin-w-full mimin-bg-gray-200 mimin-my-6"></div>
+          <div className="mimin-grid mimin-grid-cols-2 mimin-gap-4 mimin-w-full">
+            <div className="mimin-col-span-2 mimin-flex mimin-items-center mimin-justify-center">
               <button
                 type="button"
-                className="cursor-pointer bg-gradient-to-br from-[#0096a2]/30 to-[#f26075]/30 rounded-full w-[60px] h-[60px] p-4 aspect-square flex items-center justify-center"
+                className="mimin-cursor-pointer mimin-bg-gradient-to-br mimin-from-[#0096a2]/30 mimin-to-[#f26075]/30 mimin-rounded-full mimin-w-[60px] mimin-h-[60px] mimin-p-4 mimin-aspect-square mimin-flex mimin-items-center mimin-justify-center"
                 onClick={onToggleCallWindow}
               >
-                <MdPhone className="w-full h-full text-[#f26075]/90 rotate-90" />
+                <MdPhone className="mimin-w-full mimin-h-full mimin-text-[#f26075]/90 mimin-rotate-90" />
               </button>
             </div>
-            {/* <div className="flex items-center justify-center">
+            {/* <div className="mimin-flex mimin-items-center mimin-justify-center">
               <button
                 type="button"
                 className={cn(
-                  "cursor-pointer w-[60px] h-[60px] p-4 aspect-square rounded-full flex items-center justify-center",
-                  isMuted
-                    ? "bg-gradient-to-br from-white/60 to-[#ffa100]/60"
-                    : "bg-gradient-to-br from-white/20 to-[#ffa100]/20"
+                  "mimin-cursor-pointer mimin-w-[60px] mimin-h-[60px] mimin-p-4 mimin-aspect-square mimin-rounded-full mimin-flex mimin-items-center mimin-justify-center",                  isMuted
+                    ? "mimin-bg-gradient-to-br mimin-from-white/60 mimin-to-[#ffa100]/60"
+                    : "mimin-bg-gradient-to-br mimin-from-white/20 mimin-to-[#ffa100]/20"
                 )}
                 onClick={handleToggleMute}
               >
-                <Mic className={cn("w-full h-full text-[#0096a2]/90")} />
+                <MdPhone className="mimin-w-full mimin-h-full mimin-text-[#f26075]/90 mimin-rotate-90" />
+              </button>
+            </div>
+            {/* <div className="mimin-flex mimin-items-center mimin-justify-center">
+              <button
+                type="button"
+                className={cn(
+                  "mimin-cursor-pointer mimin-w-[60px] mimin-h-[60px] mimin-p-4 mimin-aspect-square mimin-rounded-full mimin-flex mimin-items-center mimin-justify-center",
+                  isMuted
+                    ? "mimin-bg-gradient-to-br mimin-from-white/60 mimin-to-[#ffa100]/60"
+                    : "mimin-bg-gradient-to-br mimin-from-white/20 mimin-to-[#ffa100]/20"
+                )}
+                onClick={handleToggleMute}
+              >
+                <Mic className={cn("mimin-w-full mimin-h-full mimin-text-[#0096a2]/90")} />
               </button>
             </div>
             <div className="flex items-center justify-center">
               <button
                 type="button"
                 className={cn(
-                  "cursor-pointer w-[60px] h-[60px] p-4 aspect-square rounded-full flex items-center justify-center",
+                  "mimin-cursor-pointer mimin-w-[60px] mimin-h-[60px] mimin-p-4 mimin-aspect-square mimin-rounded-full mimin-flex mimin-items-center mimin-justify-center",
                   !isSpeakerOn
-                    ? "bg-gradient-to-br from-white/60 to-[#ffa100]/60"
-                    : "bg-gradient-to-br from-white/20 to-[#ffa100]/20"
+                    ? "mimin-bg-gradient-to-br mimin-from-white/60 mimin-to-[#ffa100]/60"
+                    : "mimin-bg-gradient-to-br mimin-from-white/20 mimin-to-[#ffa100]/20"
                 )}
                 onClick={handleToggleSpeaker}
               >
-                <Volume2 className={cn("w-full h-full text-[#0096a2]/90")} />
+                <Volume2 className={cn("mimin-w-full mimin-h-full mimin-text-[#0096a2]/90")} />
               </button>
             </div> */}
           </div>

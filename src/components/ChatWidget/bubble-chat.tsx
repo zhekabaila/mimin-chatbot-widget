@@ -49,7 +49,7 @@ const BubbleChat: React.FC<{
     return (
       <div
         className={cn(
-          "relative flex w-fit max-w-[90%] border rounded-t-2xl py-3 px-3.5 rounded-br-2xl bg-white text-[#0096a2] border-[#0096a2] mr-auto justify-start"
+          "mimin-relative mimin-flex mimin-w-fit mimin-max-w-[90%] mimin-border mimin-rounded-t-2xl mimin-py-3 mimin-px-3.5 mimin-rounded-br-2xl mimin-bg-white mimin-text-[#0096a2] mimin-border-[#0096a2] mimin-mr-auto mimin-justify-start"
         )}
         style={{
           backgroundColor:
@@ -59,18 +59,18 @@ const BubbleChat: React.FC<{
         }}
       >
         <div
-          className="text-sm"
+          className="mimin-text-sm"
           style={{
             color:
               config?.theme?.chatWindow?.botMessage?.textColor || "#0096a2",
           }}
         >
-          <div className="flex gap-3">
-            <div className="text-base flex gap-2 items-end">
+          <div className="mimin-flex mimin-gap-3">
+            <div className="mimin-text-base mimin-flex mimin-gap-2 mimin-items-end">
               {Array.from({ length: 3 }).map((_, index) => (
                 <span
                   key={`loading-circle-${index}`}
-                  className="block w-2 h-2 rounded-full bg-[#0096a2] animate-bounce"
+                  className="mimin-block mimin-w-2 mimin-h-2 mimin-rounded-full mimin-bg-[#0096a2] mimin-animate-bounce"
                   style={{ animationDelay: `${250 * index}ms` }}
                 />
               ))}
@@ -89,10 +89,10 @@ const BubbleChat: React.FC<{
   return (
     <div
       className={cn(
-        "relative flex w-fit max-w-[90%] border rounded-t-3xl py-3 px-3.5",
-        !isUser
-          ? "rounded-br-3xl bg-white text-[#0096a2] border-[#0096a2] mr-auto justify-start"
-          : "rounded-bl-3xl bg-white text-[#0096a2] border-[#0096a2] ml-auto justify-end"
+        "mimin-relative mimin-flex mimin-w-fit mimin-max-w-[90%] mimin-border mimin-rounded-t-3xl mimin-py-3 mimin-px-3.5" +
+          (!isUser
+            ? " mimin-rounded-br-3xl mimin-bg-white mimin-text-[#0096a2] mimin-border-[#0096a2] mimin-mr-auto mimin-justify-start"
+            : " mimin-rounded-bl-3xl mimin-bg-white mimin-text-[#0096a2] mimin-border-[#0096a2] mimin-ml-auto mimin-justify-end")
       )}
       style={{
         backgroundColor: isUser
@@ -105,11 +105,11 @@ const BubbleChat: React.FC<{
     >
       <div
         className={cn(
-          "flex items-end gap-3",
-          isUser ? "flex-row-reverse" : "flex-row"
+          "mimin-flex mimin-items-end mimin-gap-3" +
+            (isUser ? " mimin-flex-row-reverse" : " mimin-flex-row")
         )}
       >
-        <div className="flex items-end justify-center w-3 h-3">
+        <div className="mimin-flex mimin-items-end mimin-justify-center mimin-w-3 mimin-h-3">
           {isUser ? (
             <img
               src={
@@ -119,7 +119,7 @@ const BubbleChat: React.FC<{
               alt=" "
               width={100}
               height={100}
-              className="w-3 h-3 aspect-square"
+              className="mimin-w-3 mimin-h-3 mimin-aspect-square"
             />
           ) : (
             <img
@@ -130,12 +130,12 @@ const BubbleChat: React.FC<{
               alt=" "
               width={100}
               height={100}
-              className="w-3 h-3 aspect-square"
+              className="mimin-w-3 mimin-h-3 mimin-aspect-square"
             />
           )}
         </div>
         <div
-          className="text-sm flex-1 pb-2"
+          className="mimin-text-sm mimin-flex-1 mimin-pb-2"
           style={{
             color: isUser
               ? config?.theme?.chatWindow?.userMessage?.textColor || "#ffffff"
@@ -148,11 +148,11 @@ const BubbleChat: React.FC<{
       </div>
       <div
         className={cn(
-          "absolute top-full mt-0.5 w-fit",
-          isUser ? "right-0" : "left-0"
+          "mimin-absolute mimin-top-full mimin-mt-0.5 mimin-w-fit" +
+            (isUser ? " mimin-right-0" : " mimin-left-0")
         )}
       >
-        <p className="text-[10px] font-light text-gray-500 w-max">
+        <p className="mimin-text-[10px] mimin-font-light mimin-text-gray-500 mimin-w-max">
           {format(new Date(date), "dd MMMM yyyy, HH:mm")}
         </p>
       </div>

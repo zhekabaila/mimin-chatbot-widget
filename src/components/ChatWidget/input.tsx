@@ -36,7 +36,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <div
-      className="px-2 pt-2 pb-1 overflow-hidden max-h-full"
+      className="mimin-px-2 mimin-pt-2 mimin-pb-1 mimin-overflow-hidden mimin-max-h-full"
       style={{
         backgroundColor:
           config?.theme?.chatWindow?.textInput?.backgroundColor || "#0096a2",
@@ -49,10 +49,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           e.stopPropagation();
           handleSendMessage();
         }}
-        className="relative flex items-center gap-2"
+        className="mimin-relative mimin-flex mimin-items-center mimin-gap-2"
       >
         <textarea
-          className="flex-1 border rounded-md p-2 max-h-[80px] bg-white pr-10 focus:outline focus:outline-[#ffa100] resize-none"
+          className="mimin-flex-1 mimin-border mimin-rounded-md mimin-p-2 mimin-max-h-[80px] mimin-bg-white mimin-pr-10 mimin-focus:outline mimin-focus:outline-[#ffa100] mimin-resize-none"
           style={{
             borderColor:
               config?.theme?.chatWindow?.textInput?.borderColor || "#ffffff",
@@ -68,20 +68,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           ref={textareaRef}
         />
         <button
-          className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mimin-absolute mimin-right-4 mimin-top-1/2 mimin--translate-y-1/2 mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
           disabled={loading || message.trim().length === 0}
         >
           <RiSendPlane2Fill
-            className="w-4 h-4 text-[#0096a2]"
+            className="mimin-w-4 mimin-h-4 mimin-text-[#0096a2]"
             color={
               config?.theme?.chatWindow?.textInput?.sendButtonColor || "#0096a2"
             }
           />
         </button>
       </form>
-      <p className="text-white text-[10px] font-medium text-center mt-1">
+      <p className="mimin-text-white mimin-text-[10px] mimin-font-medium mimin-text-center mimin-mt-1">
         Powered by{" "}
-        <a href="https://mimin.io" className="underline">
+        <a href="https://mimin.io" className="mimin-underline">
           Mimin
         </a>
       </p>

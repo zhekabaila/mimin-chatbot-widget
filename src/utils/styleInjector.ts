@@ -1,9 +1,11 @@
 export function injectStyle(): void {
   // Inject Tailwind CSS jika belum ada
-  if (!document.getElementById("tailwind-cdn")) {
-    const tw = document.createElement("script");
-    tw.src = "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4";
-    tw.id = "tailwind-cdn";
+  if (!document.getElementById("mimin-chatbot-widget-css")) {
+    const tw = document.createElement("link");
+    tw.rel = "stylesheet";
+    tw.href =
+      "https://unpkg.com/mimin-chatbot-widget-react@latest/dist/chat-widget.css";
+    tw.id = "mimin-chatbot-widget-css";
     document.head.appendChild(tw);
   }
 }

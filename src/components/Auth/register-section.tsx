@@ -21,16 +21,19 @@ const RegisterSection = ({ onClickSignin }: IProps) => {
   };
 
   return (
-    <div className="mt-10">
-      <div className="space-y-2">
-        <h2 className="text-base font-bold">Create Account</h2>
-        <p className="text-sm text-gray-500">
+    <div className="mimin-mt-10">
+      <div className="mimin-space-y-2">
+        <h2 className="mimin-text-base mimin-font-bold">Create Account</h2>
+        <p className="mimin-text-sm mimin-text-gray-500">
           Fill your information below to create your account
         </p>
       </div>
-      <div className="space-y-2 mt-6">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="companyName" className="text-sm font-medium">
+      <div className="mimin-space-y-2 mimin-mt-6">
+        <div className="mimin-flex mimin-flex-col mimin-gap-1">
+          <label
+            htmlFor="companyName"
+            className="mimin-text-sm mimin-font-medium"
+          >
             Company Name
           </label>
           <input
@@ -39,11 +42,11 @@ const RegisterSection = ({ onClickSignin }: IProps) => {
             value={form.companyName}
             onChange={handleChange}
             autoComplete="off"
-            className="border border-[#0096A2] rounded-md p-2 focus:outline focus:outline-2 focus:outline-[#0096A2]"
+            className="mimin-border mimin-border-[#0096A2] mimin-rounded-md mimin-p-2 mimin-focus:outline mimin-focus:outline-2 mimin-focus:outline-[#0096A2]"
           />
         </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="email" className="text-sm font-medium">
+        <div className="mimin-flex mimin-flex-col mimin-gap-1">
+          <label htmlFor="email" className="mimin-text-sm mimin-font-medium">
             Email
           </label>
           <input
@@ -52,60 +55,63 @@ const RegisterSection = ({ onClickSignin }: IProps) => {
             autoComplete="off"
             value={form.email}
             onChange={handleChange}
-            className="border border-[#0096A2] rounded-md p-2 focus:outline focus:outline-2 focus:outline-[#0096A2]"
+            className="mimin-border mimin-border-[#0096A2] mimin-rounded-md mimin-p-2 mimin-focus:outline mimin-focus:outline-2 mimin-focus:outline-[#0096A2]"
           />
         </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="password" className="text-sm font-medium">
+        <div className="mimin-flex mimin-flex-col mimin-gap-1">
+          <label htmlFor="password" className="mimin-text-sm mimin-font-medium">
             Password
           </label>
-          <div className="relative">
+          <div className="mimin-relative">
             <input
               type={showPassword ? "text" : "password"}
               name="password"
               value={form.password}
               onChange={handleChange}
               autoComplete="off"
-              className="border border-[#0096A2] rounded-md p-2 focus:outline focus:outline-2 focus:outline-[#0096A2] w-full"
+              className="mimin-border mimin-border-[#0096A2] mimin-rounded-md mimin-p-2 mimin-focus:outline mimin-focus:outline-2 mimin-focus:outline-[#0096A2] mimin-w-full"
             />
             <button
-              className="absolute right-2.5 top-1/2 -translate-y-1/2"
+              className="mimin-absolute mimin-right-2.5 mimin-top-1/2 -mimin-translate-y-1/2"
               onClick={() => setShowPassword((e) => !e)}
             >
               {showPassword ? (
-                <EyeIcon className="w-4 h-4" />
+                <EyeIcon className="mimin-w-4 mimin-h-4" />
               ) : (
-                <EyeOffIcon className="w-4 h-4" />
+                <EyeOffIcon className="mimin-w-4 mimin-h-4" />
               )}
             </button>
           </div>
         </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="confirmPassword" className="text-sm font-medium">
+        <div className="mimin-flex mimin-flex-col mimin-gap-1">
+          <label
+            htmlFor="confirmPassword"
+            className="mimin-text-sm mimin-font-medium"
+          >
             Confirm Password
           </label>
-          <div className="relative">
+          <div className="mimin-relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
               value={form.confirmPassword}
               onChange={handleChange}
               autoComplete="off"
-              className="border border-[#0096A2] rounded-md p-2 focus:outline focus:outline-2 focus:outline-[#0096A2] w-full"
+              className="mimin-border mimin-border-[#0096A2] mimin-rounded-md mimin-p-2 mimin-focus:outline mimin-focus:outline-2 mimin-focus:outline-[#0096A2] mimin-w-full"
             />
             <button
-              className="absolute right-2.5 top-1/2 -translate-y-1/2"
+              className="mimin-absolute mimin-right-2.5 mimin-top-1/2 -mimin-translate-y-1/2"
               onClick={() => setShowConfirmPassword((e) => !e)}
             >
               {showConfirmPassword ? (
-                <EyeIcon className="w-4 h-4" />
+                <EyeIcon className="mimin-w-4 mimin-h-4" />
               ) : (
-                <EyeOffIcon className="w-4 h-4" />
+                <EyeOffIcon className="mimin-w-4 mimin-h-4" />
               )}
             </button>
           </div>
         </div>
-        <div className="flex items-start gap-3 py-2">
+        <div className="mimin-flex mimin-items-start mimin-gap-3 mimin-py-2">
           <input
             type="checkbox"
             name="acceptTerms"
@@ -114,27 +120,30 @@ const RegisterSection = ({ onClickSignin }: IProps) => {
             onChange={(e) =>
               setForm({ ...form, acceptTerms: e.target.checked })
             }
-            className="mt-1 size-3.5 accent-[#0096A2]"
+            className="mimin-mt-1 mimin-size-3.5 mimin-accent-[#0096A2]"
           />
 
-          <label className="block text-xs text-gray-500" htmlFor="acceptTerms">
+          <label
+            className="mimin-block mimin-text-xs mimin-text-gray-500"
+            htmlFor="acceptTerms"
+          >
             By creating an account, you agree to our{" "}
-            <a href="#" className="text-[#0096A2]">
+            <a href="#" className="mimin-text-[#0096A2]">
               Terms of Service
             </a>
           </label>
         </div>
         {errorMessage && (
-          <div className="flex items-start gap-3 bg-[#F26075]/10 p-2 rounded-md mt-5 border border-[#F26075]/20">
-            <div className="flex items-start justify-center pt-1">
-              <TriangleAlert className="w-4 h-4 text-[#F26075]" />
+          <div className="mimin-flex mimin-items-start mimin-gap-3 mimin-bg-[#F26075]/10 mimin-p-2 mimin-rounded-md mimin-mt-5 mimin-border mimin-border-[#F26075]/20">
+            <div className="mimin-flex mimin-items-start mimin-justify-center mimin-pt-1">
+              <TriangleAlert className="mimin-w-4 mimin-h-4 mimin-text-[#F26075]" />
             </div>
-            <p className="text-[#F26075] text-sm">{errorMessage}</p>
+            <p className="mimin-text-[#F26075] mimin-text-sm">{errorMessage}</p>
           </div>
         )}
-        <div className="flex flex-col gap-1 pb-6">
+        <div className="mimin-flex mimin-flex-col mimin-gap-1 mimin-pb-6">
           <button
-            className="bg-[#0096A2] text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mimin-bg-[#0096A2] mimin-text-white mimin-px-4 mimin-py-2 mimin-rounded-md mimin-w-full mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
             disabled={
               !form.companyName ||
               !form.email ||
@@ -145,11 +154,11 @@ const RegisterSection = ({ onClickSignin }: IProps) => {
           >
             Create Account
           </button>
-          <div className="text-xs text-center text-gray-500">
+          <div className="mimin-text-xs mimin-text-center mimin-text-gray-500">
             Already have an account?{" "}
             <button
               onClick={onClickSignin}
-              className="inline text-[#0096A2] underline cursor-pointer"
+              className="mimin-inline mimin-text-[#0096A2] mimin-underline mimin-cursor-pointer"
             >
               Sign in
             </button>
