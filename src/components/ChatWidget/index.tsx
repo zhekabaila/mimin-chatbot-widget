@@ -5,7 +5,6 @@ import type {
   IESResponse,
 } from "../../types";
 import { useConfigStore } from "../../hooks/config-store";
-import { ENV } from "../../config/environment";
 import { useInteractionsStore } from "../../hooks/interaction-store";
 import AuthWindow from "../Auth";
 import { ChatHeader } from "./header";
@@ -14,6 +13,8 @@ import { ChatInput } from "./input";
 import { CallWindow } from "../CallWindow";
 import { useAuthStore } from "../../hooks/auth-store";
 import { StartChatSection } from "./start-chat-section";
+import { motion, AnimatePresence } from "framer-motion";
+import { API } from "../../services";
 
 interface ChatWidgetProps {
   config?: ChatbotConfig;
@@ -46,6 +47,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [isCallVisible, setIsCallVisible] = useState(false);
+  const [shouldRenderChat, setShouldRenderChat] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const {
@@ -57,7 +59,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   } = useInteractionsStore();
 
   const handleToggleChatWindow = () => {
-    setIsChatVisible(!isChatVisible);
+    if (isChatVisible) {
+      setIsChatVisible(false); // trigger exit
+    } else {
+      setShouldRenderChat(true); // show component
+      setIsChatVisible(true); // trigger enter
+    }
   };
 
   const handleToggleCallWindow = () => {
@@ -99,18 +106,16 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     };
 
     try {
-      const response = await fetch(
-        `${ENV.NEXT_PUBLIC_CHATBOT_URL}/api/chat/new-website/${config?.credentials?.username}`,
+      const response = await API('fetch', 'chatbot')(
+        `/chat/new-website/${config?.credentials?.username}`,
         {
           headers: {
             Signature: signature,
             Accept: "text/event-stream",
-            "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
           method: "POST",
-        }
-      );
+        });
 
       if (!response.ok) {
         console.error("Failed to send message");
@@ -164,106 +169,150 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   };
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (!target.closest("#mimin-widget-main") && !target.closest("#mimin-widget-btn-trigger")) {
+        handleToggleChatWindow();
+      }
+    };
+
+    if (isChatVisible) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isChatVisible]);
+
+  useEffect(() => {
     setConfigStore(config || null);
     setSignatureStore(signature || "");
   }, []);
 
   return (
-    <div className="mimin-fixed mimin-bottom-6 mimin-right-6 mimin-z-[9999]">
-      {/* Chat Button */}
-      <button
-        className="mimin-flex mimin-items-center mimin-gap-2.5 mimin-px-4 mimin-py-2 mimin-rounded-full mimin-border mimin-border-[#0096a2] mimin-shadow-md mimin-transition-all mimin-duration-300 mimin-ease-in-out mimin-cursor-pointer"
-        style={{
-          backgroundColor: isChatVisible
-            ? "#0096a2"
-            : config?.theme?.button?.backgroundColor || "#ffffff",
-          color: isChatVisible
-            ? "#ffffff"
-            : config?.theme?.button?.textColor || "#0096a2",
-        }}
-        onClick={handleToggleChatWindow}
-      >
-        <img
-          src={
-            config?.theme?.button?.iconSrc ||
-            "https://appstaging.mimin.io/favicon.ico"
-          }
-          alt="ICON"
-          className="mimin-w-4 mimin-h-auto"
-        />
-        <span className="mimin-text-sm mimin-font-bold">
-          {config?.theme?.button?.tooltip || "Ask Mimin"}
-        </span>
-      </button>
+    <AnimatePresence>
+      <div className="mimin-fixed mimin-bottom-6 mimin-right-6 mimin-z-[9999]">
+        {/* Chat Button */}
+        <button
+          id="mimin-widget-btn-trigger"
+          className="mimin-relative mimin-flex mimin-items-center mimin-gap-2.5 mimin-px-4 mimin-py-2 mimin-rounded-full mimin-border mimin-border-[#0096a2] mimin-shadow-md mimin-transition-all mimin-duration-300 mimin-ease-in-out mimin-cursor-pointer"
+          style={{
+            backgroundColor: isChatVisible
+              ? "#0096a2"
+              : config?.theme?.button?.backgroundColor || "#ffffff",
+            color: isChatVisible
+              ? "#ffffff"
+              : config?.theme?.button?.textColor || "#0096a2",
+          }}
+          onClick={handleToggleChatWindow}
+        >
+          <img
+            src={
+              config?.theme?.button?.iconSrc ||
+              "https://appstaging.mimin.io/favicon.ico"
+            }
+            alt="ICON"
+            className="mimin-w-4 mimin-h-auto"
+          />
+          <span className="mimin-text-sm mimin-font-bold">
+            {config?.theme?.button?.tooltip || "Ask Mimin"}
+          </span>
 
-      {/* Chat Window */}
-      {isChatVisible && (
-        <div className="mimin-absolute mimin-bottom-full mimin-mb-4 mimin-right-0">
-          <div
-            className="mimin-relative mimin-flex mimin-flex-col mimin-border mimin-border-gray-200 mimin-rounded-lg mimin-shadow-lg mimin-overflow-hidden"
-            style={{
-              width: config?.theme?.chatWindow?.width || "330px",
-              height: config?.theme?.chatWindow?.height || "600px",
-              backgroundColor:
-                config?.theme?.chatWindow?.body?.backgroundColor || "#ffffff",
+          {/* Badge Notifikasi */}
+          {isCallVisible && !isChatVisible && (
+            <motion.div
+              key="call-badge"
+              initial={{ opacity: 0, scale: 0.8, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: -10 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="mimin-absolute -mimin-top-3 mimin-right-0 mimin-text-white mimin-px-1.5 mimin-py-0.5 mimin-text-[10px] mimin-rounded-full mimin-bg-red-500 mimin-animate-pulse"
+            >
+              In Call
+            </motion.div>
+          )}
+        </button>
+
+        {/* Chat Window */}
+        {shouldRenderChat && (
+          <motion.div
+            id="mimin-widget-main"
+            className="mimin-absolute mimin-bottom-full mimin-mb-4 mimin-right-0"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isChatVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            onAnimationComplete={() => {
+              if (!isChatVisible) {
+                setShouldRenderChat(false);
+              }
             }}
           >
-            {(config?.theme?.chatWindow.needAuthentication || false) &&
-              !isAuthenticated &&
-              !isFirstTime && <AuthWindow />}
-            {(isAuthenticated ||
-              !(config?.theme?.chatWindow.needAuthentication || false)) &&
-              !isFirstTime && (
-                <>
-                  <ChatHeader
-                    onToggleCallWindow={handleToggleCallWindow}
-                    onToggleChatWindow={handleToggleChatWindow}
-                  />
-                  <ChatContent
-                    messages={interactions}
-                    currentResponseMsg={currentResponseMsg}
-                    loading={loading}
-                    fetching={fetching}
-                  />
-                  <ChatInput
-                    onSendMessage={(message) => {
-                      setCurrentResponseMsg("");
-                      message = message.trim().replaceAll(/\n\n+/g, "\n\n");
-                      const newInteraction = {
-                        human: {
-                          content: message,
-                          additional_kwargs: {},
-                          example: false,
-                        },
-                        date: new Date(),
-                        id: crypto.randomUUID(),
-                      };
+            <div
+              className="mimin-relative mimin-flex mimin-flex-col mimin-border mimin-border-gray-200 mimin-rounded-xl mimin-shadow-lg mimin-overflow-hidden"
+              style={{
+                width: config?.theme?.chatWindow?.width || "330px",
+                height: config?.theme?.chatWindow?.height || "600px",
+                backgroundColor:
+                  config?.theme?.chatWindow?.body?.backgroundColor || "#ffffff",
+              }}
+            >
+              {(config?.theme?.chatWindow.needAuthentication || false) &&
+                !isAuthenticated &&
+                !isFirstTime && <AuthWindow />}
+              {(isAuthenticated ||
+                !(config?.theme?.chatWindow.needAuthentication || false)) &&
+                !isFirstTime && (
+                  <>
+                    <ChatHeader
+                      onToggleCallWindow={handleToggleCallWindow}
+                      onToggleChatWindow={handleToggleChatWindow}
+                    />
+                    <ChatContent
+                      messages={interactions}
+                      currentResponseMsg={currentResponseMsg}
+                      loading={loading}
+                      fetching={fetching}
+                    />
+                    <ChatInput
+                      onSendMessage={(message) => {
+                        setCurrentResponseMsg("");
+                        message = message.trim().replaceAll(/\n\n+/g, "\n\n");
+                        const newInteraction = {
+                          human: {
+                            content: message,
+                            additional_kwargs: {},
+                            example: false,
+                          },
+                          date: new Date(),
+                          id: crypto.randomUUID(),
+                        };
 
-                      addInteraction(newInteraction);
+                        addInteraction(newInteraction);
 
-                      handleSendMessage(message);
-                    }}
-                    loading={loading}
-                    fetching={fetching}
-                  />
-                  <CallWindow
-                    isVisible={isCallVisible}
-                    onToggleCallWindow={handleToggleCallWindow}
-                    // onToggleMuteCall={handleToggleMuteCall}
-                    // onToggleSpeakerCall={handleToggleSpeakerCall}
-                  />
-                </>
+                        handleSendMessage(message);
+                      }}
+                      loading={loading}
+                      fetching={fetching}
+                    />
+                    <CallWindow
+                      isVisible={isCallVisible}
+                      onToggleCallWindow={handleToggleCallWindow}
+                    />
+                  </>
+                )}
+              {isFirstTime && (
+                <StartChatSection
+                  onClickStartChat={() => {
+                    setIsFirstTime(false);
+                  }}
+                />
               )}
-            {isFirstTime && (
-              <StartChatSection
-                onClickStartChat={() => {
-                  setIsFirstTime(false);
-                }}
-              />
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </AnimatePresence>
   );
 };

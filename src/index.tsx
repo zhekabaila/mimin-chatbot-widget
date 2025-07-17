@@ -1,9 +1,9 @@
 import ReactDOM from "react-dom/client";
 import type { ChatbotConfig } from "./types";
-import { ENV } from "./config/environment";
 import { ChatWidget } from "./components/ChatWidget";
 import "./index.css";
 import { injectStyle } from "./utils/styleInjector";
+import { API } from "./services";
 
 // Export main Chatbot interface for React
 export interface ChatbotInterface {
@@ -31,8 +31,8 @@ const Chatbot: ChatbotInterface = {
       }
 
       // (Opsional) Ambil signature jika memang dibutuhkan
-      const response = await fetch(
-        `${ENV.NEXT_PUBLIC_LOGIN_CUSTOMER_API}/api/v1/chatbotdata/create-signature/${config.credentials.username}`,
+      const response = await API('fetch', 'customer')(
+        `/v1/chatbotdata/create-signature/${config.credentials.username}`,
         {
           method: "POST",
           headers: {
@@ -40,6 +40,7 @@ const Chatbot: ChatbotInterface = {
           },
         }
       );
+
       const { signature }: { signature: string } = await response.json();
       if (!signature) {
         throw new Error("Failed to get signature");

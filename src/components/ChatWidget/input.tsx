@@ -36,7 +36,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <div
-      className="mimin-px-2 mimin-pt-2 mimin-pb-1 mimin-overflow-hidden mimin-max-h-full"
+      className="mimin-px-2 mimin-py-2 mimin-overflow-hidden mimin-max-h-full"
       style={{
         backgroundColor:
           config?.theme?.chatWindow?.textInput?.backgroundColor || "#0096a2",
@@ -79,7 +79,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           />
         </button>
       </form>
-      <p className="mimin-text-white mimin-text-[10px] mimin-font-medium mimin-text-center mimin-mt-1">
+      <p className="mimin-text-white mimin-text-[10px] mimin-tracking-wide mimin-text-center mimin-mt-1">
         Powered by{" "}
         <a href="https://mimin.io" className="mimin-underline">
           Mimin
