@@ -75,7 +75,6 @@ export interface Environment {
   NEXT_PUBLIC_CUSTOMER_API: string;
   NEXT_PUBLIC_CHATBOT_URL: string;
   NEXT_PUBLIC_OPENAI_URL: string;
-  NEXT_PUBLIC_OPENAI_KEY: string;
 }
 
 export interface IEventStreamResponse {

@@ -14,7 +14,6 @@ import { CallWindowAudioVisualizer } from "./audio-visualizer";
 import { useConfigStore } from "../../hooks/config-store";
 import { API, getIntructions } from "../../services";
 import { blobToBase64, formatAudioCurrentTime } from "../../utils";
-import { ENV } from "../../config/environment";
 
 interface CallWindowProps {
   isVisible: boolean;
@@ -148,7 +147,7 @@ export const CallWindow: React.FC<CallWindowProps> = ({
           {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${ENV.NEXT_PUBLIC_OPENAI_KEY}`,
+              Authorization: "Bearer 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",
               "Content-Type": "application/json",
             },
             data: JSON.stringify({
