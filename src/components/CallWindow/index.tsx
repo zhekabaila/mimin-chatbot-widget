@@ -13,8 +13,8 @@ import {
 import { CallWindowAudioVisualizer } from "./audio-visualizer";
 import { useConfigStore } from "../../hooks/config-store";
 import { API, getIntructions } from "../../services";
-import { OPENAI_KEY } from "../../config/environment";
 import { blobToBase64, formatAudioCurrentTime } from "../../utils";
+import { ENV } from "../../config/environment";
 
 interface CallWindowProps {
   isVisible: boolean;
@@ -148,7 +148,7 @@ export const CallWindow: React.FC<CallWindowProps> = ({
           {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${OPENAI_KEY}`,
+              Authorization: `Bearer ${ENV.NEXT_PUBLIC_OPENAI_KEY}`,
               "Content-Type": "application/json",
             },
             data: JSON.stringify({
