@@ -11,10 +11,8 @@ import {
 } from "./animate";
 import { CallWindowAudioVisualizer } from "./audio-visualizer";
 import { useConfigStore } from "../../hooks/config-store";
-import { API, getIntructions } from "../../services";
+import { API } from "../../services";
 import { formatAudioCurrentTime } from "../../utils";
-
-const openaiSecret = import.meta.env.OPENAI_SECRET_KEY;
 
 interface CallWindowProps {
   isVisible: boolean;
@@ -130,25 +128,17 @@ export const CallWindow: React.FC<CallWindowProps> = ({
       (async () => {
         peerConnection = new RTCPeerConnection();
 
-        const instructions = await getIntructions(
-          config?.credentials?.username || "",
-          signature
+        const sessionRes = await API("axios", "customer")(
+          `/v1/call-session/create-realtime-session/${config?.credentials?.username}`,
+          {
+            method: "POST",
+            headers: {
+              "x-api-key": config?.credentials?.apiKey
+            }
+          }
         );
 
-        const sessionRes = await API("axios", "openai")("/realtime/sessions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${openaiSecret}`,
-            "Content-Type": "application/json",
-          },
-          data: JSON.stringify({
-            model: "gpt-4o-realtime-preview-2024-12-17",
-            instructions: instructions,
-            voice: "sage",
-          }),
-        });
-
-        const { client_secret, model } = sessionRes.data;
+        const { client_secret, model, instructions } = sessionRes.data;
 
         peerConnection.ontrack = (event: RTCTrackEvent) => {
           if (audioRef.current) {
@@ -178,19 +168,9 @@ export const CallWindow: React.FC<CallWindowProps> = ({
           switch (message.type) {
             case "output_audio_buffer.started":
               setAiStatus("speaking");
-              if (mediaStream) {
-                mediaStream
-                  .getAudioTracks()
-                  .forEach((track) => (track.enabled = false));
-              }
               break;
             case "output_audio_buffer.stopped":
               setAiStatus("idle");
-              if (mediaStream) {
-                mediaStream
-                  .getAudioTracks()
-                  .forEach((track) => (track.enabled = true));
-              }
               break;
             case "input_audio_buffer.speech_started":
               setAiStatus("listening");
@@ -421,10 +401,10 @@ export const CallWindow: React.FC<CallWindowProps> = ({
                 animate={
                   isAnimating
                     ? {
-                        scale: [1, 1.2, 0.8],
-                        rotate: [0, 180, 360],
-                        transition: { duration: 0.3 },
-                      }
+                      scale: [1, 1.2, 0.8],
+                      rotate: [0, 180, 360],
+                      transition: { duration: 0.3 },
+                    }
                     : {}
                 }
               >
