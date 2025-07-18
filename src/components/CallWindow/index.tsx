@@ -13,6 +13,7 @@ import { CallWindowAudioVisualizer } from "./audio-visualizer";
 import { useConfigStore } from "../../hooks/config-store";
 import { API, getIntructions } from "../../services";
 import { formatAudioCurrentTime } from "../../utils";
+
 const openaiSecret = import.meta.env.OPENAI_SECRET_KEY;
 
 interface CallWindowProps {
