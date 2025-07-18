@@ -106,16 +106,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     };
 
     try {
-      const response = await API('fetch', 'chatbot')(
+      const response = await API("fetch", "chatbot")(
         `/chat/new-website/${config?.credentials?.username}`,
         {
           headers: {
             Signature: signature,
             Accept: "text/event-stream",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
           method: "POST",
-        });
+        }
+      );
 
       if (!response.ok) {
         console.error("Failed to send message");
@@ -172,7 +174,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
-      if (!target.closest("#mimin-widget-main") && !target.closest("#mimin-widget-btn-trigger")) {
+      if (
+        !target.closest("#mimin-widget-main") &&
+        !target.closest("#mimin-widget-btn-trigger")
+      ) {
         handleToggleChatWindow();
       }
     };
@@ -241,7 +246,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             id="mimin-widget-main"
             className="mimin-absolute mimin-bottom-full mimin-mb-4 mimin-right-0"
             initial={{ opacity: 0, y: 20 }}
-            animate={isChatVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+            animate={
+              isChatVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }
+            }
             transition={{ duration: 0.3, ease: "easeOut" }}
             onAnimationComplete={() => {
               if (!isChatVisible) {

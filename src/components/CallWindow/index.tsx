@@ -1,4 +1,3 @@
-import { AudioLines } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { MdPhone } from "react-icons/md";
 import { motion } from "framer-motion";
@@ -8,12 +7,12 @@ import {
   childVariants,
   containerVariants,
   dividerVariants,
-  hangUpButtonVariants
+  hangUpButtonVariants,
 } from "./animate";
 import { CallWindowAudioVisualizer } from "./audio-visualizer";
 import { useConfigStore } from "../../hooks/config-store";
 import { API, getIntructions } from "../../services";
-import { blobToBase64, formatAudioCurrentTime } from "../../utils";
+import { formatAudioCurrentTime } from "../../utils";
 
 interface CallWindowProps {
   isVisible: boolean;
@@ -25,12 +24,14 @@ export const CallWindow: React.FC<CallWindowProps> = ({
   onToggleCallWindow,
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
-  const [time, setTime] = useState('00:00:00');
+  const [time, setTime] = useState("00:00:00");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [aiMediaStream, setAiMediaStream] = useState<MediaStream | null>(null);
-  const [aiStatus, setAiStatus] = useState<'idle' | 'listening' | 'speaking'>('idle');
+  const [aiStatus, setAiStatus] = useState<"idle" | "listening" | "speaking">(
+    "idle"
+  );
 
   const { config, signature } = useConfigStore();
 
@@ -52,40 +53,32 @@ export const CallWindow: React.FC<CallWindowProps> = ({
     //     const aiSource = audioContext.createMediaStreamSource(aiStream);
     //     aiSource.connect(destination);
     //   }
-
     //   recordingStreamRef.current = destination.stream;
     //   const mimeType = MediaRecorder.isTypeSupported('audio/webm')
     //     ? 'audio/webm'
     //     : 'audio/mp4';
-
     //   mediaRecorderRef.current = new MediaRecorder(destination.stream, {
     //     mimeType
     //   });
-
     //   recordedChunksRef.current = [];
-
     //   mediaRecorderRef.current.ondataavailable = (event) => {
     //     if (event.data.size > 0) {
     //       recordedChunksRef.current.push(event.data);
     //     }
     //   };
-
     //   mediaRecorderRef.current.onstop = () => {
     //     const blob = new Blob(recordedChunksRef.current, { type: mimeType });
     //     const url = URL.createObjectURL(blob);
     //     setRecordingUrl(url);
     //   };
-
     //   mediaRecorderRef.current.start();
     //   setIsRecording(true);
-
     //   const response = await API('axios', 'customer')({
     //     url: `/v1/call-session/create-draft/${config?.credentials?.username}`,
     //     method: 'POST',
     //     data: { phone_number: phoneNumber },
     //     headers: { "x-api-key": signature! }
     //   });
-
     //   if (response.data?.session_id._id) setSessionId(response.data.session_id._id);
     // } catch (error) {
     //   console.error('Error starting recording:', error);
@@ -99,7 +92,6 @@ export const CallWindow: React.FC<CallWindowProps> = ({
     //   if (recordingStreamRef.current) {
     //     recordingStreamRef.current.getTracks().forEach(track => track.stop());
     //   }
-
     //   if (userMediaRef.current) {
     //     userMediaRef.current.getTracks().forEach(track => track.stop());
     //     userMediaRef.current = null;
@@ -109,20 +101,16 @@ export const CallWindow: React.FC<CallWindowProps> = ({
     //       const mimeType = MediaRecorder.isTypeSupported('audio/webm')
     //         ? 'audio/webm'
     //         : 'audio/mp4';
-
     //       const blob = new Blob(recordedChunksRef.current, { type: mimeType });
     //       setRecordingUrl(URL.createObjectURL(blob));
-
     //       try {
     //         const base64 = await blobToBase64(blob);
-
     //         await API('axios', 'customer')({
     //           url: `/v1/call-session/update/${config?.credentials?.username}/${sessionId}`,
     //           method: 'POST',
     //           data: { audio_base64: base64 },
     //           headers: { "x-api-key": signature}
     //         });
-
     //         setSessionId(null);
     //       } catch (err) {
     //         console.error('Failed to upload recording:', err);
@@ -140,23 +128,24 @@ export const CallWindow: React.FC<CallWindowProps> = ({
       (async () => {
         peerConnection = new RTCPeerConnection();
 
-        const instructions = await getIntructions(config?.credentials?.username || '', signature);
-
-        const sessionRes = await API('axios', 'openai')(
-          "/realtime/sessions",
-          {
-            method: "POST",
-            headers: {
-              Authorization: "Bearer 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",
-              "Content-Type": "application/json",
-            },
-            data: JSON.stringify({
-              model: "gpt-4o-realtime-preview-2024-12-17",
-              instructions: instructions,
-              voice: "sage",
-            }),
-          }
+        const instructions = await getIntructions(
+          config?.credentials?.username || "",
+          signature
         );
+
+        const sessionRes = await API("axios", "openai")("/realtime/sessions", {
+          method: "POST",
+          headers: {
+            Authorization:
+              "Bearer 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",
+            "Content-Type": "application/json",
+          },
+          data: JSON.stringify({
+            model: "gpt-4o-realtime-preview-2024-12-17",
+            instructions: instructions,
+            voice: "sage",
+          }),
+        });
 
         const { client_secret, model } = sessionRes.data;
 
@@ -168,51 +157,57 @@ export const CallWindow: React.FC<CallWindowProps> = ({
           }
         };
 
-        const dataChannel = peerConnection.createDataChannel('response');
+        const dataChannel = peerConnection.createDataChannel("response");
 
         const configureData = () => {
-          dataChannel.send(JSON.stringify({
-            type: 'session.update',
-            session: {
-              modalities: ['text', 'audio'],
-              tools: [],
-            },
-          }));
+          dataChannel.send(
+            JSON.stringify({
+              type: "session.update",
+              session: {
+                modalities: ["text", "audio"],
+                tools: [],
+              },
+            })
+          );
         };
 
-        dataChannel.addEventListener('message', (event) => {
+        dataChannel.addEventListener("message", (event) => {
           const message = JSON.parse(event.data);
 
           switch (message.type) {
-            case 'output_audio_buffer.started':
-              setAiStatus('speaking');
+            case "output_audio_buffer.started":
+              setAiStatus("speaking");
               if (mediaStream) {
-                mediaStream.getAudioTracks().forEach(track => track.enabled = false);
+                mediaStream
+                  .getAudioTracks()
+                  .forEach((track) => (track.enabled = false));
               }
               break;
-            case 'output_audio_buffer.stopped':
-              setAiStatus('idle');
+            case "output_audio_buffer.stopped":
+              setAiStatus("idle");
               if (mediaStream) {
-                mediaStream.getAudioTracks().forEach(track => track.enabled = true);
+                mediaStream
+                  .getAudioTracks()
+                  .forEach((track) => (track.enabled = true));
               }
               break;
-            case 'input_audio_buffer.speech_started':
-              setAiStatus('listening');
+            case "input_audio_buffer.speech_started":
+              setAiStatus("listening");
               break;
             default:
               break;
           }
         });
 
-        dataChannel.addEventListener('open', async () => {
+        dataChannel.addEventListener("open", async () => {
           configureData();
           startRecording();
 
           const startConversation = {
-            type: 'response.create',
+            type: "response.create",
             response: {
-              instructions: instructions
-            }
+              instructions: instructions,
+            },
           };
 
           dataChannel.send(JSON.stringify(startConversation));
@@ -221,31 +216,30 @@ export const CallWindow: React.FC<CallWindowProps> = ({
         navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
           mediaStream = stream;
 
-          stream.getTracks().forEach((track) =>
-            peerConnection!.addTransceiver(track, { direction: 'sendrecv' })
-          );
+          stream
+            .getTracks()
+            .forEach((track) =>
+              peerConnection!.addTransceiver(track, { direction: "sendrecv" })
+            );
 
           peerConnection!.createOffer().then((offer) => {
             peerConnection!.setLocalDescription(offer);
 
-            API('fetch', 'openai')(
-              `/realtime?model=${model}`,
-              {
-                method: 'POST',
-                body: offer.sdp,
-                headers: {
-                  Authorization: `Bearer ${client_secret.value}`,
-                  'Content-Type': 'application/sdp',
-                },
-                // @ts-expect-error: fetch support duplex property
-                duplex: 'half'
-              }
-            )
+            API("fetch", "openai")(`/realtime?model=${model}`, {
+              method: "POST",
+              body: offer.sdp,
+              headers: {
+                Authorization: `Bearer ${client_secret.value}`,
+                "Content-Type": "application/sdp",
+              },
+              // @ts-expect-error: fetch support duplex property
+              duplex: "half",
+            })
               .then((r) => r.text())
               .then((sdp) => {
                 peerConnection!.setRemoteDescription({
                   sdp,
-                  type: 'answer',
+                  type: "answer",
                 });
               })
               .catch((err) => console.log(err));
@@ -259,7 +253,7 @@ export const CallWindow: React.FC<CallWindowProps> = ({
         }
 
         if (peerConnection) {
-          peerConnection.getSenders().forEach(sender => sender.track?.stop());
+          peerConnection.getSenders().forEach((sender) => sender.track?.stop());
           peerConnection.close();
         }
       };
@@ -281,7 +275,7 @@ export const CallWindow: React.FC<CallWindowProps> = ({
       if (isRecording) stopRecording();
 
       if (audioRef.current) {
-        setTime('00:00:00');
+        setTime("00:00:00");
         audioRef.current.pause();
       }
 
@@ -304,7 +298,6 @@ export const CallWindow: React.FC<CallWindowProps> = ({
     >
       <div className="mimin-h-full mimin-px-6 mimin-py-10 mimin-overflow-y-auto">
         <div className="mimin-flex mimin-flex-col mimin-items-center mimin-justify-center">
-
           {/* Header dengan animasi berkedip */}
           <motion.h4
             className="mimin-text-[#0096a2] mimin-text-xl mimin-font-bold mimin-mb-6"
@@ -333,8 +326,8 @@ export const CallWindow: React.FC<CallWindowProps> = ({
                     repeat: Infinity,
                     repeatType: "reverse",
                     ease: "easeInOut",
-                    delay: 0.2
-                  }
+                    delay: 0.2,
+                  },
                 }}
               >
                 <motion.div
@@ -346,8 +339,8 @@ export const CallWindow: React.FC<CallWindowProps> = ({
                       repeat: Infinity,
                       repeatType: "reverse",
                       ease: "easeInOut",
-                      delay: 0.4
-                    }
+                      delay: 0.4,
+                    },
                   }}
                 />
               </motion.div>
@@ -357,7 +350,6 @@ export const CallWindow: React.FC<CallWindowProps> = ({
                 audioStream={aiMediaStream}
                 isActive={isVisible}
               />
-
             </div>
             {!!aiMediaStream && (
               <div className="mimin-absolute mimin-text-white mimin-text-xs mimin-capitalize mimin-tracking-wide mimin-bottom-[25%] mimin-left-[50%] -mimin-translate-x-[50%] mimin-mt-4 mimin-animate-pulse">
@@ -425,11 +417,15 @@ export const CallWindow: React.FC<CallWindowProps> = ({
                 whileTap="tap"
                 onClick={handleHangUp}
                 disabled={isAnimating}
-                animate={isAnimating ? {
-                  scale: [1, 1.2, 0.8],
-                  rotate: [0, 180, 360],
-                  transition: { duration: 0.3 }
-                } : {}}
+                animate={
+                  isAnimating
+                    ? {
+                        scale: [1, 1.2, 0.8],
+                        rotate: [0, 180, 360],
+                        transition: { duration: 0.3 },
+                      }
+                    : {}
+                }
               >
                 <MdPhone className="mimin-w-full mimin-h-full mimin-text-[#f26075]/90 mimin-rotate-90" />
               </motion.button>
@@ -448,7 +444,7 @@ export const CallWindow: React.FC<CallWindowProps> = ({
                 key={i}
                 className="mimin-absolute mimin-top-1/2 mimin-left-1/2 mimin-w-4 mimin-h-4 mimin-bg-[#0096a2]/10 mimin-rounded-full"
                 style={{
-                  transform: 'translate(-50%, -50%)'
+                  transform: "translate(-50%, -50%)",
                 }}
                 animate={{
                   scale: [0, 20, 0],
@@ -458,12 +454,11 @@ export const CallWindow: React.FC<CallWindowProps> = ({
                   duration: 3,
                   repeat: Infinity,
                   delay: i * 1,
-                  ease: "easeOut"
+                  ease: "easeOut",
                 }}
               />
             ))}
           </motion.div>
-
         </div>
       </div>
     </motion.div>

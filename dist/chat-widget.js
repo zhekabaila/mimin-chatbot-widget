@@ -21923,27 +21923,27 @@ Zt.getAdapter = Db.getAdapter;
 Zt.HttpStatusCode = Nf;
 Zt.default = Zt;
 const {
-  Axios: oD,
-  AxiosError: uD,
-  CanceledError: cD,
-  isCancel: fD,
-  CancelToken: mD,
-  VERSION: dD,
-  all: hD,
-  Cancel: pD,
-  isAxiosError: yD,
-  spread: gD,
-  toFormData: vD,
-  AxiosHeaders: bD,
-  HttpStatusCode: xD,
-  formToJSON: SD,
-  getAdapter: TD,
-  mergeConfig: wD
+  Axios: lD,
+  AxiosError: oD,
+  CanceledError: uD,
+  isCancel: cD,
+  CancelToken: fD,
+  VERSION: mD,
+  all: dD,
+  Cancel: hD,
+  isAxiosError: pD,
+  spread: yD,
+  toFormData: gD,
+  AxiosHeaders: vD,
+  HttpStatusCode: bD,
+  formToJSON: xD,
+  getAdapter: SD,
+  mergeConfig: TD
 } = Zt, $c = {
   NEXT_PUBLIC_CUSTOMER_API: "https://mimin-test.mimin.io/mimin-backend",
   NEXT_PUBLIC_CHATBOT_URL: "https://mimin-api.mimin.io/backend-gen-ai",
   NEXT_PUBLIC_OPENAI_URL: "https://api.openai.com"
-}, WC = "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";
+};
 function ar(n, i) {
   const s = $c.NEXT_PUBLIC_CUSTOMER_API, l = $c.NEXT_PUBLIC_CHATBOT_URL, o = $c.NEXT_PUBLIC_OPENAI_URL, m = i === "openai" ? "v1" : "api", f = i === "customer" ? `${s}/${m}` : i === "chatbot" ? `${l}/${m}` : `${o}/${m}`;
   return n === "axios" ? Zt.create({
@@ -21959,7 +21959,7 @@ function ar(n, i) {
     ...p
   });
 }
-const JC = async (n, i) => {
+const WC = async (n, i) => {
   const l = ["voice-greeting", "voice-behavior", "voice-information", "voice-end"].map(async (f) => {
     try {
       const d = `limit=1&page=1&order=_id&sort=1&category=chatbot&value=${f}`, p = await ar("fetch", "customer")(
@@ -21981,7 +21981,7 @@ const JC = async (n, i) => {
 
 `);
   throw new Error("Failed to fetch any instructions from endpoints");
-}, $C = ({
+}, JC = ({
   isVisible: n,
   onToggleCallWindow: i
 }) => {
@@ -21994,12 +21994,12 @@ const JC = async (n, i) => {
     if (n)
       return (async () => {
         G = new RTCPeerConnection();
-        const $ = await JC(j?.credentials?.username || "", V), Y = await ar("axios", "openai")(
+        const $ = await WC(j?.credentials?.username || "", V), Y = await ar("axios", "openai")(
           "/realtime/sessions",
           {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${WC}`,
+              Authorization: "Bearer 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",
               "Content-Type": "application/json"
             },
             data: JSON.stringify({
@@ -22246,7 +22246,7 @@ const JC = async (n, i) => {
       ] }) })
     }
   ) : null;
-}, IC = _f()(
+}, $C = _f()(
   zf(
     (n) => ({
       user: null,
@@ -22258,7 +22258,7 @@ const JC = async (n, i) => {
       name: "auth-store"
     }
   )
-), tD = ({ onClickStartChat: n }) => /* @__PURE__ */ A.jsxs("div", { className: "mimin-h-full mimin-overflow-y-auto mimin-bg-[#0096A2] mimin-flex mimin-flex-col mimin-justify-between", children: [
+), IC = ({ onClickStartChat: n }) => /* @__PURE__ */ A.jsxs("div", { className: "mimin-h-full mimin-overflow-y-auto mimin-bg-[#0096A2] mimin-flex mimin-flex-col mimin-justify-between", children: [
   /* @__PURE__ */ A.jsxs("div", { className: "mimin-flex mimin-flex-col mimin-items-center mimin-justify-center mimin-py-11 mimin-px-11", children: [
     /* @__PURE__ */ A.jsx("h2", { className: "mimin-text-sm mimin-font-bold mimin-text-white", children: "MINA AGENT" }),
     /* @__PURE__ */ A.jsx(
@@ -22284,16 +22284,16 @@ const JC = async (n, i) => {
       }
     )
   ] })
-] }), eD = {
+] }), tD = {
   limit: 10,
   page: 0,
   pages: 0,
   size: 10
-}, nD = ({
+}, eD = ({
   config: n,
   signature: i
 }) => {
-  const [s, l] = X.useState(!1), [o, m] = X.useState(!1), { isFirstTime: f, setIsFirstTime: d } = IC(), [p, h] = X.useState(""), [g, b] = X.useState(""), [x, C] = X.useState(eD), { setConfig: E, setSignature: R } = sr(), [j, V] = X.useState(!1), [k, q] = X.useState(!1), [J, K] = X.useState(!1), [G, $] = X.useState(!1), {
+  const [s, l] = X.useState(!1), [o, m] = X.useState(!1), { isFirstTime: f, setIsFirstTime: d } = $C(), [p, h] = X.useState(""), [g, b] = X.useState(""), [x, C] = X.useState(tD), { setConfig: E, setSignature: R } = sr(), [j, V] = X.useState(!1), [k, q] = X.useState(!1), [J, K] = X.useState(!1), [G, $] = X.useState(!1), {
     interactions: Y,
     addInteraction: lt,
     updateAiInteractionByIndex: St,
@@ -22332,7 +22332,8 @@ const JC = async (n, i) => {
         {
           headers: {
             Signature: i,
-            Accept: "text/event-stream"
+            Accept: "text/event-stream",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify(Q),
           method: "POST"
@@ -22476,7 +22477,7 @@ const JC = async (n, i) => {
                   }
                 ),
                 /* @__PURE__ */ A.jsx(
-                  $C,
+                  JC,
                   {
                     isVisible: k,
                     onToggleCallWindow: qt
@@ -22484,7 +22485,7 @@ const JC = async (n, i) => {
                 )
               ] }),
               f && /* @__PURE__ */ A.jsx(
-                tD,
+                IC,
                 {
                   onClickStartChat: () => {
                     d(!1);
@@ -22498,16 +22499,16 @@ const JC = async (n, i) => {
     )
   ] }) });
 };
-function iD() {
+function nD() {
   if (!document.getElementById("mimin-chatbot-widget-css")) {
     const n = document.createElement("link");
     n.rel = "stylesheet", n.href = "https://unpkg.com/mimin-chatbot-widget-react@latest/dist/chat-widget.css", n.id = "mimin-chatbot-widget-css", document.head.appendChild(n);
   }
 }
-const aD = {
+const iD = {
   init: async function(n = {}) {
     try {
-      if (console.log("INIT V2 INDEX>TSX"), iD(), !n.credentials)
+      if (console.log("INIT V2 INDEX>TSX"), nD(), !n.credentials)
         throw new Error("credentials are required");
       if (!n.credentials.username)
         throw new Error("username is required");
@@ -22529,7 +22530,7 @@ const aD = {
       const o = document.createElement("div");
       o.id = "mimin-widget-container", document.body.appendChild(o), mS.createRoot(o).render(
         /* @__PURE__ */ A.jsx(A.Fragment, { children: /* @__PURE__ */ A.jsx(
-          nD,
+          eD,
           {
             config: {
               ...n,
@@ -22546,8 +22547,8 @@ const aD = {
     }
   }
 };
-window.Chatbot = aD;
+window.Chatbot = iD;
 export {
-  aD as Chatbot
+  iD as Chatbot
 };
 //# sourceMappingURL=chat-widget.js.map
