@@ -13,6 +13,7 @@ import { CallWindowAudioVisualizer } from "./audio-visualizer";
 import { useConfigStore } from "../../hooks/config-store";
 import { API, getIntructions } from "../../services";
 import { formatAudioCurrentTime } from "../../utils";
+const openaiSecret = import.meta.env.OPENAI_SECRET_KEY;
 
 interface CallWindowProps {
   isVisible: boolean;
@@ -136,8 +137,7 @@ export const CallWindow: React.FC<CallWindowProps> = ({
         const sessionRes = await API("axios", "openai")("/realtime/sessions", {
           method: "POST",
           headers: {
-            Authorization:
-              "Bearer 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",
+            Authorization: `Bearer ${openaiSecret}`,
             "Content-Type": "application/json",
           },
           data: JSON.stringify({
