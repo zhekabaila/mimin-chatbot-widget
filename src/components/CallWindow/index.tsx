@@ -11,8 +11,8 @@ import {
 } from "./animate";
 import { CallWindowAudioVisualizer } from "./audio-visualizer";
 import { useConfigStore } from "../../hooks/config-store";
-import { API } from "../../services";
-import { formatAudioCurrentTime } from "../../utils";
+import { API, getClientInfo } from "../../services";
+import { blobToBase64, formatAudioCurrentTime } from "../../utils";
 
 interface CallWindowProps {
   isVisible: boolean;
@@ -42,82 +42,98 @@ export const CallWindow: React.FC<CallWindowProps> = ({
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const startRecording = async () => {
-    // try {
-    //   const audioContext = new AudioContext();
-    //   const destination = audioContext.createMediaStreamDestination();
-    //   userMediaRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
-    //   const userSource = audioContext.createMediaStreamSource(userMediaRef.current);
-    //   userSource.connect(destination);
-    //   if (audioRef.current && audioRef.current.srcObject) {
-    //     const aiStream = audioRef.current.srcObject as MediaStream;
-    //     const aiSource = audioContext.createMediaStreamSource(aiStream);
-    //     aiSource.connect(destination);
-    //   }
-    //   recordingStreamRef.current = destination.stream;
-    //   const mimeType = MediaRecorder.isTypeSupported('audio/webm')
-    //     ? 'audio/webm'
-    //     : 'audio/mp4';
-    //   mediaRecorderRef.current = new MediaRecorder(destination.stream, {
-    //     mimeType
-    //   });
-    //   recordedChunksRef.current = [];
-    //   mediaRecorderRef.current.ondataavailable = (event) => {
-    //     if (event.data.size > 0) {
-    //       recordedChunksRef.current.push(event.data);
-    //     }
-    //   };
-    //   mediaRecorderRef.current.onstop = () => {
-    //     const blob = new Blob(recordedChunksRef.current, { type: mimeType });
-    //     const url = URL.createObjectURL(blob);
-    //     setRecordingUrl(url);
-    //   };
-    //   mediaRecorderRef.current.start();
-    //   setIsRecording(true);
-    //   const response = await API('axios', 'customer')({
-    //     url: `/v1/call-session/create-draft/${config?.credentials?.username}`,
-    //     method: 'POST',
-    //     data: { phone_number: phoneNumber },
-    //     headers: { "x-api-key": signature! }
-    //   });
-    //   if (response.data?.session_id._id) setSessionId(response.data.session_id._id);
-    // } catch (error) {
-    //   console.error('Error starting recording:', error);
-    // }
+    try {
+      const audioContext = new AudioContext();
+      const destination = audioContext.createMediaStreamDestination();
+      userMediaRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const userSource = audioContext.createMediaStreamSource(userMediaRef.current);
+      userSource.connect(destination);
+
+      if (audioRef.current && audioRef.current.srcObject) {
+        const aiStream = audioRef.current.srcObject as MediaStream;
+        const aiSource = audioContext.createMediaStreamSource(aiStream);
+        aiSource.connect(destination);
+      }
+
+      recordingStreamRef.current = destination.stream;
+
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm')
+        ? 'audio/webm'
+        : 'audio/mp4';
+
+      mediaRecorderRef.current = new MediaRecorder(destination.stream, {
+        mimeType
+      });
+
+      recordedChunksRef.current = [];
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const blob = new Blob(recordedChunksRef.current, { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        setRecordingUrl(url);
+      };
+
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+
+      const { isError, ip } = await getClientInfo();
+
+      if (!isError) {
+        const response = await API('axios', 'customer')({
+          url: `/v1/call-session/create-draft/${config?.credentials?.username}`,
+          method: 'POST',
+          data: { phone_number: ip },
+          headers: { "x-api-key": config?.credentials?.apiKey }
+        });
+        if (response.data?.session_id._id) setSessionId(response.data.session_id._id);
+      }
+    } catch (error) {
+      console.error('Error starting recording:', error);
+    }
   };
 
   const stopRecording = () => {
-    // if (mediaRecorderRef.current && isRecording) {
-    //   mediaRecorderRef.current.stop();
-    //   setIsRecording(false);
-    //   if (recordingStreamRef.current) {
-    //     recordingStreamRef.current.getTracks().forEach(track => track.stop());
-    //   }
-    //   if (userMediaRef.current) {
-    //     userMediaRef.current.getTracks().forEach(track => track.stop());
-    //     userMediaRef.current = null;
-    //   }
-    //   if (sessionId) {
-    //     mediaRecorderRef.current.onstop = async () => {
-    //       const mimeType = MediaRecorder.isTypeSupported('audio/webm')
-    //         ? 'audio/webm'
-    //         : 'audio/mp4';
-    //       const blob = new Blob(recordedChunksRef.current, { type: mimeType });
-    //       setRecordingUrl(URL.createObjectURL(blob));
-    //       try {
-    //         const base64 = await blobToBase64(blob);
-    //         await API('axios', 'customer')({
-    //           url: `/v1/call-session/update/${config?.credentials?.username}/${sessionId}`,
-    //           method: 'POST',
-    //           data: { audio_base64: base64 },
-    //           headers: { "x-api-key": signature}
-    //         });
-    //         setSessionId(null);
-    //       } catch (err) {
-    //         console.error('Failed to upload recording:', err);
-    //       }
-    //     };
-    //   }
-    // }
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+
+      if (recordingStreamRef.current) {
+        recordingStreamRef.current.getTracks().forEach(track => track.stop());
+      }
+
+      if (userMediaRef.current) {
+        userMediaRef.current.getTracks().forEach(track => track.stop());
+        userMediaRef.current = null;
+      }
+
+      if (sessionId) {
+        mediaRecorderRef.current.onstop = async () => {
+          const mimeType = MediaRecorder.isTypeSupported('audio/webm')
+            ? 'audio/webm'
+            : 'audio/mp4';
+          const blob = new Blob(recordedChunksRef.current, { type: mimeType });
+          setRecordingUrl(URL.createObjectURL(blob));
+
+          try {
+            const base64 = await blobToBase64(blob);
+            await API('axios', 'customer')({
+              url: `/v1/call-session/update/${config?.credentials?.username}/${sessionId}`,
+              method: 'POST',
+              data: { audio_base64: base64 },
+              headers: { "x-api-key": config?.credentials?.apiKey }
+            });
+            setSessionId(null);
+          } catch (err) {
+            console.error('Failed to upload recording:', err);
+          }
+        };
+      }
+    }
   };
 
   useEffect(() => {

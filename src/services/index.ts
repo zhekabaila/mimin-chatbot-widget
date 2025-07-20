@@ -44,3 +44,17 @@ export function API(
     });
   };
 }
+
+export const getClientInfo = async () => {
+  try {
+    const ipRes = await fetch("https://api.ipify.org?format=json");
+    const ipData = await ipRes.json();
+
+    const ip = ipData.ip;
+    const userAgent = navigator.userAgent;
+
+    return { ip, userAgent, isError: false };
+  } catch (error) {
+    return { isError: true, errorMessage: (error as Error).message };
+  }
+};

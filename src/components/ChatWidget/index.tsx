@@ -14,7 +14,7 @@ import { CallWindow } from "../CallWindow";
 import { useAuthStore } from "../../hooks/auth-store";
 import { StartChatSection } from "./start-chat-section";
 import { motion, AnimatePresence } from "framer-motion";
-import { API } from "../../services";
+import { API, getClientInfo } from "../../services";
 
 interface ChatWidgetProps {
   config?: ChatbotConfig;
@@ -69,20 +69,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   const handleToggleCallWindow = () => {
     setIsCallVisible(!isCallVisible);
-  };
-
-  const getClientInfo = async () => {
-    try {
-      const ipRes = await fetch("https://api.ipify.org?format=json");
-      const ipData = await ipRes.json();
-
-      const ip = ipData.ip;
-      const userAgent = navigator.userAgent;
-
-      return { ip, userAgent, isError: false };
-    } catch (error) {
-      return { isError: true, errorMessage: (error as Error).message };
-    }
   };
 
   const handleSendMessage = async (message: string) => {
