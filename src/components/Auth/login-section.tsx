@@ -21,9 +21,9 @@ const LoginSection = ({ onClickCreateAccount }: IProps) => {
   return (
     <div className="mimin-mt-10">
       <div className="mimin-space-y-2">
-        <h2 className="mimin-text-base mimin-font-bold">Sign In</h2>
+        <h2 className="mimin-text-base mimin-font-bold">Hi, Welcome Back!</h2>
         <p className="mimin-text-sm mimin-text-gray-500">
-          Fill your information below to sign in to your account
+        Log in to access your account and continue your activity.
         </p>
       </div>
       <div className="mimin-space-y-2 mimin-mt-6">

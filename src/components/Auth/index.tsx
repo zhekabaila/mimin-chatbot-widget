@@ -5,45 +5,45 @@ import RegisterSection from "./register-section";
 const AuthWindow = () => {
   const [step, setStep] = useState<
     "landing-section" | "sign-in" | "create-account"
-  >("landing-section");
+  >("create-account");
 
   return (
-    <div className="p-4 h-full overflow-y-auto">
-      <div className="flex justify-center items-center w-full h-auto">
-        <img
+    <div className="mimin-p-4 mimin-h-full mimin-overflow-y-auto">
+      {/* <div className="mimin-flex mimin-justify-center mimin-items-center mimin-w-full mimin-h-auto"> */}
+      {/* <img
           src="https://res.cloudinary.com/dctqloe37/image/upload/v1752455653/undraw_chat_qmyo_1_wwzcjj.svg"
           alt=" "
           width={1000}
           height={1000}
           loading="lazy"
-          className="w-full h-auto object-contain object-center"
-        />
-      </div>
-      {step === "landing-section" && (
-        <div className="text-center mt-10">
-          <h1 className="text-[#0096A2] text-base font-bold">
+          className="mimin-w-full mimin-h-auto mimin-object-contain mimin-object-center"
+        /> */}
+      {/* </div> */}
+      {/* {step === "landing-section" && (
+        <div className="mimin-text-center mimin-mt-10">
+          <h1 className="mimin-text-[#0096A2] mimin-text-base mimin-font-bold">
             Explore the MIMIN AI Agent
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="mimin-text-gray-500 mimin-text-sm">
             Sign in and start chatting with your smart AI assistant ready to
             help anytime, day or night!
           </p>
-          <div className="flex flex-col gap-3 mt-6">
+          <div className="mimin-flex mimin-flex-col mimin-gap-3 mimin-mt-6">
             <button
-              className="bg-[#0096A2] w-full border border-[#0096A2] text-white px-4 py-2 rounded-md cursor-pointer"
+              className="mimin-bg-[#0096A2] mimin-w-full mimin-border mimin-border-[#0096A2] mimin-text-white mimin-px-4 mimin-py-2 mimin-rounded-md mimin-cursor-pointer"
               onClick={() => setStep("sign-in")}
             >
               Sign In
             </button>
             <button
-              className="bg-white w-full border border-[#0096A2] text-[#0096A2] px-4 py-2 rounded-md cursor-pointer hover:bg-[#0096A2] hover:text-white transition-all duration-300"
+              className="mimin-bg-white mimin-w-full mimin-border mimin-border-[#0096A2] mimin-text-[#0096A2] mimin-px-4 mimin-py-2 mimin-rounded-md mimin-cursor-pointer mimin-hover:bg-[#0096A2] mimin-hover:text-white mimin-transition-all mimin-duration-300"
               onClick={() => setStep("create-account")}
             >
               Create Account
             </button>
           </div>
         </div>
-      )}
+      )} */}
       {step === "sign-in" && (
         <LoginSection onClickCreateAccount={() => setStep("create-account")} />
       )}

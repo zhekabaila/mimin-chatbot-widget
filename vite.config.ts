@@ -6,7 +6,6 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   define: {
-    "process.env.OPENAI_SECRET_KEY": JSON.stringify("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"),
     "process.env.NODE_ENV": JSON.stringify("production"),
     "process.env": "{}", // Untuk mencegah error process.env lain
     process: "{}", // Untuk mencegah error process

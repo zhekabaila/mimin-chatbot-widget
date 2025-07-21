@@ -156,26 +156,26 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     const target = event.target as HTMLElement;
 
-      if (
-        !target.closest("#mimin-widget-main") &&
-        !target.closest("#mimin-widget-btn-trigger")
-      ) {
-        handleToggleChatWindow();
-      }
-    };
+  //     if (
+  //       !target.closest("#mimin-widget-main") &&
+  //       !target.closest("#mimin-widget-btn-trigger")
+  //     ) {
+  //       handleToggleChatWindow();
+  //     }
+  //   };
 
-    if (isChatVisible) {
-      document.addEventListener("click", handleClickOutside);
-    }
+  //   if (isChatVisible) {
+  //     document.addEventListener("click", handleClickOutside);
+  //   }
 
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isChatVisible]);
+  //   return () => {
+  //     document.removeEventListener("click", handleClickOutside);
+  //   };
+  // }, [isChatVisible]);
 
   useEffect(() => {
     setConfigStore(config || null);
