@@ -1,6 +1,7 @@
 export interface ChatWindowConfig {
   isActiveCall?: boolean;
   needAuthentication?: boolean;
+  enableGreating?: boolean;
   width?: string;
   height?: string;
   header?: {
@@ -35,6 +36,14 @@ export interface ChatWindowConfig {
     borderColor?: string;
     placeholder?: string;
     sendButtonColor?: string;
+    footerText?: string;
+    footerTextColor?: string;
+  };
+  greating?: {
+    title?: string;
+    description?: string;
+    avatar?: string;
+    color?: string;
   };
 }
 

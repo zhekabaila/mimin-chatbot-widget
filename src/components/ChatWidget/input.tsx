@@ -1,15 +1,18 @@
 import React, { useRef, useState } from "react";
 import { useConfigStore } from "../../hooks/config-store";
 import { RiSendPlane2Fill } from "react-icons/ri";
+import { FaCircleStop } from "react-icons/fa6";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
+  onCancelSendMessage: (message: string) => void;
   loading: boolean;
   fetching: boolean;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
   onSendMessage,
+  onCancelSendMessage,
   loading,
   fetching,
 }) => {
@@ -47,7 +50,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          handleSendMessage();
+          if (loading) {
+            onCancelSendMessage(message);
+          } else {
+            handleSendMessage();
+          }
         }}
         className="mimin-relative mimin-flex mimin-items-center mimin-gap-2"
       >
@@ -68,22 +75,30 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           ref={textareaRef}
         />
         <button
-          className="mimin-absolute mimin-right-4 mimin-top-1/2 mimin--translate-y-1/2 mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
-          disabled={loading || message.trim().length === 0}
+          className="mimin-absolute mimin-right-4 mimin-top-1/2 mimin--translate-y-1/2 mimin-cursor-pointer disabled:mimin-opacity-50 disabled:mimin-cursor-not-allowed"
+          disabled={message.trim().length === 0 && !loading}
+          style={{
+            color:
+              config?.theme?.chatWindow?.textInput?.sendButtonColor ||
+              "#0096a2",
+          }}
         >
-          <RiSendPlane2Fill
-            className="mimin-w-4 mimin-h-4 mimin-text-[#0096a2]"
-            color={
-              config?.theme?.chatWindow?.textInput?.sendButtonColor || "#0096a2"
-            }
-          />
+          {loading ? (
+            <FaCircleStop className="mimin-w-4 mimin-h-4" />
+          ) : (
+            <RiSendPlane2Fill className="mimin-w-4 mimin-h-4" />
+          )}
         </button>
       </form>
-      <p className="mimin-text-white mimin-text-[10px] mimin-tracking-wide mimin-text-center mimin-mt-1">
-        Powered by{" "}
-        <a href="https://mimin.io" className="mimin-underline">
-          Mimin
-        </a>
+      <p
+        className="mimin-text-[10px] mimin-tracking-wide mimin-text-center mimin-mt-1"
+        style={{
+          color:
+            config?.theme?.chatWindow?.textInput?.footerTextColor || "$ffffff",
+        }}
+      >
+        {config?.theme?.chatWindow?.textInput?.footerText ||
+          "Ada yang bisa saya bantu?"}
       </p>
     </div>
   );

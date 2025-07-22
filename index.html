@@ -11,40 +11,60 @@
     <div class="h-[200vh]">
       <h1>Mimin Chatbot Widget Demo</h1>
     </div>
+
     <script type="module">
       import { Chatbot } from "/src/index.tsx";
+
       Chatbot.init({
         credentials: {
           apiKey: "n51I1W5ZNIbyjb9Db35iBRFup",
           username: "testmimin66",
         },
         theme: {
+          button: {
+            backgroundColor: "#1b9f1e",
+            textColor: "#ffffff",
+            iconSrc:
+              "https://mimin-images.s3.ap-southeast-1.amazonaws.com/testmimin66/account/widget_icon",
+            tooltip: "Ask Mimin",
+          },
           chatWindow: {
             isActiveCall: true,
-            needAuthentication: true,
+            needAuthentication: false,
+            enableGreating: true,
             header: {
-              // backgroundColor: "#FFA100",
-              // color: "#F26075",
-              title: "MINAAAA",
-              description: "Ngobrol langsung dengan AI, cepat & mudaeeh.",
+              backgroundColor: "#1b9f1e",
+              color: "#ffffff",
+              title: "Ask Mimin",
+              description: "Ngobrol langsung dengan AI, cepat & mudah.",
               avatarSrc:
-                "https://res.cloudinary.com/dctqloe37/image/upload/v1750336554/PORTFOLIO_MAKER/PROFILES/1750336551832.png",
-            },
-            body: {
-              // backgroundColor: "#F26075",
+                "https://mimin-images.s3.ap-southeast-1.amazonaws.com/testmimin66/account/widget_avatar_chatbot",
             },
             botMessage: {
-              // backgroundColor: "#FFA100",
-              // borderColor: "#F26075",
-              // textColor: "#ffffff",
-              iconUrl: "https://appstaging.mimin.io/favicon.ico",
+              backgroundColor: "#ffffff",
+              borderColor: "#4b9d35",
+              textColor: "#4b9d35",
             },
             userMessage: {
-              // backgroundColor: "#F26075",
-              // borderColor: "#FFA100",
-              // textColor: "#ffffff",
-              iconUrl:
-                "https://res.cloudinary.com/dctqloe37/image/upload/v1752570930/circle-user-round_1_ja2oac.svg",
+              backgroundColor: "#4b9d35",
+              borderColor: "#ffffff",
+              textColor: "#ffffff",
+            },
+            greating: {
+              title: "Hello",
+              description: "World",
+              avatar:
+                "https://mimin-images.s3.ap-southeast-1.amazonaws.com/testmimin66/account/widget_greeting_avatar",
+              color: "#1b9f1e",
+            },
+            textInput: {
+              title: "Hello",
+              borderColor: "#1b9f1e",
+              placeholder: "Enter your message here...",
+              backgroundColor: "#1b9f1e",
+              sendButtonColor: "#1b9f1e",
+              footerText: "Ada yang bisa saya bantu?",
+              footerTextColor: "#fafff9",
             },
           },
         },

@@ -2,6 +2,7 @@ import React from "react";
 import { useConfigStore } from "../../hooks/config-store";
 import { cn } from "../../utils";
 import { format } from "date-fns";
+import { Bot, CircleUserRound } from "lucide-react";
 
 const BubbleChat: React.FC<{
   message?: string;
@@ -111,26 +112,18 @@ const BubbleChat: React.FC<{
       >
         <div className="mimin-flex mimin-items-end mimin-justify-center mimin-w-3 mimin-h-3">
           {isUser ? (
-            <img
-              src={
-                config?.theme?.chatWindow?.userMessage?.iconUrl ||
-                "https://res.cloudinary.com/dctqloe37/image/upload/v1752570930/circle-user-round_1_ja2oac.svg"
+            <CircleUserRound
+              className="mimin-w-4 mimin-h-4 mimin-aspect-square"
+              color={
+                config?.theme?.chatWindow?.userMessage?.textColor || "#ffffff"
               }
-              alt=" "
-              width={100}
-              height={100}
-              className="mimin-w-3 mimin-h-3 mimin-aspect-square"
             />
           ) : (
-            <img
-              src={
-                config?.theme?.chatWindow?.botMessage?.iconUrl ||
-                "https://appstaging.mimin.io/favicon.ico"
+            <Bot
+              className="mimin-w-4 mimin-h-4 mimin-aspect-square"
+              color={
+                config?.theme?.chatWindow?.botMessage?.textColor || "#0096a2"
               }
-              alt=" "
-              width={100}
-              height={100}
-              className="mimin-w-3 mimin-h-3 mimin-aspect-square"
             />
           )}
         </div>

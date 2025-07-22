@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type {
   ChatbotConfig,
   ConversationsResponse,
@@ -58,6 +58,17 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     setChatType,
   } = useInteractionsStore();
 
+  // Ref untuk menyimpan AbortController agar bisa diakses di luar handleSendMessage
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Fungsi untuk membatalkan request yang sedang berjalan
+  const cancelSendMessage = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+  };
+
   const handleToggleChatWindow = () => {
     if (isChatVisible) {
       setIsChatVisible(false); // trigger exit
@@ -72,6 +83,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   };
 
   const handleSendMessage = async (message: string) => {
+    // Batalkan request sebelumnya jika ada
+    cancelSendMessage();
+
     const { isError, errorMessage, ip, userAgent } = await getClientInfo();
 
     if (isError) {
@@ -91,6 +105,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       type: chatType || "",
     };
 
+    // Buat AbortController baru untuk request ini
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     try {
       const response = await API("fetch", "chatbot")(
         `/chat/new-website/${config?.credentials?.username}`,
@@ -102,6 +120,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           },
           body: JSON.stringify(payload),
           method: "POST",
+          signal: abortController.signal,
         }
       );
 
@@ -115,6 +134,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         .getReader();
 
       while (true) {
+        // Cek jika request sudah dibatalkan, keluar dari loop
+        if (abortController.signal.aborted) {
+          break;
+        }
+
         const { value, done } = await reader!.read();
         if (done) break;
 
@@ -147,12 +171,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           }
         });
       }
-    } catch {
-      console.error(
-        "We apologize, a system error has occurred. Please try again!"
-      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      if (err?.name === "AbortError") {
+        // Request dibatalkan, tidak perlu tampilkan error
+        // Bisa tambahkan logika lain jika ingin
+        // console.log("Request dibatalkan oleh user");
+      } else {
+        console.error("Maaf, terjadi kesalahan sistem. Silakan coba lagi!");
+      }
     } finally {
       setLoading(false);
+      abortControllerRef.current = null;
     }
   };
 
@@ -180,7 +210,19 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   useEffect(() => {
     setConfigStore(config || null);
     setSignatureStore(signature || "");
+    // Cleanup: batalkan request jika komponen unmount
+    return () => {
+      cancelSendMessage();
+    };
   }, []);
+
+  const backgroundButtonColor = isChatVisible
+    ? config?.theme?.button?.backgroundColor
+    : config?.theme?.button?.backgroundColor + "80" || "#ffffff";
+
+  const textButtonColor = isChatVisible
+    ? config?.theme?.button?.textColor
+    : config?.theme?.button?.backgroundColor || "#0096a2";
 
   return (
     <AnimatePresence>
@@ -190,12 +232,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           id="mimin-widget-btn-trigger"
           className="mimin-relative mimin-flex mimin-items-center mimin-gap-2.5 mimin-px-4 mimin-py-2 mimin-rounded-full mimin-border mimin-border-[#0096a2] mimin-shadow-md mimin-transition-all mimin-duration-300 mimin-ease-in-out mimin-cursor-pointer"
           style={{
-            backgroundColor: isChatVisible
-              ? "#0096a2"
-              : config?.theme?.button?.backgroundColor || "#ffffff",
-            color: isChatVisible
-              ? "#ffffff"
-              : config?.theme?.button?.textColor || "#0096a2",
+            backgroundColor: backgroundButtonColor,
+            color: textButtonColor,
           }}
           onClick={handleToggleChatWindow}
         >
@@ -204,7 +242,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               config?.theme?.button?.iconSrc ||
               "https://appstaging.mimin.io/favicon.ico"
             }
-            alt="ICON"
+            onError={(e) => {
+              // Ganti gambar ke default jika error load gambar
+              const target = e.target as HTMLImageElement;
+              target.onerror = null; // Hindari infinite loop jika default image juga error
+              target.src = "https://appstaging.mimin.io/favicon.ico";
+            }}
+            alt=" "
             className="mimin-w-4 mimin-h-auto"
           />
           <span className="mimin-text-sm mimin-font-bold">
@@ -288,6 +332,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       }}
                       loading={loading}
                       fetching={fetching}
+                      onCancelSendMessage={cancelSendMessage} // Anda bisa teruskan ke ChatInput jika ingin tombol cancel
                     />
                     <CallWindow
                       isVisible={isCallVisible}
@@ -295,13 +340,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     />
                   </>
                 )}
-              {isFirstTime && (
-                <StartChatSection
-                  onClickStartChat={() => {
-                    setIsFirstTime(false);
-                  }}
-                />
-              )}
+              {isFirstTime &&
+                (config?.theme?.chatWindow?.enableGreating || false) && (
+                  <StartChatSection
+                    onClickStartChat={() => {
+                      setIsFirstTime(false);
+                    }}
+                  />
+                )}
             </div>
           </motion.div>
         )}

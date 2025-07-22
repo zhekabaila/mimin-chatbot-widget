@@ -31,7 +31,14 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               config?.theme?.chatWindow?.header?.avatarSrc ||
               "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg"
             }
-            alt="ICON"
+            alt=" "
+            onError={(e) => {
+              // Ganti gambar ke default jika error load gambar
+              const target = e.target as HTMLImageElement;
+              target.onerror = null; // Hindari infinite loop jika default image juga error
+              target.src =
+                "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg";
+            }}
             className="mimin-w-6 mimin-h-6 mimin-rounded-full"
           />
         </div>
