@@ -59,7 +59,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         className="mimin-relative mimin-flex mimin-items-center mimin-gap-2"
       >
         <textarea
-          className="mimin-flex-1 mimin-border mimin-rounded-md mimin-p-2 mimin-max-h-[80px] mimin-bg-white mimin-pr-10 mimin-focus:outline mimin-focus:outline-[#ffa100] mimin-resize-none"
+          className="mimin-flex-1 mimin-border mimin-rounded-md mimin-p-2 mimin-max-h-[80px] mimin-bg-white mimin-text-black mimin-pr-10 mimin-focus:outline mimin-focus:outline-[#ffa100] mimin-resize-none"
           style={{
             borderColor:
               config?.theme?.chatWindow?.textInput?.borderColor || "#ffffff",

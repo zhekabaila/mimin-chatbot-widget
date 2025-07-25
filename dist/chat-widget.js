@@ -15314,7 +15314,7 @@ const kw = ({
               /* @__PURE__ */ A.jsx(
                 "textarea",
                 {
-                  className: "mimin-flex-1 mimin-border mimin-rounded-md mimin-p-2 mimin-max-h-[80px] mimin-bg-white mimin-pr-10 mimin-focus:outline mimin-focus:outline-[#ffa100] mimin-resize-none",
+                  className: "mimin-flex-1 mimin-border mimin-rounded-md mimin-p-2 mimin-max-h-[80px] mimin-bg-white mimin-text-black mimin-pr-10 mimin-focus:outline mimin-focus:outline-[#ffa100] mimin-resize-none",
                   style: {
                     borderColor: f?.theme?.chatWindow?.textInput?.borderColor || "#ffffff"
                   },
