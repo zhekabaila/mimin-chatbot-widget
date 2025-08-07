@@ -35,6 +35,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [loading, setLoading] = useState(false);
   const [fetching, _setFetching] = useState(false);
   const { isFirstTime, setIsFirstTime } = useAuthStore();
+  const [phoneOrIP, setPhoneOrIP] = useState<{ name: string, value: string } | null>(null);
 
   // const [chatType, setChatType] = useState("");
   const [chatHistoryId, setChatHistoryId] = useState("");
@@ -83,21 +84,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   };
 
   const handleSendMessage = async (message: string) => {
-    // Batalkan request sebelumnya jika ada
+    if (!phoneOrIP) return;
     cancelSendMessage();
-
-    const { isError, errorMessage, ip, userAgent } = await getClientInfo();
-
-    if (isError) {
-      console.error(errorMessage);
-      return;
-    }
-
     setLoading(true);
 
+    let name = phoneOrIP.name;
+    if (!name) {
+      name = navigator.userAgent;
+    }
+
     const payload = {
-      name: userAgent,
-      phone: ip,
+      name,
+      phone: phoneOrIP.value,
       message_id: crypto.randomUUID(),
       message: message,
       media_type: "text",
@@ -216,6 +214,48 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     };
   }, []);
 
+
+  useEffect(() => {
+    if (!config) return;
+
+    (async () => {
+      let phoneOrIP: { name: string, value: string } | null = null;
+
+      if (config.theme?.chatWindow.needAuthentication) {
+        const token = localStorage.getItem(`mimin-token-${config.credentials?.username}`);
+
+        if (token) {
+          try {
+            const res = await API("fetch", "customer")(`/v1/customer/get-by-token/${config.credentials?.username}`, {
+              method: "GET",
+              headers: {
+                "x-api-key": config.credentials?.apiKey || '',
+                "Authorization-Customer": `Bearer ${token}`
+              },
+            });
+
+            if (!res.ok) {
+              if (res.status === 401) localStorage.delete(`mimin-token-${config.credentials?.username}`);
+              else throw Error('Failed to get customer data');
+            } else {
+              const data = await res.json();
+              phoneOrIP = { name: data.data.name, value: data.data.phone };
+              setIsAuthenticated(true);
+            }
+          } catch (error) {
+            throw Error('Failed to get customer data');
+          }
+        }
+      } else {
+        const { isError, errorMessage, ip } = await getClientInfo();
+        if (isError) throw Error(errorMessage);
+        phoneOrIP = { name: '', value: ip! }
+      }
+
+      setPhoneOrIP(phoneOrIP);
+    })();
+  }, [config]);
+
   const backgroundButtonColor = isChatVisible
     ? config?.theme?.button?.backgroundColor
     : config?.theme?.button?.backgroundColor + "80" || "#ffffff";
@@ -297,7 +337,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             >
               {(config?.theme?.chatWindow.needAuthentication || false) &&
                 !isAuthenticated &&
-                !isFirstTime && <AuthWindow />}
+                !isFirstTime && (
+                  <AuthWindow
+                    onSuccessLogin={(token, phone) => {
+                      setPhoneOrIP(phone);
+                      setIsAuthenticated(!!token);
+                    }}
+                  />
+                )}
               {(isAuthenticated ||
                 !(config?.theme?.chatWindow.needAuthentication || false)) &&
                 !isFirstTime && (
