@@ -10,15 +10,17 @@ import AuthWindow from "../Auth";
 import { ChatHeader } from "./header";
 import { ChatContent } from "./chat-content";
 import { ChatInput } from "./input";
-import { CallWindow } from "../CallWindow";
 import { useAuthStore } from "../../hooks/auth-store";
 import { StartChatSection } from "./start-chat-section";
 import { motion, AnimatePresence } from "framer-motion";
 import { API, getClientInfo } from "../../services";
+import { OpenAiAgentVoiceLayout } from "../CallWindow/openai-agent-voice";
+import { ElevenLabsAgentVoiceLayout } from "../CallWindow/elevenlabs-agent-voice";
 
 interface ChatWidgetProps {
   config?: ChatbotConfig;
   signature: string;
+  voiceAgent: 'elevenlabs' | 'openai';
 }
 
 const INIT_PAGINATION = {
@@ -31,6 +33,7 @@ const INIT_PAGINATION = {
 export const ChatWidget: React.FC<ChatWidgetProps> = ({
   config,
   signature,
+  voiceAgent
 }) => {
   const [loading, setLoading] = useState(false);
   const [fetching, _setFetching] = useState(false);
@@ -381,10 +384,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       fetching={fetching}
                       onCancelSendMessage={cancelSendMessage} // Anda bisa teruskan ke ChatInput jika ingin tombol cancel
                     />
-                    <CallWindow
-                      isVisible={isCallVisible}
-                      onToggleCallWindow={handleToggleCallWindow}
-                    />
+                    {voiceAgent === 'openai' ? (
+                      <OpenAiAgentVoiceLayout
+                        isVisible={isCallVisible}
+                        onToggleCallWindow={handleToggleCallWindow}
+                      />
+                    ) : (
+                      <ElevenLabsAgentVoiceLayout
+                        isVisible={isCallVisible}
+                        onToggleCallWindow={handleToggleCallWindow}
+                        phoneOrIP={phoneOrIP}
+                      />
+                    )}
                   </>
                 )}
               {isFirstTime &&

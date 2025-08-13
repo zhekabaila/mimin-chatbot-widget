@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import type { ChatbotConfig } from "./types";
+import type { Agent, ChatbotConfig } from "./types";
 import { ChatWidget } from "./components/ChatWidget";
 import "./index.css";
 import { injectStyle } from "./utils/styleInjector";
@@ -31,7 +31,7 @@ const Chatbot: ChatbotInterface = {
       }
 
       // (Opsional) Ambil signature jika memang dibutuhkan
-      const response = await API('fetch', 'customer')(
+      const signatureRes = await API('fetch', 'customer')(
         `/v1/chatbotdata/create-signature/${config.credentials.username}`,
         {
           method: "POST",
@@ -41,10 +41,20 @@ const Chatbot: ChatbotInterface = {
         }
       );
 
-      const { signature }: { signature: string } = await response.json();
+      const accountRes = await API("fetch", "customer")(`/v1/setting/get/${config.credentials.username}`, {
+        method: "GET",
+        headers: {
+          "x-api-key": config.credentials.apiKey,
+        },
+      })
+
+      const { signature }: { signature: string } = await signatureRes.json();
       if (!signature) {
         throw new Error("Failed to get signature");
       }
+
+      const agents: Agent[] = (await accountRes.json())?.data;
+      const elevenlabsAgent = agents.find(agent => agent.name.includes("elevenlabs"));
 
       // Hapus widget lama jika sudah ada
       const existing = document.getElementById("mimin-widget-container");
@@ -59,6 +69,7 @@ const Chatbot: ChatbotInterface = {
       ReactDOM.createRoot(container).render(
         <>
           <ChatWidget
+            voiceAgent={!!elevenlabsAgent ? 'elevenlabs' : 'openai'}
             config={{
               ...config,
               credentials: {

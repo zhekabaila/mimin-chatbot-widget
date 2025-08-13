@@ -164,3 +164,9 @@ export type ConversationsResponse = {
   page: number;
   limit: number;
 };
+
+export type Agent = {
+  id: string;
+  name: string;
+  template_data: { voice_ai_agent_id: string }
+}

@@ -9,17 +9,17 @@ import {
   dividerVariants,
   hangUpButtonVariants,
 } from "./animate";
-import { CallWindowAudioVisualizer } from "./audio-visualizer";
+import { OpenAIAudioVisualizer } from "./openai-audio-visualizer";
 import { useConfigStore } from "../../hooks/config-store";
 import { API, getClientInfo } from "../../services";
 import { blobToBase64, formatAudioCurrentTime } from "../../utils";
 
-interface CallWindowProps {
+interface OpenAiAgentVoiceProps {
   isVisible: boolean;
   onToggleCallWindow: () => void;
 }
 
-export const CallWindow: React.FC<CallWindowProps> = ({
+export const OpenAiAgentVoiceLayout: React.FC<OpenAiAgentVoiceProps> = ({
   isVisible,
   onToggleCallWindow,
 }) => {
@@ -343,7 +343,7 @@ export const CallWindow: React.FC<CallWindowProps> = ({
               </motion.div>
             </motion.div>
             <div className="mimin-absolute mimin-inset-0 mimin-flex mimin-justify-center mimin-items-center">
-              <CallWindowAudioVisualizer
+              <OpenAIAudioVisualizer
                 audioStream={aiMediaStream}
                 isActive={isVisible}
               />

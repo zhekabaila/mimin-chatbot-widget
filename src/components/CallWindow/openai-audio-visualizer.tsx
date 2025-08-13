@@ -88,7 +88,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
     const analyze = () => {
       if (!analyzerRef.current || !dataArrayRef.current) return;
 
-      // Ambil frequency data
+      // @ts-ignore
       analyzerRef.current.getByteFrequencyData(dataArrayRef.current);
 
       // Proses data menjadi 8 bar untuk visualisasi
@@ -209,7 +209,7 @@ export const useAudioVisualizer = () => {
 };
 
 // Komponen yang sudah terintegrasi untuk CallWindow
-export const CallWindowAudioVisualizer: React.FC<{
+export const OpenAIAudioVisualizer: React.FC<{
   audioStream?: MediaStream | null;
   isActive?: boolean;
 }> = ({ audioStream, isActive = true }) => {
