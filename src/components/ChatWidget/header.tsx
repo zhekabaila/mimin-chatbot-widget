@@ -66,7 +66,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         {config?.theme?.chatWindow?.isActiveCall && (
           <button
             style={{
-              color: config?.theme?.chatWindow?.header?.color || "#ffffff",
+              color: config?.theme?.chatWindow?.header?.voiceAIColorButton || "#ffffff",
             }}
             className="mimin-relative mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
             // disabled={true}
@@ -74,7 +74,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           >
             <MdPhone
               className="mimin-w-5 mimin-h-5"
-              color={config?.theme?.chatWindow?.header?.color || "#ffffff"}
+              color={config?.theme?.chatWindow?.header?.voiceAIColorButton || "#ffffff"}
             />
             <div className="mimin-absolute mimin--top-0 mimin--right-0">
               <p className="mimin-text-[8px] mimin-font-medium">AI</p>
@@ -84,7 +84,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         <button
           className="mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
           style={{
-            color: config?.theme?.chatWindow?.header?.color || "#ffffff",
+            color: config?.theme?.chatWindow?.header?.refreshColorButton || "#ffffff",
           }}
           onClick={() => {
             clearInteractions();
@@ -93,19 +93,19 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         >
           <BiRotateLeft
             className="mimin-w-5 mimin-h-5"
-            color={config?.theme?.chatWindow?.header?.color || "#ffffff"}
+            color={config?.theme?.chatWindow?.header?.refreshColorButton || "#ffffff"}
           />
         </button>
         <button
           className="mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
           style={{
-            color: config?.theme?.chatWindow?.header?.color || "#ffffff",
+            color: config?.theme?.chatWindow?.header?.closeColorButton || "#ffffff",
           }}
           onClick={onToggleChatWindow}
         >
           <X
             className="mimin-w-5 mimin-h-5"
-            color={config?.theme?.chatWindow?.header?.color || "#ffffff"}
+            color={config?.theme?.chatWindow?.header?.closeColorButton || "#ffffff"}
           />
         </button>
       </div>

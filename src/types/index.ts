@@ -11,6 +11,9 @@ export interface ChatWindowConfig {
     title?: string;
     description?: string;
     avatarSrc?: string;
+    closeColorButton?: string;
+    voiceAIColorButton?: string;
+    refreshColorButton?: string;
   };
   body?: {
     backgroundColor?: string;
