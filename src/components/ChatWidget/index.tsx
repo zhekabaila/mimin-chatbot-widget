@@ -16,6 +16,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { API, getClientInfo } from "../../services";
 import { OpenAiAgentVoiceLayout } from "../CallWindow/openai-agent-voice";
 import { ElevenLabsAgentVoiceLayout } from "../CallWindow/elevenlabs-agent-voice";
+import { io, Socket } from "socket.io-client";
+import { ENV } from "../../config/environment";
 
 interface ChatWidgetProps {
   config?: ChatbotConfig;
@@ -64,6 +66,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   // Ref untuk menyimpan AbortController agar bisa diakses di luar handleSendMessage
   const abortControllerRef = useRef<AbortController | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
   // Fungsi untuk membatalkan request yang sedang berjalan
   const cancelSendMessage = () => {
@@ -91,39 +94,78 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     cancelSendMessage();
     setLoading(true);
 
-    let name = phoneOrIP.name;
-    if (!name) {
-      name = navigator.userAgent;
-    }
-
-    const payload = {
-      name,
-      phone: phoneOrIP.value,
-      message_id: crypto.randomUUID(),
-      message: message,
-      media_type: "text",
-      media: "",
-      type: chatType || "",
-    };
+    const isWebsite = config?.widgetType === "website";
 
     // Buat AbortController baru untuk request ini
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
     try {
-      const response = await API("fetch", "chatbot")(
-        `/chat/new-website/${config?.credentials?.username}`,
-        {
-          headers: {
-            Signature: signature,
-            Accept: "text/event-stream",
-            "Content-Type": "application/json",
+      let response: Response;
+
+      if (isWebsite) {
+        const token = localStorage.getItem(`mimin-token-${config?.credentials?.username}`);
+        const name = phoneOrIP.name || phoneOrIP.value;
+
+        const websitePayload = {
+          sender: {
+            name,
+            phone: phoneOrIP.value,
+            type: chatType || "",
           },
-          body: JSON.stringify(payload),
-          method: "POST",
-          signal: abortController.signal,
-        }
-      );
+          recipient: {
+            id: config?.credentials?.websiteId || "",
+          },
+          message: {
+            id: crypto.randomUUID(),
+            reply_to: "",
+            text: message,
+            media: [],
+          },
+        };
+
+        response = await API("fetch", "customer")(
+          `/v1/website/webhook/${config?.credentials?.username}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": config?.credentials?.apiKey || "",
+              ...(token ? { "Authorization-Customer": `Bearer ${token}` } : {}),
+              Accept: "text/event-stream",
+            },
+            body: JSON.stringify(websitePayload),
+            method: "POST",
+            signal: abortController.signal,
+          }
+        );
+      } else {
+        let name = phoneOrIP.name;
+        if (!name) name = navigator.userAgent;
+
+        const chatbotPayload = {
+          name,
+          phone: phoneOrIP.value,
+          message_id: crypto.randomUUID(),
+          message,
+          media_type: "text",
+          media: "",
+          type: chatType || "",
+        };
+
+        response = await API("fetch", "chatbot")(
+          `/chat/new-website/${config?.credentials?.username}`,
+          {
+            headers: {
+              Signature: signature,
+              Accept: "text/event-stream",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(chatbotPayload),
+            method: "POST",
+            signal: abortController.signal,
+          }
+        );
+      }
 
       if (!response.ok) {
         console.error("Failed to send message");
@@ -134,50 +176,75 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         .body!.pipeThrough(new TextDecoderStream())
         .getReader();
 
-      while (true) {
-        // Cek jika request sudah dibatalkan, keluar dari loop
-        if (abortController.signal.aborted) {
-          break;
-        }
+      if (isWebsite) {
+        let buffer = "";
+        while (true) {
+          if (abortController.signal.aborted) break;
+          const { value, done } = await reader.read();
+          if (done) break;
 
-        const { value, done } = await reader!.read();
-        if (done) break;
+          buffer += value;
+          const parts = buffer.split("\n\n");
+          buffer = parts.pop() ?? "";
 
-        const identifier = '{"event": ';
-        const events: IESResponse[] = value
-          .split(`data: ${identifier}`)
-          .filter(Boolean)
-          .map((res) =>
-            JSON.parse(`${identifier}${res}`.replace(/\n\n$/gm, ""))
-          )
-          .filter((res) => (res.event === "token" ? !!res.data : true));
+          for (const part of parts) {
+            const dataLines = part
+              .split("\n")
+              .filter((l) => l.startsWith("data:"))
+              .map((l) => l.replace(/^data:\s?/, ""));
 
-        events.forEach(async (res) => {
-          if (res.event === "payload") {
-            const newInteraction = {
-              additional_kwargs: {},
-              content: res.message,
-              example: false,
-            };
+            if (!dataLines.length) continue;
 
-            updateAiInteractionByIndex(0, newInteraction);
+            const data = dataLines.join("\n");
+            const res: IESResponse = JSON.parse(data);
 
-            if (!chatType) {
-              setChatType(res.type);
+            if (res.event === "payload") {
+              updateAiInteractionByIndex(0, {
+                additional_kwargs: {},
+                content: res.message,
+                example: false,
+              });
+              if (!chatType) setChatType(res.type);
+              setChatHistoryId(res.chat_history_id);
+            } else if (res.event === "token") {
+              if (res.data) setCurrentResponseMsg((prev) => prev + res.data);
             }
-
-            setChatHistoryId(res.chat_history_id);
-          } else if (res.event === "token") {
-            setCurrentResponseMsg((prev) => prev + res.data);
           }
-        });
+        }
+      } else {
+        while (true) {
+          if (abortController.signal.aborted) break;
+          const { value, done } = await reader!.read();
+          if (done) break;
+
+          const identifier = '{"event": ';
+          const events: IESResponse[] = value
+            .split(`data: ${identifier}`)
+            .filter(Boolean)
+            .map((res) =>
+              JSON.parse(`${identifier}${res}`.replace(/\n\n$/gm, ""))
+            )
+            .filter((res) => (res.event === "token" ? !!res.data : true));
+
+          events.forEach(async (res) => {
+            if (res.event === "payload") {
+              updateAiInteractionByIndex(0, {
+                additional_kwargs: {},
+                content: res.message,
+                example: false,
+              });
+              if (!chatType) setChatType(res.type);
+              setChatHistoryId(res.chat_history_id);
+            } else if (res.event === "token") {
+              setCurrentResponseMsg((prev) => prev + res.data);
+            }
+          });
+        }
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err?.name === "AbortError") {
         // Request dibatalkan, tidak perlu tampilkan error
-        // Bisa tambahkan logika lain jika ingin
-        // console.log("Request dibatalkan oleh user");
       } else {
         console.error("Maaf, terjadi kesalahan sistem. Silakan coba lagi!");
       }
@@ -209,11 +276,105 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   // }, [isChatVisible]);
 
   useEffect(() => {
+    if (config?.widgetType !== "website") return;
+    if (!chatHistoryId && !config?.credentials?.websiteId) return;
+
+    const playNotificationSound = () => {
+      try {
+        const audio = new Audio('/sounds/notification.mp3')
+        audio.volume = 1
+        audio.play().catch((error) => { })
+      } catch (error) {
+      }
+    }
+    
+    const socket = io(ENV.NEXT_PUBLIC_API_SOCKET, {
+      path: ENV.NEXT_PUBLIC_API_SOCKET_PATHNAME,
+      transports: ["websocket"],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+    });
+
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      if (socket.connected) {
+        if (chatHistoryId) socket.emit("joinRoom", chatHistoryId);
+        if (config?.credentials?.websiteId && phoneOrIP?.value) {
+          socket.emit("joinRoom", `${config.credentials.websiteId}-${phoneOrIP.value}`);
+        }
+      }
+    });
+
+    const handleEndSession = (data: { message: string }) => {
+      const msg = data.message || "";
+      addInteraction({
+        human: undefined,
+        ai: { content: msg, additional_kwargs: {}, example: false },
+        date: new Date(),
+        id: crypto.randomUUID(),
+      });
+      setCurrentResponseMsg(msg);
+    };
+
+    const handleReminderFired = (data: { message: string }) => {
+      const msg = data.message || "";
+      addInteraction({
+        human: undefined,
+        ai: { content: msg, additional_kwargs: {}, example: false },
+        date: new Date(),
+        id: crypto.randomUUID(),
+      });
+      setCurrentResponseMsg(msg);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleWebsiteMessage = (data: any) => {
+      const payload = data.payload || data;
+      const message =
+        payload.text ||
+        (typeof payload.message === "object"
+          ? payload.message?.text
+          : payload.message) ||
+        payload.message;
+
+      if (message && typeof message === "string") {
+        playNotificationSound()
+        addInteraction({
+          human: undefined,
+          ai: {
+            content: message,
+            additional_kwargs: payload.additional_kwargs || {},
+            example: false,
+          },
+          date: new Date(),
+          id: data.message_id || crypto.randomUUID(),
+        });
+        setCurrentResponseMsg(message);
+      }
+    };
+
+    socket.on("endSession", handleEndSession);
+    socket.on("reminderFired", handleReminderFired);
+    socket.on("websiteMessage", handleWebsiteMessage);
+
+    return () => {
+      socket.off("endSession", handleEndSession);
+      socket.off("reminderFired", handleReminderFired);
+      socket.off("websiteMessage", handleWebsiteMessage);
+      socket.disconnect();
+    };
+  }, [chatHistoryId, addInteraction, config?.credentials?.websiteId, phoneOrIP]);
+
+  useEffect(() => {
     setConfigStore(config || null);
     setSignatureStore(signature || "");
     // Cleanup: batalkan request jika komponen unmount
     return () => {
       cancelSendMessage();
+      socketRef.current?.disconnect();
     };
   }, []);
 
