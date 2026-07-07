@@ -1,8 +1,9 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { useConfigStore } from "../../hooks/config-store";
 import { cn } from "../../utils";
 import { format } from "date-fns";
-import { Bot, CircleUserRound } from "lucide-react";
+import { Bot, CircleUserRound, X } from "lucide-react";
 
 interface MediaItem {
   type: string;
@@ -26,20 +27,54 @@ const isImageFile = (url: string, type?: string) => {
 
 const MediaItemRenderer: React.FC<{ item: MediaItem; isUser: boolean }> = ({ item, isUser }) => {
   const [imageError, setImageError] = React.useState(false);
+  const [isZoomed, setIsZoomed] = React.useState(false);
   const { config } = useConfigStore();
   const isImg = isImageFile(item.data, item.type) && !imageError;
 
   if (isImg) {
     return (
-      <div className="mimin-max-w-full mimin-rounded-lg mimin-overflow-hidden mimin-border mimin-border-gray-100 mimin-bg-white">
-        <img
-          src={item.data}
-          alt={item.name || "Image"}
-          className="mimin-max-w-full mimin-h-auto mimin-object-contain mimin-block mimin-min-w-[120px] mimin-min-h-[80px]"
-          style={{ maxHeight: "200px" }}
-          onError={() => setImageError(true)}
-        />
-      </div>
+      <>
+        <div
+          className="mimin-max-w-full mimin-rounded-lg mimin-overflow-hidden mimin-border mimin-border-gray-100 mimin-bg-white mimin-cursor-zoom-in hover:mimin-opacity-95 mimin-transition-opacity"
+          onClick={() => setIsZoomed(true)}
+        >
+          <img
+            src={item.data}
+            alt={item.name || "Image"}
+            className="mimin-max-w-full mimin-h-auto mimin-object-contain mimin-block mimin-min-w-[120px] mimin-min-h-[80px]"
+            style={{ maxHeight: "200px" }}
+            width={1000}
+            height={1000}
+            onError={() => setImageError(true)}
+          />
+        </div>
+
+        {isZoomed && createPortal(
+          <div
+            className="mimin-fixed mimin-inset-0 mimin-z-[99999] mimin-flex mimin-flex-col mimin-items-center mimin-justify-center mimin-bg-black/80 mimin-p-8 mimin-cursor-zoom-out"
+            onClick={() => setIsZoomed(false)}
+          >
+            <div className="mimin-relative mimin-flex mimin-items-center mimin-justify-center">
+              <img
+                src={item.data}
+                alt={item.name || "Zoomed Image"}
+                className="mimin-w-[90vw] mimin-max-w-[90vw] mimin-h-auto mimin-max-h-[90vh] mimin-object-contain mimin-rounded-lg mimin-shadow-2xl mimin-select-none"
+              />
+              <button
+                type="button"
+                className="mimin-fixed mimin-top-4 mimin-right-4 mimin-p-2.5 mimin-rounded-full mimin-bg-black/50 hover:mimin-bg-black/80 mimin-text-white mimin-cursor-pointer mimin-transition-colors mimin-z-[100000]"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsZoomed(false);
+                }}
+              >
+                <X className="mimin-w-6 mimin-h-6" />
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
+      </>
     );
   }
 
