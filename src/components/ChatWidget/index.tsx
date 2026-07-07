@@ -62,6 +62,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     updateAiInteractionByIndex,
     chatType,
     setChatType,
+    loadSession,
   } = useInteractionsStore();
 
   // Ref untuk menyimpan AbortController agar bisa diakses di luar handleSendMessage
@@ -334,27 +335,32 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleWebsiteMessage = (data: any) => {
+      console.log("handleWebsiteMessage", data)
       const payload = data.payload || data;
       const message =
         payload.text ||
         (typeof payload.message === "object"
           ? payload.message?.text
           : payload.message) ||
-        payload.message;
+        (typeof payload.message === "string" ? payload.message : "") ||
+        "";
 
-      if (message && typeof message === "string") {
+      const media = payload.media || payload.message?.media || [];
+
+      if ((message && typeof message === "string") || (media && media.length > 0)) {
         playNotificationSound()
         addInteraction({
           human: undefined,
           ai: {
-            content: message,
+            content: typeof message === "string" ? message : "",
             additional_kwargs: payload.additional_kwargs || {},
             example: false,
+            media: media,
           },
           date: new Date(),
-          id: data.message_id || crypto.randomUUID(),
+          id: data.message_id || payload.message?.id || crypto.randomUUID(),
         });
-        setCurrentResponseMsg(message);
+        setCurrentResponseMsg(typeof message === "string" ? message : "");
       }
     };
 
@@ -380,6 +386,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     };
   }, []);
 
+
+  useEffect(() => {
+    loadSession(
+      config?.credentials?.username,
+      config?.credentials?.websiteId,
+      config?.widgetType
+    );
+  }, [config?.credentials?.username, config?.credentials?.websiteId, config?.widgetType, loadSession]);
 
   useEffect(() => {
     if (!config) return;

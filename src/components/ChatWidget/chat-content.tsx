@@ -30,16 +30,18 @@ export const ChatContent: React.FC<{
         <div className="mimin-flex mimin-flex-col-reverse mimin-gap-9">
           {messages.map((msg, index) => (
             <div key={index} className="mimin-flex mimin-flex-col mimin-gap-6">
-              {msg.human && msg.human.content && (
+              {msg.human && (msg.human.content || (msg.human.media && msg.human.media.length > 0)) && (
                 <BubbleChat
                   message={msg.human.content}
+                  media={msg.human.media}
                   isUser={true}
                   date={msg.date}
                 />
               )}
-              {msg.ai && msg.ai.content && (
+              {msg.ai && (msg.ai.content || (msg.ai.media && msg.ai.media.length > 0)) && (
                 <BubbleChat
                   message={msg.ai.content}
+                  media={msg.ai.media}
                   isUser={false}
                   date={msg.date}
                 />

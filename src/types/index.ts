@@ -136,6 +136,11 @@ export interface Message {
   content: string;
   additional_kwargs: Record<string, unknown>;
   example: boolean;
+  media?: {
+    type: string;
+    name: string;
+    data: string;
+  }[];
 }
 
 export interface Pagination {
