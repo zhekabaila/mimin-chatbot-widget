@@ -47,10 +47,18 @@ export function API(
 
 export const getClientInfo = async () => {
   try {
-    const ipRes = await fetch("https://api.ipify.org?format=json");
-    const ipData = await ipRes.json();
+    const cacheKey = "mimin-cached-ip";
+    let ip = localStorage.getItem(cacheKey);
 
-    const ip = ipData.ip;
+    if (!ip) {
+      const ipRes = await fetch("https://api.ipify.org?format=json");
+      const ipData = await ipRes.json();
+      ip = ipData.ip;
+      if (ip) {
+        localStorage.setItem(cacheKey, ip);
+      }
+    }
+
     const userAgent = navigator.userAgent;
 
     return { ip, userAgent, isError: false };

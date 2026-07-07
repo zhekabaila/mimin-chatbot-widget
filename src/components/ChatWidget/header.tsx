@@ -89,6 +89,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           onClick={() => {
             clearInteractions();
             setChatType(null);
+            localStorage.removeItem("mimin-cached-ip");
           }}
         >
           <BiRotateLeft

@@ -12339,8 +12339,11 @@ function Gn(t, e) {
 }
 const Ok = async () => {
   try {
-    const n = (await (await fetch("https://api.ipify.org?format=json")).json()).ip, i = navigator.userAgent;
-    return { ip: n, userAgent: i, isError: !1 };
+    const t = "mimin-cached-ip";
+    let e = localStorage.getItem(t);
+    e || (e = (await (await fetch("https://api.ipify.org?format=json")).json()).ip, e && localStorage.setItem(t, e));
+    const n = navigator.userAgent;
+    return { ip: e, userAgent: n, isError: !1 };
   } catch (t) {
     return { isError: !0, errorMessage: t.message };
   }
@@ -12929,7 +12932,7 @@ const OM = ({
                 color: n?.theme?.chatWindow?.header?.refreshColorButton || "#ffffff"
               },
               onClick: () => {
-                r(), i(null);
+                r(), i(null), localStorage.removeItem("mimin-cached-ip");
               },
               children: /* @__PURE__ */ O.jsx(
                 AM,
@@ -19629,7 +19632,7 @@ function $L(t, e, n, i, r) {
     reducedMotionConfig: h
   }));
   const p = f.current, v = K.useContext(Zw);
-  p && !p.projection && r && (p.type === "html" || p.type === "svg") && e3(f.current, n, r, v);
+  p && !p.projection && r && (p.type === "html" || p.type === "svg") && eI(f.current, n, r, v);
   const y = K.useRef(!1);
   K.useInsertionEffect(() => {
     p && y.current && p.update(n, u);
@@ -19643,7 +19646,7 @@ function $L(t, e, n, i, r) {
     }), T.current = !1));
   }), p;
 }
-function e3(t, e, n, i) {
+function eI(t, e, n, i) {
   const { layoutId: r, layout: o, drag: l, dragConstraints: u, layoutScroll: h, layoutRoot: f, layoutCrossfade: p } = e;
   t.projection = new n(t.latestValues, e["data-framer-portal-id"] ? void 0 : $w(t.parent)), t.projection.setOptions({
     layoutId: r,
@@ -19676,11 +19679,11 @@ function Gf(t, { forwardMotionProps: e = !1 } = {}, n, i) {
     const p = {
       ...K.useContext(yg),
       ...u,
-      layoutId: t3(u)
+      layoutId: tI(u)
     }, { isStatic: v } = p, y = PL(u), S = r(u, v);
     if (!v && Qp) {
-      n3();
-      const T = i3(p);
+      nI();
+      const T = iI(p);
       f = T.MeasureLayout, y.visualElement = $L(t, S, p, i, T.ProjectionNode);
     }
     return O.jsxs(id.Provider, { value: y, children: [f && y.visualElement ? O.jsx(f, { visualElement: y.visualElement, ...p }) : null, GL(t, u, JL(S, y.visualElement, h), S, v, e)] });
@@ -19689,14 +19692,14 @@ function Gf(t, { forwardMotionProps: e = !1 } = {}, n, i) {
   const l = K.forwardRef(o);
   return l[QL] = t, l;
 }
-function t3({ layoutId: t }) {
+function tI({ layoutId: t }) {
   const e = K.useContext(Wp).id;
   return e && t !== void 0 ? e + "-" + t : t;
 }
-function n3(t, e) {
+function nI(t, e) {
   K.useContext(Fw).strict;
 }
-function i3(t) {
+function iI(t) {
   const { drag: e, layout: n } = Ca;
   if (!e && !n)
     return {};
@@ -19706,7 +19709,7 @@ function i3(t) {
     ProjectionNode: i.ProjectionNode
   };
 }
-function s3(t, e) {
+function sI(t, e) {
   if (typeof Proxy > "u")
     return Gf;
   const n = /* @__PURE__ */ new Map(), i = (o, l) => Gf(o, l, t, e), r = (o, l) => i(o, l);
@@ -19725,10 +19728,10 @@ function eE({ top: t, left: e, right: n, bottom: i }) {
     y: { min: t, max: i }
   };
 }
-function r3({ x: t, y: e }) {
+function rI({ x: t, y: e }) {
   return { top: e.min, right: t.max, bottom: e.max, left: t.min };
 }
-function a3(t, e) {
+function aI(t, e) {
   if (!e)
     return t;
   const n = e({ x: t.left, y: t.top }), i = e({ x: t.right, y: t.bottom });
@@ -19768,7 +19771,7 @@ function nE(t, { x: e, y: n }) {
   Km(t.x, e.translate, e.scale, e.originPoint), Km(t.y, n.translate, n.scale, n.originPoint);
 }
 const rT = 0.999999999999, aT = 1.0000000000001;
-function o3(t, e, n, i = !1) {
+function oI(t, e, n, i = !1) {
   const r = n.length;
   if (!r)
     return;
@@ -19795,9 +19798,9 @@ function ca(t, e) {
   oT(t.x, e.x, e.scaleX, e.scale, e.originX), oT(t.y, e.y, e.scaleY, e.scale, e.originY);
 }
 function iE(t, e) {
-  return eE(a3(t.getBoundingClientRect(), e));
+  return eE(aI(t.getBoundingClientRect(), e));
 }
-function c3(t, e, n) {
+function cI(t, e, n) {
   const i = iE(t, n), { scroll: r } = e;
   return r && (oa(i.x, r.offset.x), oa(i.y, r.offset.y)), i;
 }
@@ -19813,7 +19816,7 @@ const cT = () => ({
   x: lT(),
   y: lT()
 }), Ym = { current: null }, sE = { current: !1 };
-function l3() {
+function lI() {
   if (sE.current = !0, !!Qp)
     if (window.matchMedia) {
       const t = window.matchMedia("(prefers-reduced-motion)"), e = () => Ym.current = t.matches;
@@ -19821,8 +19824,8 @@ function l3() {
     } else
       Ym.current = !1;
 }
-const u3 = /* @__PURE__ */ new WeakMap();
-function d3(t, e, n) {
+const uI = /* @__PURE__ */ new WeakMap();
+function dI(t, e, n) {
   for (const i in e) {
     const r = e[i], o = n[i];
     if (Kt(r))
@@ -19851,7 +19854,7 @@ const uT = [
   "LayoutAnimationStart",
   "LayoutAnimationComplete"
 ];
-class h3 {
+class hI {
   /**
    * This method takes React props and returns found MotionValues. For example, HTML
    * MotionValues will be found within the style prop, whereas for Three.js within attribute arrays.
@@ -19878,7 +19881,7 @@ class h3 {
     }
   }
   mount(e) {
-    this.current = e, u3.set(e, this), this.projection && !this.projection.instance && this.projection.mount(e), this.parent && this.isVariantNode && !this.isControllingVariants && (this.removeFromVariantTree = this.parent.addVariantChild(this)), this.values.forEach((n, i) => this.bindToMotionValue(i, n)), sE.current || l3(), this.shouldReduceMotion = this.reducedMotionConfig === "never" ? !1 : this.reducedMotionConfig === "always" ? !0 : Ym.current, this.parent && this.parent.children.add(this), this.update(this.props, this.presenceContext);
+    this.current = e, uI.set(e, this), this.projection && !this.projection.instance && this.projection.mount(e), this.parent && this.isVariantNode && !this.isControllingVariants && (this.removeFromVariantTree = this.parent.addVariantChild(this)), this.values.forEach((n, i) => this.bindToMotionValue(i, n)), sE.current || lI(), this.shouldReduceMotion = this.reducedMotionConfig === "never" ? !1 : this.reducedMotionConfig === "always" ? !0 : Ym.current, this.parent && this.parent.children.add(this), this.update(this.props, this.presenceContext);
   }
   unmount() {
     this.projection && this.projection.unmount(), Es(this.notifyUpdate), Es(this.render), this.valueSubscriptions.forEach((e) => e()), this.valueSubscriptions.clear(), this.removeFromVariantTree && this.removeFromVariantTree(), this.parent && this.parent.children.delete(this);
@@ -19947,7 +19950,7 @@ class h3 {
       const o = "on" + r, l = e[o];
       l && (this.propEventSubscriptions[r] = this.on(r, l));
     }
-    this.prevMotionValues = d3(this, this.scrapeMotionValuesFromProps(e, this.prevProps, this), this.prevMotionValues), this.handleChildMotionValue && this.handleChildMotionValue();
+    this.prevMotionValues = dI(this, this.scrapeMotionValuesFromProps(e, this.prevProps, this), this.prevMotionValues), this.handleChildMotionValue && this.handleChildMotionValue();
   }
   getProps() {
     return this.props;
@@ -20047,7 +20050,7 @@ class h3 {
     gg.render(this.render);
   }
 }
-class rE extends h3 {
+class rE extends hI {
   constructor() {
     super(...arguments), this.KeyframeResolver = lL;
   }
@@ -20077,10 +20080,10 @@ function aE(t, { style: e, vars: n }, i, r) {
   for (l in n)
     o.setProperty(l, n[l]);
 }
-function f3(t) {
+function fI(t) {
   return window.getComputedStyle(t);
 }
-class m3 extends rE {
+class mI extends rE {
   constructor() {
     super(...arguments), this.type = "html", this.renderInstance = aE;
   }
@@ -20088,7 +20091,7 @@ class m3 extends rE {
     if (Pa.has(n))
       return this.projection?.isProjecting ? Bm(n) : _N(e, n);
     {
-      const i = f3(e), r = (sg(n) ? i.getPropertyValue(n) : i[n]) || 0;
+      const i = fI(e), r = (sg(n) ? i.getPropertyValue(n) : i[n]) || 0;
       return typeof r == "string" ? r.trim() : r;
     }
   }
@@ -20127,12 +20130,12 @@ const oE = /* @__PURE__ */ new Set([
   "textLength",
   "lengthAdjust"
 ]);
-function p3(t, e, n, i) {
+function pI(t, e, n, i) {
   aE(t, e, void 0, i);
   for (const r in e.attrs)
     t.setAttribute(oE.has(r) ? r : xg(r), e.attrs[r]);
 }
-class g3 extends rE {
+class gI extends rE {
   constructor() {
     super(...arguments), this.type = "svg", this.isSVGTag = !1, this.measureInstanceViewportBox = vt;
   }
@@ -20153,13 +20156,13 @@ class g3 extends rE {
     Kw(e, n, this.isSVGTag, i.transformTemplate, i.style);
   }
   renderInstance(e, n, i, r) {
-    p3(e, n, i, r);
+    pI(e, n, i, r);
   }
   mount(e) {
     this.isSVGTag = Ww(e.tagName), super.mount(e);
   }
 }
-const v3 = (t, e) => kg(t) ? new g3(e) : new m3(e, {
+const vI = (t, e) => kg(t) ? new gI(e) : new mI(e, {
   allowProjection: t !== K.Fragment
 });
 function mc(t, e, n) {
@@ -20167,27 +20170,27 @@ function mc(t, e, n) {
   return wg(i, e, n !== void 0 ? n : i.custom, t);
 }
 const Wm = (t) => Array.isArray(t);
-function y3(t, e, n) {
+function yI(t, e, n) {
   t.hasValue(e) ? t.getValue(e).set(n) : t.addValue(e, Ta(n));
 }
-function b3(t) {
+function bI(t) {
   return Wm(t) ? t[t.length - 1] || 0 : t;
 }
-function S3(t, e) {
+function SI(t, e) {
   const n = mc(t, e);
   let { transitionEnd: i = {}, transition: r = {}, ...o } = n || {};
   o = { ...o, ...i };
   for (const l in o) {
-    const u = b3(o[l]);
-    y3(t, l, u);
+    const u = bI(o[l]);
+    yI(t, l, u);
   }
 }
-function T3(t) {
+function TI(t) {
   return !!(Kt(t) && t.add);
 }
 function Xm(t, e) {
   const n = t.getValue("willChange");
-  if (T3(n))
+  if (TI(n))
     return n.add(e);
   if (!n && Bi.WillChange) {
     const i = new Bi.WillChange("auto");
@@ -20197,30 +20200,30 @@ function Xm(t, e) {
 function cE(t) {
   return t.props[Jw];
 }
-const C3 = (t) => t !== null;
-function k3(t, { repeat: e, repeatType: n = "loop" }, i) {
-  const r = t.filter(C3), o = e && n !== "loop" && e % 2 === 1 ? 0 : r.length - 1;
+const CI = (t) => t !== null;
+function kI(t, { repeat: e, repeatType: n = "loop" }, i) {
+  const r = t.filter(CI), o = e && n !== "loop" && e % 2 === 1 ? 0 : r.length - 1;
   return r[o];
 }
-const w3 = {
+const wI = {
   type: "spring",
   stiffness: 500,
   damping: 25,
   restSpeed: 10
-}, E3 = (t) => ({
+}, EI = (t) => ({
   type: "spring",
   stiffness: 550,
   damping: t === 0 ? 2 * Math.sqrt(550) : 30,
   restSpeed: 10
-}), x3 = {
+}), xI = {
   type: "keyframes",
   duration: 0.8
-}, R3 = {
+}, RI = {
   type: "keyframes",
   ease: [0.25, 0.1, 0.35, 1],
   duration: 0.3
-}, _3 = (t, { keyframes: e }) => e.length > 2 ? x3 : Pa.has(t) ? t.startsWith("scale") ? E3(e[1]) : w3 : R3;
-function A3({ when: t, delay: e, delayChildren: n, staggerChildren: i, staggerDirection: r, repeat: o, repeatType: l, repeatDelay: u, from: h, elapsed: f, ...p }) {
+}, _I = (t, { keyframes: e }) => e.length > 2 ? xI : Pa.has(t) ? t.startsWith("scale") ? EI(e[1]) : wI : RI;
+function AI({ when: t, delay: e, delayChildren: n, staggerChildren: i, staggerDirection: r, repeat: o, repeatType: l, repeatDelay: u, from: h, elapsed: f, ...p }) {
   return !!Object.keys(p).length;
 }
 const Rg = (t, e, n, i = {}, r, o) => (l) => {
@@ -20243,10 +20246,10 @@ const Rg = (t, e, n, i = {}, r, o) => (l) => {
     motionValue: e,
     element: o ? void 0 : r
   };
-  A3(u) || Object.assign(p, _3(t, p)), p.duration && (p.duration = /* @__PURE__ */ oi(p.duration)), p.repeatDelay && (p.repeatDelay = /* @__PURE__ */ oi(p.repeatDelay)), p.from !== void 0 && (p.keyframes[0] = p.from);
+  AI(u) || Object.assign(p, _I(t, p)), p.duration && (p.duration = /* @__PURE__ */ oi(p.duration)), p.repeatDelay && (p.repeatDelay = /* @__PURE__ */ oi(p.repeatDelay)), p.from !== void 0 && (p.keyframes[0] = p.from);
   let v = !1;
   if ((p.type === !1 || p.duration === 0 && !p.repeatDelay) && (p.duration = 0, p.delay === 0 && (v = !0)), (Bi.instantAnimations || Bi.skipAnimations) && (v = !0, p.duration = 0, p.delay = 0), p.allowFlatten = !u.type && !u.ease, v && !o && e.get() !== void 0) {
-    const y = k3(p.keyframes, u);
+    const y = kI(p.keyframes, u);
     if (y !== void 0) {
       rt.update(() => {
         p.onUpdate(y), p.onComplete();
@@ -20256,7 +20259,7 @@ const Rg = (t, e, n, i = {}, r, o) => (l) => {
   }
   return u.isSync ? new hg(p) : new JN(p);
 };
-function O3({ protectedKeys: t, needsAnimating: e }, n) {
+function OI({ protectedKeys: t, needsAnimating: e }, n) {
   const i = t.hasOwnProperty(n) && e[n] !== !0;
   return e[n] = !1, i;
 }
@@ -20266,7 +20269,7 @@ function lE(t, e, { delay: n = 0, transitionOverride: i, type: r } = {}) {
   const h = [], f = r && t.animationState && t.animationState.getState()[r];
   for (const p in u) {
     const v = t.getValue(p, t.latestValues[p] ?? null), y = u[p];
-    if (y === void 0 || f && O3(f, p))
+    if (y === void 0 || f && OI(f, p))
       continue;
     const S = {
       delay: n,
@@ -20288,7 +20291,7 @@ function lE(t, e, { delay: n = 0, transitionOverride: i, type: r } = {}) {
   }
   return l && Promise.all(h).then(() => {
     rt.update(() => {
-      l && S3(t, l);
+      l && SI(t, l);
     });
   }), h;
 }
@@ -20298,7 +20301,7 @@ function Qm(t, e, n = {}) {
   n.transitionOverride && (r = n.transitionOverride);
   const o = i ? () => Promise.all(lE(t, i, n)) : () => Promise.resolve(), l = t.variantChildren && t.variantChildren.size ? (h = 0) => {
     const { delayChildren: f = 0, staggerChildren: p, staggerDirection: v } = r;
-    return M3(t, e, h, f, p, v, n);
+    return MI(t, e, h, f, p, v, n);
   } : () => Promise.resolve(), { when: u } = r;
   if (u) {
     const [h, f] = u === "beforeChildren" ? [o, l] : [l, o];
@@ -20306,22 +20309,22 @@ function Qm(t, e, n = {}) {
   } else
     return Promise.all([o(), l(n.delay)]);
 }
-function M3(t, e, n = 0, i = 0, r = 0, o = 1, l) {
+function MI(t, e, n = 0, i = 0, r = 0, o = 1, l) {
   const u = [], h = t.variantChildren.size, f = (h - 1) * r, p = typeof i == "function", v = p ? (y) => i(y, h) : (
     // Support deprecated staggerChildren
     o === 1 ? (y = 0) => y * r : (y = 0) => f - y * r
   );
-  return Array.from(t.variantChildren).sort(P3).forEach((y, S) => {
+  return Array.from(t.variantChildren).sort(PI).forEach((y, S) => {
     y.notify("AnimationStart", e), u.push(Qm(y, e, {
       ...l,
       delay: n + (p ? 0 : i) + v(S)
     }).then(() => y.notify("AnimationComplete", e)));
   }), Promise.all(u);
 }
-function P3(t, e) {
+function PI(t, e) {
   return t.sortNodePosition(e);
 }
-function D3(t, e, n = {}) {
+function DI(t, e, n = {}) {
   t.notify("AnimationStart", e);
   let i;
   if (Array.isArray(e)) {
@@ -20348,7 +20351,7 @@ function uE(t, e) {
       return !1;
   return !0;
 }
-const N3 = Sg.length;
+const NI = Sg.length;
 function dE(t) {
   if (!t)
     return;
@@ -20357,18 +20360,18 @@ function dE(t) {
     return t.props.initial !== void 0 && (n.initial = t.props.initial), n;
   }
   const e = {};
-  for (let n = 0; n < N3; n++) {
+  for (let n = 0; n < NI; n++) {
     const i = Sg[n], r = t.props[i];
     (hc(r) || r === !1) && (e[i] = r);
   }
   return e;
 }
-const L3 = [...bg].reverse(), I3 = bg.length;
-function U3(t) {
-  return (e) => Promise.all(e.map(({ animation: n, options: i }) => D3(t, n, i)));
+const LI = [...bg].reverse(), II = bg.length;
+function UI(t) {
+  return (e) => Promise.all(e.map(({ animation: n, options: i }) => DI(t, n, i)));
 }
-function j3(t) {
-  let e = U3(t), n = dT(), i = !0;
+function jI(t) {
+  let e = UI(t), n = dT(), i = !0;
   const r = (h) => (f, p) => {
     const v = mc(t, p, h === "exit" ? t.presenceContext?.custom : void 0);
     if (v) {
@@ -20383,8 +20386,8 @@ function j3(t) {
   function l(h) {
     const { props: f } = t, p = dE(t.parent) || {}, v = [], y = /* @__PURE__ */ new Set();
     let S = {}, T = 1 / 0;
-    for (let w = 0; w < I3; w++) {
-      const E = L3[w], N = n[E], M = f[E] !== void 0 ? f[E] : p[E], x = hc(M), _ = E === h ? N.isActive : null;
+    for (let w = 0; w < II; w++) {
+      const E = LI[w], N = n[E], M = f[E] !== void 0 ? f[E] : p[E], x = hc(M), _ = E === h ? N.isActive : null;
       _ === !1 && (T = w);
       let P = M === p[E] && M !== f[E] && x;
       if (P && i && t.manuallyAnimateOnMount && (P = !1), N.protectedKeys = { ...S }, // If it isn't active and hasn't *just* been set as inactive
@@ -20392,7 +20395,7 @@ function j3(t) {
       !M && !N.prevProp || // Or if the prop doesn't define an animation
       sd(M) || typeof M == "boolean")
         continue;
-      const G = B3(N.prevProp, M);
+      const G = BI(N.prevProp, M);
       let U = G || // If we're making this variant active, we want to always make it active
       E === h && N.isActive && !P && x || // If we removed a higher-priority variant (i is in reverse order)
       w > T && x, Z = !1;
@@ -20452,7 +20455,7 @@ function j3(t) {
     }
   };
 }
-function B3(t, e) {
+function BI(t, e) {
   return typeof e == "string" ? e !== t : Array.isArray(e) ? !uE(e, t) : !1;
 }
 function Js(t = !1) {
@@ -20481,14 +20484,14 @@ class _s {
   update() {
   }
 }
-class V3 extends _s {
+class VI extends _s {
   /**
    * We dynamically generate the AnimationState manager as it contains a reference
    * to the underlying animation library. We only want to load that if we load this,
    * so people can optionally code split it out using the `m` component.
    */
   constructor(e) {
-    super(e), e.animationState || (e.animationState = j3(e));
+    super(e), e.animationState || (e.animationState = jI(e));
   }
   updateAnimationControlsSubscription() {
     const { animate: e } = this.node.getProps();
@@ -20508,10 +20511,10 @@ class V3 extends _s {
     this.node.animationState.reset(), this.unmountControls?.();
   }
 }
-let F3 = 0;
-class q3 extends _s {
+let FI = 0;
+class qI extends _s {
   constructor() {
-    super(...arguments), this.id = F3++;
+    super(...arguments), this.id = FI++;
   }
   update() {
     if (!this.node.presenceContext)
@@ -20531,12 +20534,12 @@ class q3 extends _s {
   unmount() {
   }
 }
-const z3 = {
+const zI = {
   animation: {
-    Feature: V3
+    Feature: VI
   },
   exit: {
-    Feature: q3
+    Feature: qI
   }
 };
 function pc(t, e, n, i = { passive: !0 }) {
@@ -20550,19 +20553,19 @@ function Rc(t) {
     }
   };
 }
-const H3 = (t) => (e) => vg(e) && t(e, Rc(e));
+const HI = (t) => (e) => vg(e) && t(e, Rc(e));
 function ec(t, e, n, i) {
-  return pc(t, e, H3(n), i);
+  return pc(t, e, HI(n), i);
 }
-const hE = 1e-4, G3 = 1 - hE, K3 = 1 + hE, fE = 0.01, Y3 = 0 - fE, W3 = 0 + fE;
+const hE = 1e-4, GI = 1 - hE, KI = 1 + hE, fE = 0.01, YI = 0 - fE, WI = 0 + fE;
 function Wt(t) {
   return t.max - t.min;
 }
-function X3(t, e, n) {
+function XI(t, e, n) {
   return Math.abs(t - e) <= n;
 }
 function hT(t, e, n, i = 0.5) {
-  t.origin = i, t.originPoint = ot(e.min, e.max, t.origin), t.scale = Wt(n) / Wt(e), t.translate = ot(n.min, n.max, t.origin) - t.originPoint, (t.scale >= G3 && t.scale <= K3 || isNaN(t.scale)) && (t.scale = 1), (t.translate >= Y3 && t.translate <= W3 || isNaN(t.translate)) && (t.translate = 0);
+  t.origin = i, t.originPoint = ot(e.min, e.max, t.origin), t.scale = Wt(n) / Wt(e), t.translate = ot(n.min, n.max, t.origin) - t.originPoint, (t.scale >= GI && t.scale <= KI || isNaN(t.scale)) && (t.scale = 1), (t.translate >= YI && t.translate <= WI || isNaN(t.translate)) && (t.translate = 0);
 }
 function tc(t, e, n, i) {
   hT(t.x, e.x, n.x, i ? i.originX : void 0), hT(t.y, e.y, n.y, i ? i.originY : void 0);
@@ -20570,7 +20573,7 @@ function tc(t, e, n, i) {
 function fT(t, e, n) {
   t.min = n.min + e.min, t.max = t.min + Wt(e);
 }
-function Q3(t, e, n) {
+function QI(t, e, n) {
   fT(t.x, e.x, n.x), fT(t.y, e.y, n.y);
 }
 function mT(t, e, n) {
@@ -20583,7 +20586,7 @@ function Pn(t) {
   return [t("x"), t("y")];
 }
 const mE = ({ current: t }) => t ? t.ownerDocument.defaultView : null, pT = (t, e) => Math.abs(t - e);
-function J3(t, e) {
+function JI(t, e) {
   const n = pT(t.x, e.x), i = pT(t.y, e.y);
   return Math.sqrt(n ** 2 + i ** 2);
 }
@@ -20592,7 +20595,7 @@ class pE {
     if (this.startEvent = null, this.lastMoveEvent = null, this.lastMoveEventInfo = null, this.handlers = {}, this.contextWindow = window, this.updatePoint = () => {
       if (!(this.lastMoveEvent && this.lastMoveEventInfo))
         return;
-      const y = Wf(this.lastMoveEventInfo, this.history), S = this.startEvent !== null, T = J3(y.offset, { x: 0, y: 0 }) >= this.distanceThreshold;
+      const y = Wf(this.lastMoveEventInfo, this.history), S = this.startEvent !== null, T = JI(y.offset, { x: 0, y: 0 }) >= this.distanceThreshold;
       if (!S && !T)
         return;
       const { point: C } = y, { timestamp: w } = Vt;
@@ -20633,17 +20636,17 @@ function Wf({ point: t }, e) {
   return {
     point: t,
     delta: gT(t, gE(e)),
-    offset: gT(t, Z3(e)),
-    velocity: $3(e, 0.1)
+    offset: gT(t, ZI(e)),
+    velocity: $I(e, 0.1)
   };
 }
-function Z3(t) {
+function ZI(t) {
   return t[0];
 }
 function gE(t) {
   return t[t.length - 1];
 }
-function $3(t, e) {
+function $I(t, e) {
   if (t.length < 2)
     return { x: 0, y: 0 };
   let n = t.length - 1, i = null;
@@ -20661,7 +20664,7 @@ function $3(t, e) {
   };
   return l.x === 1 / 0 && (l.x = 0), l.y === 1 / 0 && (l.y = 0), l;
 }
-function eI(t, { min: e, max: n }, i) {
+function e3(t, { min: e, max: n }, i) {
   return e !== void 0 && t < e ? t = i ? ot(e, t, i.min) : Math.max(t, e) : n !== void 0 && t > n && (t = i ? ot(n, t, i.max) : Math.min(t, n)), t;
 }
 function vT(t, e, n) {
@@ -20670,7 +20673,7 @@ function vT(t, e, n) {
     max: n !== void 0 ? t.max + n - (t.max - t.min) : void 0
   };
 }
-function tI(t, { top: e, left: n, bottom: i, right: r }) {
+function t3(t, { top: e, left: n, bottom: i, right: r }) {
   return {
     x: vT(t.x, n, r),
     y: vT(t.y, e, i)
@@ -20680,23 +20683,23 @@ function yT(t, e) {
   let n = e.min - t.min, i = e.max - t.max;
   return e.max - e.min < t.max - t.min && ([n, i] = [i, n]), { min: n, max: i };
 }
-function nI(t, e) {
+function n3(t, e) {
   return {
     x: yT(t.x, e.x),
     y: yT(t.y, e.y)
   };
 }
-function iI(t, e) {
+function i3(t, e) {
   let n = 0.5;
   const i = Wt(t), r = Wt(e);
   return r > i ? n = /* @__PURE__ */ lc(e.min, e.max - i, t.min) : i > r && (n = /* @__PURE__ */ lc(t.min, t.max - r, e.min)), ji(0, 1, n);
 }
-function sI(t, e) {
+function s3(t, e) {
   const n = {};
   return e.min !== void 0 && (n.min = e.min - t.min), e.max !== void 0 && (n.max = e.max - t.min), n;
 }
 const Jm = 0.35;
-function rI(t = Jm) {
+function r3(t = Jm) {
   return t === !1 ? t = 0 : t === !0 && (t = Jm), {
     x: bT(t, "left", "right"),
     y: bT(t, "top", "bottom")
@@ -20711,8 +20714,8 @@ function bT(t, e, n) {
 function ST(t, e) {
   return typeof t == "number" ? t : t[e] || 0;
 }
-const aI = /* @__PURE__ */ new WeakMap();
-class oI {
+const a3 = /* @__PURE__ */ new WeakMap();
+class o3 {
   constructor(e) {
     this.openDragLock = null, this.isDragging = !1, this.currentDirection = null, this.originPoint = { x: 0, y: 0 }, this.constraints = !1, this.hasMutatedConstraints = !1, this.elastic = vt(), this.latestPointerEvent = null, this.latestPanInfo = null, this.visualElement = e;
   }
@@ -20747,7 +20750,7 @@ class oI {
         return;
       const { offset: E } = y;
       if (T && this.currentDirection === null) {
-        this.currentDirection = cI(E), this.currentDirection !== null && C && C(this.currentDirection);
+        this.currentDirection = c3(E), this.currentDirection !== null && C && C(this.currentDirection);
         return;
       }
       this.updateAxis("x", y.point, E), this.updateAxis("y", y.point, E), this.visualElement.render(), w && w(v, y);
@@ -20795,12 +20798,12 @@ class oI {
       return;
     const o = this.getAxisMotionValue(e);
     let l = this.originPoint[e] + i[e];
-    this.constraints && this.constraints[e] && (l = eI(l, this.constraints[e], this.elastic[e])), o.set(l);
+    this.constraints && this.constraints[e] && (l = e3(l, this.constraints[e], this.elastic[e])), o.set(l);
   }
   resolveConstraints() {
     const { dragConstraints: e, dragElastic: n } = this.getProps(), i = this.visualElement.projection && !this.visualElement.projection.layout ? this.visualElement.projection.measure(!1) : this.visualElement.projection?.layout, r = this.constraints;
-    e && aa(e) ? this.constraints || (this.constraints = this.resolveRefConstraints()) : e && i ? this.constraints = tI(i.layoutBox, e) : this.constraints = !1, this.elastic = rI(n), r !== this.constraints && i && this.constraints && !this.hasMutatedConstraints && Pn((o) => {
-      this.constraints !== !1 && this.getAxisMotionValue(o) && (this.constraints[o] = sI(i.layoutBox[o], this.constraints[o]));
+    e && aa(e) ? this.constraints || (this.constraints = this.resolveRefConstraints()) : e && i ? this.constraints = t3(i.layoutBox, e) : this.constraints = !1, this.elastic = r3(n), r !== this.constraints && i && this.constraints && !this.hasMutatedConstraints && Pn((o) => {
+      this.constraints !== !1 && this.getAxisMotionValue(o) && (this.constraints[o] = s3(i.layoutBox[o], this.constraints[o]));
     });
   }
   resolveRefConstraints() {
@@ -20810,10 +20813,10 @@ class oI {
     const i = e.current, { projection: r } = this.visualElement;
     if (!r || !r.layout)
       return !1;
-    const o = c3(i, r.root, this.visualElement.getTransformPagePoint());
-    let l = nI(r.layout.layoutBox, o);
+    const o = cI(i, r.root, this.visualElement.getTransformPagePoint());
+    let l = n3(r.layout.layoutBox, o);
     if (n) {
-      const u = n(r3(l));
+      const u = n(rI(l));
       this.hasMutatedConstraints = !!u, u && (l = eE(u));
     }
     return l;
@@ -20891,7 +20894,7 @@ class oI {
       const u = this.getAxisMotionValue(l);
       if (u && this.constraints !== !1) {
         const h = u.get();
-        r[l] = iI({ min: h, max: h }, this.constraints[l]);
+        r[l] = i3({ min: h, max: h }, this.constraints[l]);
       }
     });
     const { transformTemplate: o } = this.visualElement.getProps();
@@ -20905,7 +20908,7 @@ class oI {
   addListeners() {
     if (!this.visualElement.current)
       return;
-    aI.set(this.visualElement, this);
+    a3.set(this.visualElement, this);
     const e = this.visualElement.current, n = ec(e, "pointerdown", (h) => {
       const { drag: f, dragListener: p = !0 } = this.getProps();
       f && p && this.start(h);
@@ -20940,13 +20943,13 @@ class oI {
 function Xl(t, e, n) {
   return (e === !0 || e === t) && (n === null || n === t);
 }
-function cI(t, e = 10) {
+function c3(t, e = 10) {
   let n = null;
   return Math.abs(t.y) > e ? n = "y" : Math.abs(t.x) > e && (n = "x"), n;
 }
-class lI extends _s {
+class l3 extends _s {
   constructor(e) {
-    super(e), this.removeGroupControls = Nn, this.removeListeners = Nn, this.controls = new oI(e);
+    super(e), this.removeGroupControls = Nn, this.removeListeners = Nn, this.controls = new o3(e);
   }
   mount() {
     const { dragControls: e } = this.node.getProps();
@@ -20959,7 +20962,7 @@ class lI extends _s {
 const TT = (t) => (e, n) => {
   t && rt.postRender(() => t(e, n));
 };
-class uI extends _s {
+class u3 extends _s {
   constructor() {
     super(...arguments), this.removePointerDownListener = Nn;
   }
@@ -21017,7 +21020,7 @@ const Bo = {
     const n = CT(t, e.target.x), i = CT(t, e.target.y);
     return `${n}% ${i}%`;
   }
-}, dI = {
+}, d3 = {
   correct: (t, { treeScale: e, projectionDelta: n }) => {
     const i = t, r = xs.parse(t);
     if (r.length > 5)
@@ -21029,7 +21032,7 @@ const Bo = {
   }
 };
 let kT = !1;
-class hI extends K.Component {
+class h3 extends K.Component {
   /**
    * This only mounts projection nodes for components that
    * need measuring, we might want to do it for all components
@@ -21037,7 +21040,7 @@ class hI extends K.Component {
    */
   componentDidMount() {
     const { visualElement: e, layoutGroup: n, switchLayoutGroup: i, layoutId: r } = this.props, { projection: o } = e;
-    DL(fI), o && (n.group && n.group.add(o), i && i.register && r && i.register(o), kT && o.root.didUpdate(), o.addEventListener("animationComplete", () => {
+    DL(f3), o && (n.group && n.group.add(o), i && i.register && r && i.register(o), kT && o.root.didUpdate(), o.addEventListener("animationComplete", () => {
       this.safeToRemove();
     }), o.setOptions({
       ...o.options,
@@ -21071,9 +21074,9 @@ class hI extends K.Component {
 }
 function vE(t) {
   const [e, n] = Vw(), i = K.useContext(Wp);
-  return O.jsx(hI, { ...t, layoutGroup: i, switchLayoutGroup: K.useContext(Zw), isPresent: e, safeToRemove: n });
+  return O.jsx(h3, { ...t, layoutGroup: i, switchLayoutGroup: K.useContext(Zw), isPresent: e, safeToRemove: n });
 }
-const fI = {
+const f3 = {
   borderRadius: {
     ...Bo,
     applyTo: [
@@ -21087,14 +21090,14 @@ const fI = {
   borderTopRightRadius: Bo,
   borderBottomLeftRadius: Bo,
   borderBottomRightRadius: Bo,
-  boxShadow: dI
+  boxShadow: d3
 };
-function mI(t, e, n) {
+function m3(t, e, n) {
   const i = Kt(t) ? t : Ta(t);
   return i.start(Rg("", i, e, n)), i.animation;
 }
-const pI = (t, e) => t.depth - e.depth;
-class gI {
+const p3 = (t, e) => t.depth - e.depth;
+class g3 {
   constructor() {
     this.children = [], this.isDirty = !1;
   }
@@ -21105,20 +21108,20 @@ class gI {
     Zp(this.children, e), this.isDirty = !0;
   }
   forEach(e) {
-    this.isDirty && this.children.sort(pI), this.isDirty = !1, this.children.forEach(e);
+    this.isDirty && this.children.sort(p3), this.isDirty = !1, this.children.forEach(e);
   }
 }
-function vI(t, e) {
+function v3(t, e) {
   const n = sn.now(), i = ({ timestamp: r }) => {
     const o = r - n;
     o >= e && (Es(i), t(o - e));
   };
   return rt.setup(i, !0), () => Es(i);
 }
-const yE = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"], yI = yE.length, wT = (t) => typeof t == "string" ? parseFloat(t) : t, ET = (t) => typeof t == "number" || ke.test(t);
-function bI(t, e, n, i, r, o) {
-  r ? (t.opacity = ot(0, n.opacity ?? 1, SI(i)), t.opacityExit = ot(e.opacity ?? 1, 0, TI(i))) : o && (t.opacity = ot(e.opacity ?? 1, n.opacity ?? 1, i));
-  for (let l = 0; l < yI; l++) {
+const yE = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"], y3 = yE.length, wT = (t) => typeof t == "string" ? parseFloat(t) : t, ET = (t) => typeof t == "number" || ke.test(t);
+function b3(t, e, n, i, r, o) {
+  r ? (t.opacity = ot(0, n.opacity ?? 1, S3(i)), t.opacityExit = ot(e.opacity ?? 1, 0, T3(i))) : o && (t.opacity = ot(e.opacity ?? 1, n.opacity ?? 1, i));
+  for (let l = 0; l < y3; l++) {
     const u = `border${yE[l]}Radius`;
     let h = xT(e, u), f = xT(n, u);
     if (h === void 0 && f === void 0)
@@ -21130,7 +21133,7 @@ function bI(t, e, n, i, r, o) {
 function xT(t, e) {
   return t[e] !== void 0 ? t[e] : t.borderRadius;
 }
-const SI = /* @__PURE__ */ bE(0, 0.5, aw), TI = /* @__PURE__ */ bE(0.5, 0.95, Nn);
+const S3 = /* @__PURE__ */ bE(0, 0.5, aw), T3 = /* @__PURE__ */ bE(0.5, 0.95, Nn);
 function bE(t, e, n) {
   return (i) => i < t ? 0 : i > e ? 1 : n(/* @__PURE__ */ lc(t, e, i));
 }
@@ -21146,18 +21149,18 @@ function _T(t, e) {
 function AT(t, e, n, i, r) {
   return t -= e, t = Lu(t, 1 / n, i), r !== void 0 && (t = Lu(t, 1 / r, i)), t;
 }
-function CI(t, e = 0, n = 1, i = 0.5, r, o = t, l = t) {
+function C3(t, e = 0, n = 1, i = 0.5, r, o = t, l = t) {
   if (li.test(e) && (e = parseFloat(e), e = ot(l.min, l.max, e / 100) - l.min), typeof e != "number")
     return;
   let u = ot(o.min, o.max, i);
   t === o && (u -= e), t.min = AT(t.min, e, n, u, r), t.max = AT(t.max, e, n, u, r);
 }
 function OT(t, e, [n, i, r], o, l) {
-  CI(t, e[n], e[i], e[r], e.scale, o, l);
+  C3(t, e[n], e[i], e[r], e.scale, o, l);
 }
-const kI = ["x", "scaleX", "originX"], wI = ["y", "scaleY", "originY"];
+const k3 = ["x", "scaleX", "originX"], w3 = ["y", "scaleY", "originY"];
 function MT(t, e, n, i) {
-  OT(t.x, e, kI, n ? n.x : void 0, i ? i.x : void 0), OT(t.y, e, wI, n ? n.y : void 0, i ? i.y : void 0);
+  OT(t.x, e, k3, n ? n.x : void 0, i ? i.x : void 0), OT(t.y, e, w3, n ? n.y : void 0, i ? i.y : void 0);
 }
 function PT(t) {
   return t.translate === 0 && t.scale === 1;
@@ -21168,7 +21171,7 @@ function SE(t) {
 function DT(t, e) {
   return t.min === e.min && t.max === e.max;
 }
-function EI(t, e) {
+function E3(t, e) {
   return DT(t.x, e.x) && DT(t.y, e.y);
 }
 function NT(t, e) {
@@ -21183,7 +21186,7 @@ function LT(t) {
 function IT(t, e) {
   return t.translate === e.translate && t.scale === e.scale && t.originPoint === e.originPoint;
 }
-class xI {
+class x3 {
   constructor() {
     this.members = [];
   }
@@ -21237,7 +21240,7 @@ class xI {
     this.lead && this.lead.snapshot && (this.lead.snapshot = void 0);
   }
 }
-function RI(t, e, n) {
+function R3(t, e, n) {
   let i = "";
   const r = t.x.translate / e.x, o = t.y.translate / e.y, l = n?.z || 0;
   if ((r || o || l) && (i = `translate3d(${r}px, ${o}px, ${l}px) `), (e.x !== 1 || e.y !== 1) && (i += `scale(${1 / e.x}, ${1 / e.y}) `), n) {
@@ -21247,8 +21250,8 @@ function RI(t, e, n) {
   const u = t.x.scale * e.x, h = t.y.scale * e.y;
   return (u !== 1 || h !== 1) && (i += `scale(${u}, ${h})`), i || "none";
 }
-const Xf = ["", "X", "Y", "Z"], _I = 1e3;
-let AI = 0;
+const Xf = ["", "X", "Y", "Z"], _3 = 1e3;
+let A3 = 0;
 function Qf(t, e, n, i) {
   const { latestValues: r } = e;
   r[t] && (n[t] = r[t], e.setStaticValue(t, 0), i && (i[t] = 0));
@@ -21270,14 +21273,14 @@ function CE(t) {
 function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, checkIsScrollRoot: i, resetTransform: r }) {
   return class {
     constructor(l = {}, u = e?.()) {
-      this.id = AI++, this.animationId = 0, this.animationCommitId = 0, this.children = /* @__PURE__ */ new Set(), this.options = {}, this.isTreeAnimating = !1, this.isAnimationBlocked = !1, this.isLayoutDirty = !1, this.isProjectionDirty = !1, this.isSharedProjectionDirty = !1, this.isTransformDirty = !1, this.updateManuallyBlocked = !1, this.updateBlockedByResize = !1, this.isUpdating = !1, this.isSVG = !1, this.needsReset = !1, this.shouldResetTransform = !1, this.hasCheckedOptimisedAppear = !1, this.treeScale = { x: 1, y: 1 }, this.eventHandlers = /* @__PURE__ */ new Map(), this.hasTreeAnimated = !1, this.updateScheduled = !1, this.scheduleUpdate = () => this.update(), this.projectionUpdateScheduled = !1, this.checkUpdateFailed = () => {
+      this.id = A3++, this.animationId = 0, this.animationCommitId = 0, this.children = /* @__PURE__ */ new Set(), this.options = {}, this.isTreeAnimating = !1, this.isAnimationBlocked = !1, this.isLayoutDirty = !1, this.isProjectionDirty = !1, this.isSharedProjectionDirty = !1, this.isTransformDirty = !1, this.updateManuallyBlocked = !1, this.updateBlockedByResize = !1, this.isUpdating = !1, this.isSVG = !1, this.needsReset = !1, this.shouldResetTransform = !1, this.hasCheckedOptimisedAppear = !1, this.treeScale = { x: 1, y: 1 }, this.eventHandlers = /* @__PURE__ */ new Map(), this.hasTreeAnimated = !1, this.updateScheduled = !1, this.scheduleUpdate = () => this.update(), this.projectionUpdateScheduled = !1, this.checkUpdateFailed = () => {
         this.isUpdating && (this.isUpdating = !1, this.clearAllSnapshots());
       }, this.updateProjection = () => {
-        this.projectionUpdateScheduled = !1, this.nodes.forEach(PI), this.nodes.forEach(II), this.nodes.forEach(UI), this.nodes.forEach(DI);
+        this.projectionUpdateScheduled = !1, this.nodes.forEach(P3), this.nodes.forEach(I3), this.nodes.forEach(U3), this.nodes.forEach(D3);
       }, this.resolvedRelativeTargetAt = 0, this.hasProjected = !1, this.isVisible = !0, this.animationProgress = 0, this.sharedNodes = /* @__PURE__ */ new Map(), this.latestValues = l, this.root = u ? u.root || u : this, this.path = u ? [...u.path, u] : [], this.parent = u, this.depth = u ? u.depth + 1 : 0;
       for (let h = 0; h < this.path.length; h++)
         this.path[h].shouldResetTransform = !0;
-      this.root === this && (this.nodes = new gI());
+      this.root === this && (this.nodes = new g3());
     }
     addEventListener(l, u) {
       return this.eventHandlers.has(l) || this.eventHandlers.set(l, new tg()), this.eventHandlers.get(l).add(u);
@@ -21304,7 +21307,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
           v = window.innerWidth;
         }), t(l, () => {
           const S = window.innerWidth;
-          S !== v && (v = S, this.root.updateBlockedByResize = !0, p && p(), p = vI(y, 250), au.hasAnimatedSinceResize && (au.hasAnimatedSinceResize = !1, this.nodes.forEach(BT)));
+          S !== v && (v = S, this.root.updateBlockedByResize = !0, p && p(), p = v3(y, 250), au.hasAnimatedSinceResize && (au.hasAnimatedSinceResize = !1, this.nodes.forEach(BT)));
         });
       }
       u && this.root.registerSharedNode(u, this), this.options.animate !== !1 && f && (u || h) && this.addEventListener("didUpdate", ({ delta: p, hasLayoutChanged: v, hasRelativeLayoutChanged: y, layout: S }) => {
@@ -21312,7 +21315,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
           this.target = void 0, this.relativeTarget = void 0;
           return;
         }
-        const T = this.options.transition || f.getDefaultTransition() || qI, { onLayoutAnimationStart: C, onLayoutAnimationComplete: w } = f.getProps(), E = !this.targetLayout || !TE(this.targetLayout, S), N = !v && y;
+        const T = this.options.transition || f.getDefaultTransition() || q3, { onLayoutAnimationStart: C, onLayoutAnimationComplete: w } = f.getProps(), E = !this.targetLayout || !TE(this.targetLayout, S), N = !v && y;
         if (this.options.layoutRoot || this.resumeFrom || N || v && (E || !this.currentAnimation)) {
           this.resumeFrom && (this.resumingFrom = this.resumeFrom, this.resumingFrom.resumingFrom = void 0);
           const M = {
@@ -21346,7 +21349,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
     }
     // Note: currently only running on root node
     startUpdate() {
-      this.isUpdateBlocked() || (this.isUpdating = !0, this.nodes && this.nodes.forEach(jI), this.animationId++);
+      this.isUpdateBlocked() || (this.isUpdating = !0, this.nodes && this.nodes.forEach(j3), this.animationId++);
     }
     getTransformTemplate() {
       const { visualElement: l } = this.options;
@@ -21379,7 +21382,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
         this.nodes.forEach(jT);
         return;
       }
-      this.animationCommitId = this.animationId, this.isUpdating ? (this.isUpdating = !1, this.nodes.forEach(LI), this.nodes.forEach(OI), this.nodes.forEach(MI)) : this.nodes.forEach(jT), this.clearAllSnapshots();
+      this.animationCommitId = this.animationId, this.isUpdating ? (this.isUpdating = !1, this.nodes.forEach(L3), this.nodes.forEach(O3), this.nodes.forEach(M3)) : this.nodes.forEach(jT), this.clearAllSnapshots();
       const u = sn.now();
       Vt.delta = ji(0, 1e3 / 60, u - Vt.timestamp), Vt.timestamp = u, Vt.isProcessing = !0, Bf.update.process(Vt), Bf.preRender.process(Vt), Bf.render.process(Vt), Vt.isProcessing = !1;
     }
@@ -21387,7 +21390,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
       this.updateScheduled || (this.updateScheduled = !0, gg.read(this.scheduleUpdate));
     }
     clearAllSnapshots() {
-      this.nodes.forEach(NI), this.sharedNodes.forEach(BI);
+      this.nodes.forEach(N3), this.sharedNodes.forEach(B3);
     }
     scheduleUpdateProjection() {
       this.projectionUpdateScheduled || (this.projectionUpdateScheduled = !0, rt.preRender(this.updateProjection, !1, !0));
@@ -21436,7 +21439,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
     measure(l = !0) {
       const u = this.measurePageBox();
       let h = this.removeElementScroll(u);
-      return l && (h = this.removeTransform(h)), zI(h), {
+      return l && (h = this.removeTransform(h)), z3(h), {
         animationId: this.root.animationId,
         measuredBox: u,
         layoutBox: h,
@@ -21449,7 +21452,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
       if (!l)
         return vt();
       const u = l.measureViewportBox();
-      if (!(this.scroll?.wasRoot || this.path.some(HI))) {
+      if (!(this.scroll?.wasRoot || this.path.some(H3))) {
         const { scroll: f } = this.root;
         f && (oa(u.x, f.offset.x), oa(u.y, f.offset.y));
       }
@@ -21518,7 +21521,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
           const y = this.getClosestProjectingParent();
           y && y.layout && this.animationProgress !== 1 ? (this.relativeParent = y, this.forceRelativeParentToResolveTarget(), this.relativeTarget = vt(), this.relativeTargetOrigin = vt(), nc(this.relativeTargetOrigin, this.layout.layoutBox, y.layout.layoutBox), Mn(this.relativeTarget, this.relativeTargetOrigin)) : this.relativeParent = this.relativeTarget = void 0;
         }
-        if (!(!this.relativeTarget && !this.targetDelta) && (this.target || (this.target = vt(), this.targetWithTransforms = vt()), this.relativeTarget && this.relativeTargetOrigin && this.relativeParent && this.relativeParent.target ? (this.forceRelativeParentToResolveTarget(), Q3(this.target, this.relativeTarget, this.relativeParent.target)) : this.targetDelta ? (this.resumingFrom ? this.target = this.applyTransform(this.layout.layoutBox) : Mn(this.target, this.layout.layoutBox), nE(this.target, this.targetDelta)) : Mn(this.target, this.layout.layoutBox), this.attemptToResolveRelativeTarget)) {
+        if (!(!this.relativeTarget && !this.targetDelta) && (this.target || (this.target = vt(), this.targetWithTransforms = vt()), this.relativeTarget && this.relativeTargetOrigin && this.relativeParent && this.relativeParent.target ? (this.forceRelativeParentToResolveTarget(), QI(this.target, this.relativeTarget, this.relativeParent.target)) : this.targetDelta ? (this.resumingFrom ? this.target = this.applyTransform(this.layout.layoutBox) : Mn(this.target, this.layout.layoutBox), nE(this.target, this.targetDelta)) : Mn(this.target, this.layout.layoutBox), this.attemptToResolveRelativeTarget)) {
           this.attemptToResolveRelativeTarget = !1;
           const y = this.getClosestProjectingParent();
           y && !!y.resumingFrom == !!this.resumingFrom && !y.options.layoutScroll && y.target && this.animationProgress !== 1 ? (this.relativeParent = y, this.forceRelativeParentToResolveTarget(), this.relativeTarget = vt(), this.relativeTargetOrigin = vt(), nc(this.relativeTargetOrigin, this.target, y.target), Mn(this.relativeTarget, this.relativeTargetOrigin)) : this.relativeParent = this.relativeTarget = void 0;
@@ -21542,7 +21545,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
         return;
       Mn(this.layoutCorrected, this.layout.layoutBox);
       const v = this.treeScale.x, y = this.treeScale.y;
-      o3(this.layoutCorrected, this.treeScale, this.path, u), l.layout && !l.target && (this.treeScale.x !== 1 || this.treeScale.y !== 1) && (l.target = l.layout.layoutBox, l.targetWithTransforms = vt());
+      oI(this.layoutCorrected, this.treeScale, this.path, u), l.layout && !l.target && (this.treeScale.x !== 1 || this.treeScale.y !== 1) && (l.target = l.layout.layoutBox, l.targetWithTransforms = vt());
       const { target: S } = l;
       if (!S) {
         this.prevProjectionDelta && (this.createProjectionDeltas(), this.scheduleRender());
@@ -21569,17 +21572,17 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
     setAnimationOrigin(l, u = !1) {
       const h = this.snapshot, f = h ? h.latestValues : {}, p = { ...this.latestValues }, v = la();
       (!this.relativeParent || !this.relativeParent.options.layoutRoot) && (this.relativeTarget = this.relativeTargetOrigin = void 0), this.attemptToResolveRelativeTarget = !u;
-      const y = vt(), S = h ? h.source : void 0, T = this.layout ? this.layout.source : void 0, C = S !== T, w = this.getStack(), E = !w || w.members.length <= 1, N = !!(C && !E && this.options.crossfade === !0 && !this.path.some(FI));
+      const y = vt(), S = h ? h.source : void 0, T = this.layout ? this.layout.source : void 0, C = S !== T, w = this.getStack(), E = !w || w.members.length <= 1, N = !!(C && !E && this.options.crossfade === !0 && !this.path.some(F3));
       this.animationProgress = 0;
       let M;
       this.mixTargetDelta = (x) => {
         const _ = x / 1e3;
-        VT(v.x, l.x, _), VT(v.y, l.y, _), this.setTargetDelta(v), this.relativeTarget && this.relativeTargetOrigin && this.layout && this.relativeParent && this.relativeParent.layout && (nc(y, this.layout.layoutBox, this.relativeParent.layout.layoutBox), VI(this.relativeTarget, this.relativeTargetOrigin, y, _), M && EI(this.relativeTarget, M) && (this.isProjectionDirty = !1), M || (M = vt()), Mn(M, this.relativeTarget)), C && (this.animationValues = p, bI(p, f, this.latestValues, _, N, E)), this.root.scheduleUpdateProjection(), this.scheduleRender(), this.animationProgress = _;
+        VT(v.x, l.x, _), VT(v.y, l.y, _), this.setTargetDelta(v), this.relativeTarget && this.relativeTargetOrigin && this.layout && this.relativeParent && this.relativeParent.layout && (nc(y, this.layout.layoutBox, this.relativeParent.layout.layoutBox), V3(this.relativeTarget, this.relativeTargetOrigin, y, _), M && E3(this.relativeTarget, M) && (this.isProjectionDirty = !1), M || (M = vt()), Mn(M, this.relativeTarget)), C && (this.animationValues = p, b3(p, f, this.latestValues, _, N, E)), this.root.scheduleUpdateProjection(), this.scheduleRender(), this.animationProgress = _;
       }, this.mixTargetDelta(this.options.layoutRoot ? 1e3 : 0);
     }
     startAnimation(l) {
       this.notifyListeners("animationStart"), this.currentAnimation?.stop(), this.resumingFrom?.currentAnimation?.stop(), this.pendingAnimation && (Es(this.pendingAnimation), this.pendingAnimation = void 0), this.pendingAnimation = rt.update(() => {
-        au.hasAnimatedSinceResize = !0, this.motionValue || (this.motionValue = Ta(0)), this.currentAnimation = mI(this.motionValue, [0, 1e3], {
+        au.hasAnimatedSinceResize = !0, this.motionValue || (this.motionValue = Ta(0)), this.currentAnimation = m3(this.motionValue, [0, 1e3], {
           ...l,
           velocity: 0,
           isSync: !0,
@@ -21600,7 +21603,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
       l && l.exitAnimationComplete(), this.resumingFrom = this.currentAnimation = this.animationValues = void 0, this.notifyListeners("animationComplete");
     }
     finishAnimation() {
-      this.currentAnimation && (this.mixTargetDelta && this.mixTargetDelta(_I), this.currentAnimation.stop()), this.completeAnimation();
+      this.currentAnimation && (this.mixTargetDelta && this.mixTargetDelta(_3), this.currentAnimation.stop()), this.completeAnimation();
     }
     applyTransformsToTarget() {
       const l = this.getLead();
@@ -21617,7 +21620,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
       }
     }
     registerSharedNode(l, u) {
-      this.sharedNodes.has(l) || this.sharedNodes.set(l, new xI()), this.sharedNodes.get(l).add(u);
+      this.sharedNodes.has(l) || this.sharedNodes.set(l, new x3()), this.sharedNodes.get(l).add(u);
       const f = u.options.initialPromotionConfig;
       u.promote({
         transition: f ? f.transition : void 0,
@@ -21686,7 +21689,7 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
       l.visibility = "";
       const p = f.animationValues || f.latestValues;
       this.applyTransformsToTarget();
-      let v = RI(this.projectionDeltaWithTransform, this.treeScale, p);
+      let v = R3(this.projectionDeltaWithTransform, this.treeScale, p);
       h && (v = h(p, v)), l.transform = v;
       const { x: y, y: S } = this.projectionDelta;
       l.transformOrigin = `${y.origin * 100}% ${S.origin * 100}% 0`, f.animationValues ? l.opacity = f === this ? p.opacity ?? this.latestValues.opacity ?? 1 : this.preserveOpacity ? this.latestValues.opacity : p.opacityExit : l.opacity = f === this ? p.opacity !== void 0 ? p.opacity : "" : p.opacityExit !== void 0 ? p.opacityExit : 0;
@@ -21712,10 +21715,10 @@ function kE({ attachResizeListener: t, defaultParent: e, measureScroll: n, check
     }
   };
 }
-function OI(t) {
+function O3(t) {
   t.updateLayout();
 }
-function MI(t) {
+function M3(t) {
   const e = t.resumeFrom?.snapshot || t.snapshot;
   if (t.isLead() && t.layout && e && t.hasListeners("didUpdate")) {
     const { layoutBox: n, measuredBox: i } = t.layout, { animationType: r } = t.options, o = e.source !== t.layout.source;
@@ -21758,13 +21761,13 @@ function MI(t) {
   }
   t.options.transition = void 0;
 }
-function PI(t) {
+function P3(t) {
   t.parent && (t.isProjecting() || (t.isProjectionDirty = t.parent.isProjectionDirty), t.isSharedProjectionDirty || (t.isSharedProjectionDirty = !!(t.isProjectionDirty || t.parent.isProjectionDirty || t.parent.isSharedProjectionDirty)), t.isTransformDirty || (t.isTransformDirty = t.parent.isTransformDirty));
 }
-function DI(t) {
+function D3(t) {
   t.isProjectionDirty = t.isSharedProjectionDirty = t.isTransformDirty = !1;
 }
-function NI(t) {
+function N3(t) {
   t.clearSnapshot();
 }
 function UT(t) {
@@ -21773,23 +21776,23 @@ function UT(t) {
 function jT(t) {
   t.isLayoutDirty = !1;
 }
-function LI(t) {
+function L3(t) {
   const { visualElement: e } = t.options;
   e && e.getProps().onBeforeLayoutMeasure && e.notify("BeforeLayoutMeasure"), t.resetTransform();
 }
 function BT(t) {
   t.finishAnimation(), t.targetDelta = t.relativeTarget = t.target = void 0, t.isProjectionDirty = !0;
 }
-function II(t) {
+function I3(t) {
   t.resolveTargetDelta();
 }
-function UI(t) {
+function U3(t) {
   t.calcProjection();
 }
-function jI(t) {
+function j3(t) {
   t.resetSkewAndRotation();
 }
-function BI(t) {
+function B3(t) {
   t.removeLeadSnapshot();
 }
 function VT(t, e, n) {
@@ -21798,29 +21801,29 @@ function VT(t, e, n) {
 function FT(t, e, n, i) {
   t.min = ot(e.min, n.min, i), t.max = ot(e.max, n.max, i);
 }
-function VI(t, e, n, i) {
+function V3(t, e, n, i) {
   FT(t.x, e.x, n.x, i), FT(t.y, e.y, n.y, i);
 }
-function FI(t) {
+function F3(t) {
   return t.animationValues && t.animationValues.opacityExit !== void 0;
 }
-const qI = {
+const q3 = {
   duration: 0.45,
   ease: [0.4, 0, 0.1, 1]
 }, qT = (t) => typeof navigator < "u" && navigator.userAgent && navigator.userAgent.toLowerCase().includes(t), zT = qT("applewebkit/") && !qT("chrome/") ? Math.round : Nn;
 function HT(t) {
   t.min = zT(t.min), t.max = zT(t.max);
 }
-function zI(t) {
+function z3(t) {
   HT(t.x), HT(t.y);
 }
 function wE(t, e, n) {
-  return t === "position" || t === "preserve-aspect" && !X3(LT(e), LT(n), 0.2);
+  return t === "position" || t === "preserve-aspect" && !XI(LT(e), LT(n), 0.2);
 }
-function HI(t) {
+function H3(t) {
   return t !== t.root && t.scroll?.wasRoot;
 }
-const GI = kE({
+const G3 = kE({
   attachResizeListener: (t, e) => pc(t, "resize", e),
   measureScroll: () => ({
     x: document.documentElement.scrollLeft || document.body.scrollLeft,
@@ -21836,7 +21839,7 @@ const GI = kE({
   }),
   defaultParent: () => {
     if (!Jf.current) {
-      const t = new GI({});
+      const t = new G3({});
       t.mount(window), t.setOptions({ layoutScroll: !0 }), Jf.current = t;
     }
     return Jf.current;
@@ -21845,12 +21848,12 @@ const GI = kE({
     t.style.transform = e !== void 0 ? e : "none";
   },
   checkIsScrollRoot: (t) => window.getComputedStyle(t).position === "fixed"
-}), KI = {
+}), K3 = {
   pan: {
-    Feature: uI
+    Feature: u3
   },
   drag: {
-    Feature: lI,
+    Feature: l3,
     ProjectionNode: EE,
     MeasureLayout: vE
   }
@@ -21861,7 +21864,7 @@ function GT(t, e, n) {
   const r = "onHover" + n, o = i[r];
   o && rt.postRender(() => o(e, Rc(e)));
 }
-class YI extends _s {
+class Y3 extends _s {
   mount() {
     const { current: e } = this.node;
     e && (this.unmount = mL(e, (n, i) => (GT(this.node, i, "Start"), (r) => GT(this.node, r, "End"))));
@@ -21869,7 +21872,7 @@ class YI extends _s {
   unmount() {
   }
 }
-class WI extends _s {
+class W3 extends _s {
   constructor() {
     super(...arguments), this.isActive = !1;
   }
@@ -21899,7 +21902,7 @@ function KT(t, e, n) {
   const r = "onTap" + (n === "End" ? "" : n), o = i[r];
   o && rt.postRender(() => o(e, Rc(e)));
 }
-class XI extends _s {
+class X3 extends _s {
   mount() {
     const { current: e } = this.node;
     e && (this.unmount = yL(e, (n, i) => (KT(this.node, i, "Start"), (r, { success: o }) => KT(this.node, r, o ? "End" : "Cancel")), { useGlobalTarget: this.node.props.globalTapTarget }));
@@ -21907,20 +21910,20 @@ class XI extends _s {
   unmount() {
   }
 }
-const Zm = /* @__PURE__ */ new WeakMap(), Zf = /* @__PURE__ */ new WeakMap(), QI = (t) => {
+const Zm = /* @__PURE__ */ new WeakMap(), Zf = /* @__PURE__ */ new WeakMap(), Q3 = (t) => {
   const e = Zm.get(t.target);
   e && e(t);
-}, JI = (t) => {
-  t.forEach(QI);
+}, J3 = (t) => {
+  t.forEach(Q3);
 };
-function ZI({ root: t, ...e }) {
+function Z3({ root: t, ...e }) {
   const n = t || document;
   Zf.has(n) || Zf.set(n, {});
   const i = Zf.get(n), r = JSON.stringify(e);
-  return i[r] || (i[r] = new IntersectionObserver(JI, { root: t, ...e })), i[r];
+  return i[r] || (i[r] = new IntersectionObserver(J3, { root: t, ...e })), i[r];
 }
-function $I(t, e, n) {
-  const i = ZI(e);
+function $3(t, e, n) {
+  const i = Z3(e);
   return Zm.set(t, n), i.observe(t), () => {
     Zm.delete(t), i.unobserve(t);
   };
@@ -21947,7 +21950,7 @@ class tU extends _s {
       const { onViewportEnter: p, onViewportLeave: v } = this.node.getProps(), y = f ? p : v;
       y && y(h);
     };
-    return $I(this.node.current, l, u);
+    return $3(this.node.current, l, u);
   }
   mount() {
     this.startObserver();
@@ -21969,13 +21972,13 @@ const iU = {
     Feature: tU
   },
   tap: {
-    Feature: XI
+    Feature: X3
   },
   focus: {
-    Feature: WI
+    Feature: W3
   },
   hover: {
-    Feature: YI
+    Feature: Y3
   }
 }, sU = {
   layout: {
@@ -21983,11 +21986,11 @@ const iU = {
     MeasureLayout: vE
   }
 }, rU = {
-  ...z3,
+  ...zI,
   ...iU,
-  ...KI,
+  ...K3,
   ...sU
-}, Je = /* @__PURE__ */ s3(rU, v3), xE = {
+}, Je = /* @__PURE__ */ sI(rU, vI), xE = {
   hidden: {
     opacity: 0,
     scale: 0.8,
