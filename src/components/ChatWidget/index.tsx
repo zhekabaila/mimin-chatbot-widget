@@ -524,6 +524,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       currentResponseMsg={currentResponseMsg}
                       loading={loading}
                       fetching={fetching}
+                      isWebsite={config?.widgetType === "website"}
                     />
                     <ChatInput
                       onSendMessage={(message) => {

@@ -7,7 +7,8 @@ export const ChatContent: React.FC<{
   currentResponseMsg: string;
   loading: boolean;
   fetching: boolean;
-}> = ({ messages, currentResponseMsg, loading, fetching }) => {
+  isWebsite?: boolean;
+}> = ({ messages, currentResponseMsg, loading, fetching, isWebsite }) => {
   const bottomRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -56,7 +57,7 @@ export const ChatContent: React.FC<{
               date={new Date()}
             />
           )}
-        {loading && !currentResponseMsg && (
+        {loading && !currentResponseMsg && !isWebsite && (
           <BubbleChat thinking={true} date={new Date()} />
         )}
       </div>

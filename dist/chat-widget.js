@@ -17075,11 +17075,11 @@ const Gl = ({ message: t, isUser: e = !1, thinking: n = !1, date: i }) => {
       ]
     }
   ) : (console.error("message is null!"), null);
-}, SD = ({ messages: t, currentResponseMsg: e, loading: n, fetching: i }) => {
-  const r = Yn.useRef(null);
+}, SD = ({ messages: t, currentResponseMsg: e, loading: n, fetching: i, isWebsite: r }) => {
+  const o = Yn.useRef(null);
   return Yn.useEffect(() => {
     setTimeout(() => {
-      r.current?.scrollIntoView({
+      o.current?.scrollIntoView({
         behavior: "smooth",
         block: "end"
       });
@@ -17091,24 +17091,24 @@ const Gl = ({ message: t, isUser: e = !1, thinking: n = !1, date: i }) => {
       style: { overflowAnchor: "none" },
       children: [
         /* @__PURE__ */ O.jsxs("div", { className: "mimin-flex mimin-flex-col mimin-gap-9", children: [
-          /* @__PURE__ */ O.jsx("div", { className: "mimin-flex mimin-flex-col-reverse mimin-gap-9", children: t.map((o, l) => /* @__PURE__ */ O.jsxs("div", { className: "mimin-flex mimin-flex-col mimin-gap-6", children: [
-            o.human && o.human.content && /* @__PURE__ */ O.jsx(
+          /* @__PURE__ */ O.jsx("div", { className: "mimin-flex mimin-flex-col-reverse mimin-gap-9", children: t.map((l, u) => /* @__PURE__ */ O.jsxs("div", { className: "mimin-flex mimin-flex-col mimin-gap-6", children: [
+            l.human && l.human.content && /* @__PURE__ */ O.jsx(
               Gl,
               {
-                message: o.human.content,
+                message: l.human.content,
                 isUser: !0,
-                date: o.date
+                date: l.date
               }
             ),
-            o.ai && o.ai.content && /* @__PURE__ */ O.jsx(
+            l.ai && l.ai.content && /* @__PURE__ */ O.jsx(
               Gl,
               {
-                message: o.ai.content,
+                message: l.ai.content,
                 isUser: !1,
-                date: o.date
+                date: l.date
               }
             )
-          ] }, l)) }),
+          ] }, u)) }),
           !i && e && t.length > 0 && !t[0]?.ai && /* @__PURE__ */ O.jsx(
             Gl,
             {
@@ -17117,9 +17117,9 @@ const Gl = ({ message: t, isUser: e = !1, thinking: n = !1, date: i }) => {
               date: /* @__PURE__ */ new Date()
             }
           ),
-          n && !e && /* @__PURE__ */ O.jsx(Gl, { thinking: !0, date: /* @__PURE__ */ new Date() })
+          n && !e && !r && /* @__PURE__ */ O.jsx(Gl, { thinking: !0, date: /* @__PURE__ */ new Date() })
         ] }),
-        /* @__PURE__ */ O.jsx("div", { ref: r, id: "bottom-ref", className: "mimin-pb-9" })
+        /* @__PURE__ */ O.jsx("div", { ref: o, id: "bottom-ref", className: "mimin-pb-9" })
       ]
     }
   );
@@ -42304,7 +42304,8 @@ const s5 = {
                     messages: se,
                     currentResponseMsg: S,
                     loading: i,
-                    fetching: o
+                    fetching: o,
+                    isWebsite: t?.widgetType === "website"
                   }
                 ),
                 /* @__PURE__ */ O.jsx(
