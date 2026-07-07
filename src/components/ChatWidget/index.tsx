@@ -90,8 +90,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     setIsCallVisible(!isCallVisible);
   };
 
-  const handleSendMessage = async (message: string) => {
-    if (!phoneOrIP) return;
+  const handleSendMessage = async (message: string, media?: { type: string; name: string; data: string }[]) => {
+    console.log("handleSendMessage triggered", { message, media, phoneOrIP });
+    if (!phoneOrIP) {
+      console.warn("handleSendMessage aborted: phoneOrIP is falsy");
+      return;
+    }
     cancelSendMessage();
     setLoading(true);
 
@@ -121,7 +125,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             id: crypto.randomUUID(),
             reply_to: "",
             text: message,
-            media: [],
+            media: media || [],
           },
         };
 
@@ -143,13 +147,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         let name = phoneOrIP.name;
         if (!name) name = navigator.userAgent;
 
+        const mediaItem = media?.[0];
         const chatbotPayload = {
           name,
           phone: phoneOrIP.value,
           message_id: crypto.randomUUID(),
           message,
-          media_type: "text",
-          media: "",
+          media_type: mediaItem ? mediaItem.type : "text",
+          media: mediaItem ? mediaItem.data : "",
           type: chatType || "",
         };
 
@@ -427,11 +432,21 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           }
         }
       } else {
-        const { isError, errorMessage, ip } = await getClientInfo();
-        if (isError) throw Error(errorMessage);
-        phoneOrIP = { name: '', value: ip! }
+        try {
+          const { isError, errorMessage, ip } = await getClientInfo();
+          if (isError) {
+            console.warn("Failed to get client IP, using fallback:", errorMessage);
+            phoneOrIP = { name: '', value: "127.0.0.1" };
+          } else {
+            phoneOrIP = { name: '', value: ip! };
+          }
+        } catch (err) {
+          console.warn("Error getting client IP, using fallback:", err);
+          phoneOrIP = { name: '', value: "127.0.0.1" };
+        }
       }
 
+      console.log("ChatWidget setting phoneOrIP:", phoneOrIP);
       setPhoneOrIP(phoneOrIP);
     })();
   }, [config]);
@@ -541,7 +556,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       isWebsite={config?.widgetType === "website"}
                     />
                     <ChatInput
-                      onSendMessage={(message) => {
+                      onSendMessage={(message, media) => {
                         setCurrentResponseMsg("");
                         message = message.trim().replaceAll(/\n\n+/g, "\n\n");
                         const newInteraction = {
@@ -549,6 +564,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                             content: message,
                             additional_kwargs: {},
                             example: false,
+                            media: media,
                           },
                           date: new Date(),
                           id: crypto.randomUUID(),
@@ -556,7 +572,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
                         addInteraction(newInteraction);
 
-                        handleSendMessage(message);
+                        handleSendMessage(message, media);
                       }}
                       loading={loading}
                       fetching={fetching}

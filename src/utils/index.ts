@@ -28,3 +28,40 @@ export const blobToBase64 = (blob: Blob): Promise<string> => {
     reader.readAsDataURL(blob);
   });
 };
+
+export const convertToBase64 = (
+  input: File | Blob,
+  fileName?: string
+) => {
+  return new Promise<{
+    type: "image" | "video" | "audio" | "document";
+    name: string;
+    data: string;
+  }>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const mime = input.type || "";
+      const type = mime.startsWith("image/")
+        ? "image"
+        : mime.startsWith("video/")
+          ? "video"
+          : mime.startsWith("audio/")
+            ? "audio"
+            : "document";
+
+      resolve({
+        type,
+        name:
+          input instanceof File
+            ? input.name
+            : fileName || "file",
+        data: reader.result as string,
+      });
+    };
+
+    reader.onerror = reject;
+
+    reader.readAsDataURL(input);
+  });
+};

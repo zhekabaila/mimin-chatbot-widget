@@ -67,6 +67,7 @@ export interface Credentials {
   apiKey?: string;
   username?: string;
   websiteId?: string;
+  apiUrl?: string;
 }
 
 export interface ChatbotConfig {

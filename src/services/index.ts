@@ -1,6 +1,8 @@
 import axios, { type AxiosInstance } from "axios";
 import { ENV } from "../config/environment";
 
+import { useConfigStore } from "../hooks/config-store";
+
 type typeAPIURL = 'customer' | 'chatbot' | 'openai';
 export function API(type: 'axios', typeAPI: typeAPIURL): AxiosInstance;
 export function API(type: 'fetch', typeAPI: typeAPIURL): (url: string, options?: RequestInit) => Promise<Response>;
@@ -9,7 +11,8 @@ export function API(
   type: 'axios' | 'fetch',
   typeAPI: typeAPIURL
 ) {
-  const customerAPI = ENV.NEXT_PUBLIC_CUSTOMER_API;
+  const config = useConfigStore.getState().config;
+  const customerAPI = config?.credentials?.apiUrl || ENV.NEXT_PUBLIC_CUSTOMER_API;
   const chatbotAPI = ENV.NEXT_PUBLIC_CHATBOT_URL;
   const openaiAPI = ENV.NEXT_PUBLIC_OPENAI_URL;
 
