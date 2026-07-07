@@ -24,8 +24,8 @@ const RegisterSection = ({ onClickSignin }: IProps) => {
     <>
       <div className="mimin-flex mimin-justify-center mimin-items-center mimin-w-full mimin-h-auto">
         <img
-          src="https://res.cloudinary.com/dctqloe37/image/upload/v1752455653/undraw_chat_qmyo_1_wwzcjj.svg"
-          alt=" "
+          src="/images/undraw_chat.svg"
+          alt="Chat Image"
           width={1000}
           height={1000}
           loading="lazy"

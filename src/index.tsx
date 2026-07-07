@@ -13,7 +13,6 @@ export interface ChatbotInterface {
 const Chatbot: ChatbotInterface = {
   init: async function (config: ChatbotConfig = {}) {
     try {
-      console.log("INIT V2 INDEX>TSX");
       // Inject required styles
       injectStyle();
 
@@ -81,7 +80,6 @@ const Chatbot: ChatbotInterface = {
         </>
       );
 
-      // console.log("Mimin Chatbot React initialized successfully");
     } catch (error) {
       console.error("Failed to initialize Mimin Chatbot React:", error);
     }

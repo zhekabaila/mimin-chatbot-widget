@@ -147,7 +147,7 @@ function App() {
           button: {
             backgroundColor: "#ffffff",
             textColor: "#0096a2",
-            iconSrc: "https://appstaging.mimin.io/favicon.ico",
+            iconSrc: "/icons/favicon.ico",
             tooltip: "Ask Mimin",
           },
           chatWindow: {
@@ -155,7 +155,7 @@ function App() {
             title: "Mimin AI",
             titleColor: "#ffffff",
             titleAvatarSrc:
-              "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg",
+              "/icons/agent.jpg",
             width: "330px",
             height: "600px",
             isActiveCall: true,

@@ -301,7 +301,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
     socket.on("connect", () => {
       if (socket.connected) {
-        if (chatHistoryId) socket.emit("joinRoom", chatHistoryId);
+        if (chatHistoryId) {
+          socket.emit("joinRoom", chatHistoryId); 
+        }
         if (config?.credentials?.websiteId && phoneOrIP?.value) {
           socket.emit("joinRoom", `${config.credentials.websiteId}-${phoneOrIP.value}`);
         }
@@ -444,13 +446,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           <img
             src={
               config?.theme?.button?.iconSrc ||
-              "https://appstaging.mimin.io/favicon.ico"
+              "/icons/favicon.ico"
             }
             onError={(e) => {
               // Ganti gambar ke default jika error load gambar
               const target = e.target as HTMLImageElement;
               target.onerror = null; // Hindari infinite loop jika default image juga error
-              target.src = "https://appstaging.mimin.io/favicon.ico";
+              target.src = "/icons/favicon.ico";
             }}
             alt=" "
             className="mimin-w-4 mimin-h-auto"

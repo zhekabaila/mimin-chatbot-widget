@@ -12501,8 +12501,8 @@ const Ok = async () => {
     /* @__PURE__ */ O.jsx("div", { className: "mimin-flex mimin-justify-center mimin-items-center mimin-w-full mimin-h-auto", children: /* @__PURE__ */ O.jsx(
       "img",
       {
-        src: "https://res.cloudinary.com/dctqloe37/image/upload/v1752455653/undraw_chat_qmyo_1_wwzcjj.svg",
-        alt: " ",
+        src: "/images/undraw_chat.svg",
+        alt: "Chat Image",
         width: 1e3,
         height: 1e3,
         loading: "lazy",
@@ -12868,11 +12868,11 @@ const OM = ({
           /* @__PURE__ */ O.jsx("div", { className: "mimin-flex mimin-items-center mimin-justify-center mimin-w-9 mimin-h-9 mimin-rounded-full mimin-bg-white", children: /* @__PURE__ */ O.jsx(
             "img",
             {
-              src: n?.theme?.chatWindow?.header?.avatarSrc || "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg",
+              src: n?.theme?.chatWindow?.header?.avatarSrc || "/icons/agent.jpg",
               alt: " ",
               onError: (o) => {
                 const l = o.target;
-                l.onerror = null, l.src = "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg";
+                l.onerror = null, l.src = "/icons/agent.jpg";
               },
               className: "mimin-w-6 mimin-h-6 mimin-rounded-full"
             }
@@ -17226,11 +17226,11 @@ const kD = ({
           /* @__PURE__ */ O.jsx(
             "img",
             {
-              src: e?.theme?.chatWindow?.greating?.avatar || "https://res.cloudinary.com/dctqloe37/image/upload/v1752571979/Icon_AI_Agent_lrdrhr.png",
+              src: e?.theme?.chatWindow?.greating?.avatar || "/icons/agent.jpg",
               alt: " ",
               onError: (n) => {
                 const i = n.target;
-                i.onerror = null, i.src = "https://res.cloudinary.com/dctqloe37/image/upload/v1752571979/Icon_AI_Agent_lrdrhr.png";
+                i.onerror = null, i.src = "/icons/agent.jpg";
               },
               width: 1e3,
               height: 1e3,
@@ -22291,7 +22291,7 @@ const iU = {
                 sdp: we,
                 type: "answer"
               });
-            }).catch((we) => console.log(we));
+            }).catch((we) => console.error(we));
           });
         });
       })(), () => {
@@ -39499,7 +39499,7 @@ const r6 = ({
           userId: n.value
         }), f(!0);
       } catch (T) {
-        console.log(`Failed to start conversation: ${T instanceof Error ? T.message : "Unknown error"}`);
+        console.error(`Failed to start conversation: ${T instanceof Error ? T.message : "Unknown error"}`);
       }
     })() : (async () => {
       try {
@@ -42233,10 +42233,10 @@ const s5 = {
           /* @__PURE__ */ O.jsx(
             "img",
             {
-              src: t?.theme?.button?.iconSrc || "https://appstaging.mimin.io/favicon.ico",
+              src: t?.theme?.button?.iconSrc || "/icons/favicon.ico",
               onError: (te) => {
                 const ce = te.target;
-                ce.onerror = null, ce.src = "https://appstaging.mimin.io/favicon.ico";
+                ce.onerror = null, ce.src = "/icons/favicon.ico";
               },
               alt: " ",
               className: "mimin-w-4 mimin-h-auto"
@@ -42366,7 +42366,7 @@ function a5() {
 const o5 = {
   init: async function(t = {}) {
     try {
-      if (console.log("INIT V2 INDEX>TSX"), a5(), !t.credentials)
+      if (a5(), !t.credentials)
         throw new Error("credentials are required");
       if (!t.credentials.username)
         throw new Error("username is required");
@@ -42415,4 +42415,3 @@ window.Chatbot = o5;
 export {
   o5 as Chatbot
 };
-//# sourceMappingURL=chat-widget.js.map

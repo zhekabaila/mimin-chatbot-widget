@@ -239,7 +239,7 @@ export const OpenAiAgentVoiceLayout: React.FC<OpenAiAgentVoiceProps> = ({
                   type: "answer",
                 });
               })
-              .catch((err) => console.log(err));
+              .catch((err) => console.error(err));
           });
         });
       })();

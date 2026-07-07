@@ -79,7 +79,7 @@ export const ElevenLabsAgentVoiceLayout: React.FC<ElevenLabsAgentVoiceProps> = (
           });
           setIsStartSession(true);
         } catch (error) {
-          console.log(`Failed to start conversation: ${error instanceof Error ? error.message : "Unknown error"}`);
+          console.error(`Failed to start conversation: ${error instanceof Error ? error.message : "Unknown error"}`);
         }
       })();
     } else {

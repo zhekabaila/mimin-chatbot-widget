@@ -19,7 +19,7 @@ export const StartChatSection = ({ onClickStartChat }: IProps) => {
         <img
           src={
             config?.theme?.chatWindow?.greating?.avatar ||
-            "https://res.cloudinary.com/dctqloe37/image/upload/v1752571979/Icon_AI_Agent_lrdrhr.png"
+            "/icons/agent.jpg"
           }
           alt=" "
           onError={(e) => {
@@ -27,7 +27,7 @@ export const StartChatSection = ({ onClickStartChat }: IProps) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null; // Hindari infinite loop jika default image juga error
             target.src =
-              "https://res.cloudinary.com/dctqloe37/image/upload/v1752571979/Icon_AI_Agent_lrdrhr.png";
+              "/icons/agent.jpg";
           }}
           width={1000}
           height={1000}

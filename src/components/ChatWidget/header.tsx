@@ -29,7 +29,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           <img
             src={
               config?.theme?.chatWindow?.header?.avatarSrc ||
-              "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg"
+              "/icons/agent.jpg"
             }
             alt=" "
             onError={(e) => {
@@ -37,7 +37,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               const target = e.target as HTMLImageElement;
               target.onerror = null; // Hindari infinite loop jika default image juga error
               target.src =
-                "https://res.cloudinary.com/dctqloe37/image/upload/v1752147771/agent_ohofti.jpg";
+                "/icons/agent.jpg";
             }}
             className="mimin-w-6 mimin-h-6 mimin-rounded-full"
           />

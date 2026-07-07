@@ -31,8 +31,8 @@ export default defineConfig({
         inlineDynamicImports: true,
       },
     },
-    // Memastikan source maps tersedia untuk debugging
-    sourcemap: true,
+    // Menonaktifkan source maps agar kode sumber tidak terekspos
+    sourcemap: false,
 
     // Memastikan semua dependencies di-bundle
     commonjsOptions: {

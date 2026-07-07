@@ -3,6 +3,9 @@
   "exports": {
     "default": "./dist/chat-widget.js"
   },
+  "files": [
+    "dist"
+  ],
   "private": false,
   "version": "1.0.14",
   "type": "module",
