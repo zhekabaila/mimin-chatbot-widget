@@ -31,9 +31,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   const handleSendMessage = () => {
-    if (!fetching && !loading && message.length > 0) {
+    if (!fetching && !loading && message.trim().length > 0) {
       onSendMessage(message);
       setMessage("");
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
     }
   };
 
@@ -71,6 +74,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           rows={1}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              if (loading) {
+                onCancelSendMessage(message);
+              } else {
+                handleSendMessage();
+              }
+            }
+          }}
           onInput={autoResize}
           ref={textareaRef}
         />

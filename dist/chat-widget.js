@@ -17140,7 +17140,7 @@ const kD = ({
     const p = u.current;
     p && (p.style.height = "auto", p.style.height = p.scrollHeight + "px");
   }, f = () => {
-    !i && !n && r.length > 0 && (t(r), o(""));
+    !i && !n && r.trim().length > 0 && (t(r), o(""), u.current && (u.current.style.height = "auto"));
   };
   return /* @__PURE__ */ O.jsxs(
     "div",
@@ -17170,6 +17170,9 @@ const kD = ({
                   rows: 1,
                   value: r,
                   onChange: (p) => o(p.target.value),
+                  onKeyDown: (p) => {
+                    p.key === "Enter" && !p.shiftKey && (p.preventDefault(), n ? e(r) : f());
+                  },
                   onInput: h,
                   ref: u
                 }
