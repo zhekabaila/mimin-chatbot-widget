@@ -120,26 +120,30 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         }}
         className="mimin-relative mimin-flex mimin-items-center mimin-gap-2"
       >
-        {/* <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className="mimin-hidden"
-          multiple
-        />
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="mimin-p-2 mimin-rounded-md mimin-bg-white/20 hover:mimin-bg-white/30 mimin-text-white mimin-cursor-pointer mimin-transition-colors"
-          style={{
-            height: "38px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Paperclip className="mimin-w-5 mimin-h-5" />
-        </button> */}
+        {config?.theme?.chatWindow?.enableMediaUpload && (
+          <>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="mimin-hidden"
+              multiple
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="mimin-p-2 mimin-rounded-md mimin-bg-white/20 hover:mimin-bg-white/30 mimin-text-white mimin-cursor-pointer mimin-transition-colors"
+              style={{
+                height: "38px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Paperclip className="mimin-w-5 mimin-h-5" />
+            </button>
+          </>
+        )}
 
         <textarea
           className="mimin-flex-1 mimin-border mimin-rounded-md mimin-p-2 mimin-max-h-[80px] mimin-bg-white mimin-text-black mimin-pr-10 mimin-focus:outline mimin-focus:outline-[#ffa100] mimin-resize-none"

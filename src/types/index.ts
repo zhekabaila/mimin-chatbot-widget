@@ -1,8 +1,9 @@
 export interface ChatWindowConfig {
   isActiveCall?: boolean;
-  needAuthentication?: boolean;
+  enableLogin?: boolean;
   enableRegister?: boolean;
   enableGreating?: boolean;
+  enableMediaUpload?: boolean;
   width?: string;
   height?: string;
   header?: {

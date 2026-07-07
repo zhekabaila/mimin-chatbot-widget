@@ -10,7 +10,6 @@ import AuthWindow from "../Auth";
 import { ChatHeader } from "./header";
 import { ChatContent } from "./chat-content";
 import { ChatInput } from "./input";
-import { useAuthStore } from "../../hooks/auth-store";
 import { StartChatSection } from "./start-chat-section";
 import { motion, AnimatePresence } from "framer-motion";
 import { API, getClientInfo } from "../../services";
@@ -39,7 +38,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [fetching, _setFetching] = useState(false);
-  const { isFirstTime, setIsFirstTime } = useAuthStore();
   const [phoneOrIP, setPhoneOrIP] = useState<{ name: string, value: string } | null>(null);
 
   // const [chatType, setChatType] = useState("");
@@ -55,6 +53,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [isCallVisible, setIsCallVisible] = useState(false);
   const [shouldRenderChat, setShouldRenderChat] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isFirstTime, setIsFirstTime] = useState(true);
 
   const {
     interactions,
@@ -391,22 +390,23 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     };
   }, []);
 
-
   useEffect(() => {
-    loadSession(
-      config?.credentials?.username,
-      config?.credentials?.websiteId,
-      config?.widgetType
-    );
-  }, [config?.credentials?.username, config?.credentials?.websiteId, config?.widgetType, loadSession]);
+    if (config?.theme?.chatWindow?.enableGreating ?? false) {
+      const greeted = localStorage.getItem(`cu-greeting-${config?.credentials?.username}`);
+      setIsFirstTime(!greeted);
+    } else {
+      setIsFirstTime(false);
+    }
+  }, [config]);
+
 
   useEffect(() => {
     if (!config) return;
 
     (async () => {
-      let phoneOrIP: { name: string, value: string } | null = null;
+      let phoneOrIPState: { name: string, value: string } | null = null;
 
-      if (config.theme?.chatWindow.needAuthentication) {
+      if (config.theme?.chatWindow.enableLogin) {
         const token = localStorage.getItem(`mimin-token-${config.credentials?.username}`);
 
         if (token) {
@@ -420,11 +420,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             });
 
             if (!res.ok) {
-              if (res.status === 401) localStorage.delete(`mimin-token-${config.credentials?.username}`);
+              if (res.status === 401) localStorage.removeItem(`mimin-token-${config.credentials?.username}`);
               else throw Error('Failed to get customer data');
             } else {
               const data = await res.json();
-              phoneOrIP = { name: data.data.name, value: data.data.phone };
+              phoneOrIPState = { name: data.data.name, value: data.data.phone };
               setIsAuthenticated(true);
             }
           } catch (error) {
@@ -436,18 +436,16 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           const { isError, errorMessage, ip } = await getClientInfo();
           if (isError) {
             console.warn("Failed to get client IP, using fallback:", errorMessage);
-            phoneOrIP = { name: '', value: "127.0.0.1" };
+            phoneOrIPState = { name: '', value: "127.0.0.1" };
           } else {
-            phoneOrIP = { name: '', value: ip! };
+            phoneOrIPState = { name: '', value: ip! };
           }
         } catch (err) {
           console.warn("Error getting client IP, using fallback:", err);
-          phoneOrIP = { name: '', value: "127.0.0.1" };
+          phoneOrIPState = { name: '', value: "127.0.0.1" };
         }
       }
-
-      console.log("ChatWidget setting phoneOrIP:", phoneOrIP);
-      setPhoneOrIP(phoneOrIP);
+      setPhoneOrIP(phoneOrIPState);
     })();
   }, [config]);
 
@@ -530,18 +528,19 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   config?.theme?.chatWindow?.body?.backgroundColor || "#ffffff",
               }}
             >
-              {(config?.theme?.chatWindow.needAuthentication || false) &&
+              {(config?.theme?.chatWindow.enableLogin || false) &&
                 !isAuthenticated &&
                 !isFirstTime && (
                   <AuthWindow
                     onSuccessLogin={(token, phone) => {
-                      setPhoneOrIP(phone);
+                      setPhoneOrIP({ name: phone.phone, value: phone.value });
                       setIsAuthenticated(!!token);
                     }}
+                    token={""}
                   />
                 )}
               {(isAuthenticated ||
-                !(config?.theme?.chatWindow.needAuthentication || false)) &&
+                !(config?.theme?.chatWindow.enableLogin || false)) &&
                 !isFirstTime && (
                   <>
                     <ChatHeader
@@ -596,6 +595,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 (config?.theme?.chatWindow?.enableGreating || false) && (
                   <StartChatSection
                     onClickStartChat={() => {
+                      localStorage.setItem(`cu-greeting-${config?.credentials?.username}`, 'true');
                       setIsFirstTime(false);
                     }}
                   />

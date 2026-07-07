@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { EyeIcon, EyeOffIcon, LoaderCircle, TriangleAlert } from "lucide-react";
-import { isAxiosError } from "axios";
-import { API } from "../../services";
 import { useConfigStore } from "../../hooks/config-store";
+import { API } from "../../services";
+import { isAxiosError } from "axios";
 
 interface IProps {
   onClickCreateAccount: () => void;
-  onSuccessLogin: (token: string, phone: { name: string, value: string }) => void;
+  onSuccessLogin: (token: string, phone: { phone: string, value: string }) => void;
 }
 
 const LoginSection = ({ onClickCreateAccount, onSuccessLogin }: IProps) => {
@@ -17,27 +17,23 @@ const LoginSection = ({ onClickCreateAccount, onSuccessLogin }: IProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [saving, startServer] = useTransition();
   const { config } = useConfigStore();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Phone validation function
   const isValidPhone = (phone: string): boolean => {
-    // International phone number validation (7-15 digits, may start with +)
     const phoneRegex = /^(\+)?[0-9]{6,14}$/;
     return phoneRegex.test(phone.replace(/\s+/g, ''));
   };
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Clear previous error
     setErrorMessage(null);
 
-    // Validate phone
     if (!form.phone.trim()) {
       setErrorMessage("Phone number is required");
       return;
@@ -48,7 +44,6 @@ const LoginSection = ({ onClickCreateAccount, onSuccessLogin }: IProps) => {
       return;
     }
 
-    // Validate password
     if (!form.password) {
       setErrorMessage("Password is required");
       return;
@@ -59,31 +54,33 @@ const LoginSection = ({ onClickCreateAccount, onSuccessLogin }: IProps) => {
       return;
     }
 
-    // Add loading state
     setLoading(true);
 
-    // Call API
+    const payload: any = {};
+    payload.phone = form.phone;
+    payload.password = form.password;
+
     API('axios', 'customer')({
       url: `/v1/customer/login/${config?.credentials?.username}`,
       method: 'POST',
-      data: {
-        phone: form.phone,
-        password: form.password
-      },
+      data: payload,
       headers: {
         "x-api-key": config?.credentials?.apiKey,
       },
     })
       .then((res) => {
-        localStorage.setItem(`mimin-token-${config?.credentials?.username}`, res.data.token)
-        const phone = { name: res.data.data.name, value: res.data.data.name };
-        onSuccessLogin(res.data.token, phone)
+        startServer(() => {
+          localStorage.setItem(`mimin-token-${config?.credentials?.username}`, res.data.token);
+          const phone = { phone: res.data.data.phone, value: res.data.data.phone };
+          onSuccessLogin(res.data.token, phone);
+        });
       })
       .catch((error) => {
-        if (isAxiosError(error) && (error.status === 400)) {
-          setErrorMessage(error.response?.data.message);
+        if (isAxiosError(error)) {
+          const msg = error.response?.data?.message || error.response?.data?.error || error.message;
+          setErrorMessage(typeof msg === 'string' ? msg : 'Login failed');
         } else {
-          setErrorMessage((error as Error).message);
+          setErrorMessage((error as Error).message || 'An unexpected error occurred');
         }
       })
       .finally(() => setLoading(false));
@@ -99,15 +96,15 @@ const LoginSection = ({ onClickCreateAccount, onSuccessLogin }: IProps) => {
         />
       )}
       <div className="mimin-space-y-2 mimin-mt-4">
-        <h2 className="mimin-text-lg mimin-font-bold">Sign In</h2>
-        <p className="mimin-text-sm mimin-text-gray-500">
+        <h2 className="mimin-text-xl mimin-font-bold">Sign In</h2>
+        <p className="mimin-text-gray-500">
           Fill your information below to sign in to your account
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="mimin-space-y-2 mimin-mt-6">
         <div className="mimin-flex mimin-flex-col mimin-gap-1">
-          <label htmlFor="phone" className="mimin-text-sm mimin-font-medium">
+          <label htmlFor="phone" className="mimin-font-medium">
             Phone Number
           </label>
           <input
@@ -118,16 +115,16 @@ const LoginSection = ({ onClickCreateAccount, onSuccessLogin }: IProps) => {
             onChange={handleChange}
             autoComplete="tel"
             placeholder="Type phone number... (e.g. 08123456789)"
-            className="mimin-text-sm mimin-rounded-md mimin-p-2 mimin-focus:outline mimin-focus:outline-1"
+            className="mimin-bg-white mimin-rounded-md mimin-p-2 mimin-focus:outline mimin-focus:outline-1"
             style={{
               border: `1px solid ${config?.theme?.chatWindow?.greating?.color || "#0096A2"}`,
-              outlineColor: config?.theme?.chatWindow?.greating?.color || "#0096A2",
+              outlineColor: config?.theme?.chatWindow?.greating?.color || "#0096A2"
             }}
           />
         </div>
 
         <div className="mimin-flex mimin-flex-col mimin-gap-1">
-          <label htmlFor="password" className="mimin-text-sm mimin-font-medium">
+          <label htmlFor="password" className="mimin-font-medium">
             Password
           </label>
           <div className="mimin-relative">
@@ -139,15 +136,15 @@ const LoginSection = ({ onClickCreateAccount, onSuccessLogin }: IProps) => {
               onChange={handleChange}
               autoComplete="current-password"
               placeholder="Type password..."
-              className="mimin-text-sm mimin-rounded-md mimin-p-2 mimin-w-full mimin-focus:outline mimin-focus:outline-1"
+              className="mimin-bg-white mimin-rounded-md mimin-p-2 mimin-w-full mimin-focus:outline mimin-focus:outline-1"
               style={{
                 border: `1px solid ${config?.theme?.chatWindow?.greating?.color || "#0096A2"}`,
-                outlineColor: config?.theme?.chatWindow?.greating?.color || "#0096A2",
+                outlineColor: config?.theme?.chatWindow?.greating?.color || "#0096A2"
               }}
             />
             <button
               type="button"
-              className="mimin-absolute mimin-right-2.5 mimin-top-1/2 mimin--translate-y-1/2"
+              className="mimin-absolute mimin-right-2.5 mimin-top-1/2 -mimin-translate-y-1/2"
               onClick={() => setShowPassword((e) => !e)}
             >
               {showPassword ? (
@@ -170,19 +167,19 @@ const LoginSection = ({ onClickCreateAccount, onSuccessLogin }: IProps) => {
           )}
           <button
             type="submit"
-            disabled={loading}
-            className="mimin-text-white mimin-text-sm mimin-px-4 mimin-py-2 mimin-rounded-md mimin-w-full mimin-flex mimin-justify-center mimin-items-center mimin-gap-2 mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed mimin-transition-opacity"
+            disabled={loading || saving}
+            className="mimin-text-white mimin-px-4 mimin-py-2 mimin-rounded-md mimin-w-full mimin-flex mimin-justify-center mimin-items-center mimin-gap-2 mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed mimin-transition-opacity"
             style={{
               backgroundColor: config?.theme?.chatWindow.greating?.color || "#0096A2",
-              color: config?.theme?.chatWindow.greating?.title || "white",
+              color: config?.theme?.chatWindow.greating?.title || "white"
             }}
           >
-            {loading && <LoaderCircle className="mimin-w-4 mimin-h-4 mimin-animate-spin" />}
-            {loading ? "Signing In..." : "Sign In"}
+            {(loading || saving) && <LoaderCircle className="mimin-w-4 mimin-h-4 mimin-animate-spin" />}
+            {(loading || saving) ? "Signing In..." : "Sign In"}
           </button>
           {config?.theme?.chatWindow.enableRegister && (
             <div className="mimin-text-sm mimin-text-center mimin-text-gray-500">
-              Don't have an account?{" "}
+              Dont have an account?{" "}
               <button
                 type="button"
                 onClick={onClickCreateAccount}

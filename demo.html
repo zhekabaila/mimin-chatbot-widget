@@ -176,9 +176,13 @@
       import { Chatbot } from 'https://unpkg.com/mimin-chatbot-widget-react@latest/dist/chat-widget.js'
 
       Chatbot.init({
+        widgetType: "website",
         credentials: {
-          apiKey: 'n51I1W5ZNIbyjb9Db35iBRFup',
-          username: 'ujiuploadfileexcel',
+          apiKey: "aFIwif02340943efjkewEORQFQIR24302rGEIEHBRJFpiwhrf",
+          username: "akuntestomnichat",
+          websiteId: "akuntestomnichat-00161-78548",
+          // websiteId: "akuntestomnichat-00117-80327",
+          apiUrl: "https://mimin-test.mimin.io/mimin-backend",
         },
         theme: {
           button: {
@@ -189,10 +193,10 @@
             tooltip: 'Ask Mimin',
           },
           chatWindow: {
-            isActiveCall: true,
-            needAuthentication: false,
+            isActiveCall: false,
+            enableLogin: false,
             enableRegister: false,
-            enableGreating: true,
+            enableGreating: false,
             header: {
               backgroundColor: '#1b9f1e',
               color: '#ffffff',
@@ -200,6 +204,9 @@
               description: 'Ngobrol langsung dengan AI, cepat & mudah.',
               avatarSrc:
                 'https://mimin-images.s3.ap-southeast-1.amazonaws.com/testmimin66/account/widget_avatar_chatbot',
+              closeColorButton: '#e5950b',
+              voiceAIColorButton: '#00ff6e',
+              refreshColorButton: '#000000',
             },
             botMessage: {
               backgroundColor: '#ffffff',

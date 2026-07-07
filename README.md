@@ -4,37 +4,18 @@ Widget chatbot yang dapat dikustomisasi untuk website dengan menggunakan React, 
 
 ## Fitur
 
-- 🎨 Kustomisasi tema yang fleksibel
-- 📱 Responsive design
-- 🎯 TypeScript support
-- ⚡ Vite build system
-- 🎨 Tailwind CSS styling
-- 📞 Call window dengan kontrol mute/speaker
-- 🔄 Real-time message handling
-- ⚛️ React hooks dan state management
-
-## Struktur Proyek
-
-```
-src/
-├── components/          # Komponen React
-│   ├── ChatWidget.tsx   # Komponen utama widget
-│   ├── ChatHeader.tsx   # Header chat window
-│   ├── ChatInput.tsx    # Input area
-│   ├── Message.tsx      # Message components
-│   └── CallWindow.tsx   # Call window component
-├── config/              # Konfigurasi
-│   └── environment.ts   # Environment variables
-├── services/            # API services
-│   └── api.ts          # API communication
-├── types/               # TypeScript types
-│   └── index.ts        # Interface definitions
-├── utils/               # Utility functions
-│   └── styleInjector.ts # Style injection
-├── App.tsx              # Main App component
-├── main.tsx             # Entry point
-└── index.ts             # Export file
-```
+- **Chat AI** — Streaming real-time conversation dengan AI agent
+- **Voice Call** — Integrasi voice agent (OpenAI / ElevenLabs) untuk panggilan suara
+- **Autentikasi** — Login & register customer dengan token-based auth
+- **Greeting Screen** — Tampilan sambutan sebelum mulai chat
+- **Dynamic Registration Fields** — Form register dinamis berdasarkan konfigurasi backend (Zod + react-hook-form)
+- **Media Upload** — Kirim gambar/file dalam percakapan
+- **Socket.io** — Real-time push message (endSession, reminderFired, websiteMessage)
+- **Abort Controller** — Pembatalan request yang sedang berjalan
+- **Session Persistence** — Token & greeting state tersimpan di localStorage
+- **Tailwind CSS dengan Prefix `mimin-`** — Tidak bentrok dengan style website client
+- **Framer Motion** — Animasi buka/tutup widget
+- **TypeScript** — Full type safety
 
 ## Instalasi
 
@@ -56,15 +37,130 @@ npm run build
 
 ## Penggunaan
 
-### Basic Usage dalam React App
+### Props ChatWidget
 
-```tsx
-import React from "react";
-import { ChatWidget } from "./components/ChatWidget";
-import type { ChatbotConfig } from "./types";
+| Prop | Tipe | Wajib | Deskripsi |
+|------|------|-------|-----------|
+| `config` | `ChatbotConfig` | Tidak | Konfigurasi tema, credentials, dan tipe widget |
+| `signature` | `string` | Ya | Signature untuk autentikasi ke chatbot API |
+| `voiceAgent` | `'elevenlabs' \| 'openai'` | Ya | Provider voice agent yang digunakan |
 
-function App() {
-  const config: ChatbotConfig = {
+### Credentials
+
+| Field | Tipe | Wajib | Deskripsi |
+|-------|------|-------|-----------|
+| `apiKey` | `string` | Tidak | API key untuk akses Mimin backend |
+| `username` | `string` | Tidak | Username/identifier chatbot |
+| `websiteId` | `string` | Tidak | ID website (untuk widgetType `website`) |
+| `apiUrl` | `string` | Tidak | Custom API base URL |
+
+### Theme → Button
+
+| Field | Tipe | Deskripsi |
+|-------|------|-----------|
+| `backgroundColor` | `string` | Warna background button trigger |
+| `textColor` | `string` | Warna teks button trigger |
+| `iconSrc` | `string` | URL icon pada button trigger |
+| `tooltip` | `string` | Tooltip text saat hover button |
+
+### Theme → chatWindow
+
+| Field | Tipe | Deskripsi |
+|-------|------|-----------|
+| `isActiveCall` | `boolean` | Aktifkan fitur voice call |
+| `enableLogin` | `boolean` | Tampilkan flow login sebelum chat |
+| `enableRegister` | `boolean` | Tampilkan tombol register di auth screen |
+| `enableGreating` | `boolean` | Tampilkan greeting screen sebelum chat |
+| `enableMediaUpload` | `boolean` | Aktifkan upload media di chat input |
+| `width` | `string` | Lebar chat window, misal `"330px"` |
+| `height` | `string` | Tinggi chat window, misal `"600px"` |
+
+### chatWindow → header
+
+| Field | Tipe | Deskripsi |
+|-------|------|-----------|
+| `backgroundColor` | `string` | Warna background header |
+| `color` | `string` | Warna icon di header |
+| `title` | `string` | Judul chatbot di header |
+| `description` | `string` | Deskripsi di bawah judul |
+| `avatarSrc` | `string` | URL avatar/logo di header & auth screen |
+| `closeColorButton` | `string` | Warna tombol close |
+| `voiceAIColorButton` | `string` | Warna tombol voice AI |
+| `refreshColorButton` | `string` | Warna tombol refresh |
+
+### chatWindow → body
+
+| Field | Tipe | Deskripsi |
+|-------|------|-----------|
+| `backgroundColor` | `string` | Warna background area chat |
+
+### chatWindow → userMessage
+
+| Field | Tipe | Deskripsi |
+|-------|------|-----------|
+| `backgroundColor` | `string` | Warna bubble pesan user |
+| `borderColor` | `string` | Warna border bubble user |
+| `textColor` | `string` | Warna teks pesan user |
+| `iconUrl` | `string` | URL avatar di samping pesan user |
+
+### chatWindow → botMessage
+
+| Field | Tipe | Deskripsi |
+|-------|------|-----------|
+| `backgroundColor` | `string` | Warna bubble pesan bot |
+| `borderColor` | `string` | Warna border bubble bot |
+| `textColor` | `string` | Warna teks pesan bot |
+| `iconUrl` | `string` | URL avatar di samping pesan bot |
+
+### chatWindow → textInput
+
+| Field | Tipe | Deskripsi |
+|-------|------|-----------|
+| `backgroundColor` | `string` | Warna background input area |
+| `borderColor` | `string` | Warna border input area |
+| `placeholder` | `string` | Placeholder text di input |
+| `sendButtonColor` | `string` | Warna tombol kirim |
+| `footerText` | `string` | Teks footer di bawah input |
+| `footerTextColor` | `string` | Warna teks footer |
+
+### chatWindow → greating
+
+| Field | Tipe | Deskripsi |
+|-------|------|-----------|
+| `title` | `string` | Judul di greeting screen |
+| `description` | `string` | Deskripsi di greeting screen |
+| `avatar` | `string` | URL avatar besar di greeting screen |
+| `color` | `string` | Warna utama greeting screen (background, tombol, teks) |
+
+### widgetType
+
+| Nilai | Deskripsi |
+|-------|-----------|
+| `"website"` | Mode website — menggunakan webhook endpoint, socket room berbasis `websiteId-phone` |
+| `"chatbot"` | Mode chatbot — menggunakan chatbot endpoint, socket room berbasis `chat_history_id` |
+
+## Alur Widget
+
+```
+Widget dibuka
+  ├── enableGreating = true → Greeting Screen → klik "Start Chat" → localStorage greeting token
+  ├── enableLogin = true → Auth Window
+  │     ├── Landing → Sign In / Create Account
+  │     ├── Sign In → Login (phone ± password) → simpan token → chat
+  │     └── Create Account → Dynamic form (required/optional tabs) → password + confirm → register → balik ke Sign In
+  └── Authenticated / tidak perlu login → Chat Window
+        ├── Header (title, avatar, call button, close)
+        ├── Chat Content (messages, streaming response)
+        ├── Chat Input (text, media upload, send, cancel)
+        └── Voice Call (OpenAI / ElevenLabs)
+```
+
+## CDN Usage
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.umd.js"></script>
+<script>
+  ChatWidget.Chatbot.init({
     credentials: {
       apiKey: "your-api-key",
       username: "your-username",
@@ -73,240 +169,75 @@ function App() {
       button: {
         backgroundColor: "#ffffff",
         textColor: "#0096a2",
-        iconSrc: "https://your-icon.com/icon.png",
-        tooltip: "Ask Assistant",
+        iconSrc: "/icons/favicon.ico",
+        tooltip: "Ask Mimin",
       },
       chatWindow: {
-        backgroundColor: "#0096a2",
-        title: "AI Assistant",
-        titleColor: "#ffffff",
-        titleAvatarSrc: "https://your-avatar.com/avatar.jpg",
-        width: "350px",
-        height: "600px",
+        enableGreating: true,
+        enableLogin: true,
+        enableRegister: true,
         isActiveCall: true,
-        icon: {
-          phoneColor: "#ffffff",
-          refreshColor: "#ffffff",
-          closeColor: "#ffffff",
+        width: "330px",
+        height: "600px",
+        header: {
+          title: "Mimin AI",
+          avatarSrc: "/icons/agent.jpg",
+        },
+        greating: {
+          title: "Hai, Aku Mimin!",
+          description: "Butuh bantuan? Chat sekarang!",
+          color: "#0096A2",
         },
         userMessage: {
           backgroundColor: "#0096a2",
-          borderColor: "#0096a2",
           textColor: "#ffffff",
         },
         botMessage: {
           backgroundColor: "#ffffff",
-          borderColor: "#0096a2",
           textColor: "#0096a2",
         },
         textInput: {
-          backgroundColor: "#0096a2",
-          borderColor: "#ffffff",
           placeholder: "Ketik pertanyaan Anda...",
-          sendButtonColor: "#0096a2",
         },
       },
     },
-  };
-
-  return (
-    <div className="App">
-      <h1>My Website</h1>
-      <ChatWidget config={config} signature="your-signature" />
-    </div>
-  );
-}
-```
-
-### CDN Usage
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mimin Chatbot Widget Demo</title>
-  </head>
-  <body>
-    <div>
-      <h1>Mimin Chatbot Widget Demo</h1>
-      <p>Widget akan muncul di pojok kanan bawah</p>
-    </div>
-
-    <!-- Hanya 1 file CDN - self-contained, tidak perlu React/ReactDOM -->
-    <script src="https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.umd.js"></script>
-
-    <script>
-      ChatWidget.Chatbot.init({
-        credentials: {
-          apiKey: "your-api-key-here",
-          username: "your-username-here",
-        },
-        theme: {
-          button: {
-            backgroundColor: "#ffffff",
-            textColor: "#0096a2",
-            iconSrc: "/icons/favicon.ico",
-            tooltip: "Ask Mimin",
-          },
-          chatWindow: {
-            backgroundColor: "#0096a2",
-            title: "Mimin AI",
-            titleColor: "#ffffff",
-            titleAvatarSrc:
-              "/icons/agent.jpg",
-            width: "330px",
-            height: "600px",
-            isActiveCall: true,
-            icon: {
-              phoneColor: "#ffffff",
-              refreshColor: "#ffffff",
-              closeColor: "#ffffff",
-            },
-            userMessage: {
-              backgroundColor: "#0096a2",
-              borderColor: "#0096a2",
-              textColor: "#ffffff",
-            },
-            botMessage: {
-              backgroundColor: "#ffffff",
-              borderColor: "#0096a2",
-              textColor: "#0096a2",
-            },
-            textInput: {
-              backgroundColor: "#0096a2",
-              borderColor: "#ffffff",
-              placeholder: "Ketik pertanyaan Anda...",
-              sendButtonColor: "#0096a2",
-            },
-          },
-        },
-      });
-    </script>
-  </body>
-</html>
-```
-
-### ES Module Usage (Self-Contained)
-
-```html
-<script type="module">
-  import { Chatbot } from "https://cdn.jsdelivr.net/gh/zhekabaila/mimin-chatbot-widget@master/dist/chat-widget.es.js";
-
-  Chatbot.init({
-    credentials: {
-      apiKey: "your-api-key-here",
-      username: "your-username-here",
-    },
-    // ... theme config
   });
 </script>
 ```
 
-### Konfigurasi Tema
+## Auth Token & Session
 
-#### Button Configuration
+- Token disimpan di localStorage dengan key `mimin-token-{username}`
+- Greeting state disimpan dengan key `cu-greeting-{username}`
+- Token otomatis diverifikasi saat widget dimuat — jika invalid (401), token dihapus dan user diminta login ulang
 
-- `backgroundColor`: Warna background button
-- `textColor`: Warna teks button
-- `iconSrc`: URL icon button
-- `tooltip`: Teks tooltip button
+## Dynamic Registration Fields
 
-#### Chat Window Configuration
+Form register mengambil field dari API `/v1/customer-field/get-by-username/{username}`. Field yang didukung:
 
-- `backgroundColor`: Warna background header
-- `title`: Judul chat window
-- `titleColor`: Warna teks judul
-- `titleAvatarSrc`: URL avatar di header
-- `width`: Lebar chat window
-- `height`: Tinggi chat window
-- `isActiveCall`: Apakah fitur call aktif
+| data_type | Input | Validasi |
+|-----------|-------|----------|
+| `string` | Text input | Min 1 karakter jika required |
+| `number` | Number input | Harus angka |
+| `boolean` | Select (Yes/No) | — |
+| `date` | Date picker | Format yyyy-MM-dd |
+| `password` | Password input | Min 6 karakter |
 
-#### Message Configuration
+Field ditampilkan dalam dua tab:
+- **Required** — field dengan `is_required: true`
+- **Optional** — field dengan `is_required: false`
 
-- `userMessage`: Konfigurasi pesan user
-- `botMessage`: Konfigurasi pesan bot
-- `textInput`: Konfigurasi input area
+Password + Confirm Password selalu di bagian bawah sebelum Terms of Service.
 
-## API Integration
+## Error Handling
 
-Widget ini mendukung integrasi dengan API Mimin:
+- Error login ditampilkan di UI dengan pesan dari backend (misal: `"Your account has not been activated"`)
+- Network error dan system error ditampilkan sebagai fallback message
+- Request yang sedang berjalan bisa dibatalkan via AbortController
 
-```typescript
-import { ApiService } from "./services/api";
+## Styling dengan Prefix `mimin-`
 
-// Set authentication
-ApiService.setAuthCookie({ phone: "your-phone-number" });
-
-// Fetch messages
-ApiService.fetchMessages(
-  "fetch",
-  setLoadingMore,
-  setMessages,
-  setFetchDetailStatus
-);
-```
-
-## State Management
-
-Widget menggunakan React hooks untuk state management:
-
-- `useState` untuk local state
-- Props untuk configuration
-- Callback functions untuk event handling
-
-## Styling
-
-- Tailwind CSS untuk utility classes
-- Inline styles untuk dynamic styling
-- FontAwesome untuk icons
-- Responsive design dengan Tailwind breakpoints
-
-## Styling Unik dengan Prefix Tailwind CSS
-
-> **Catatan:** Fitur prefix Tailwind CSS (misal: `mimin-`) <b>belum digunakan pada versi ini</b>. Semua class Tailwind pada widget ini masih menggunakan class default tanpa prefix. Fitur prefix akan tersedia pada versi berikutnya untuk menghindari bentrok style dengan website client.
-
-### Rencana Penggunaan Prefix (Next Version)
-
-- Nantinya, semua class Tailwind akan diawali prefix (misal: <code>mimin-bg-[#0096A2]</code>, <code>mimin-rounded-md</code>, dst).
-- Akan ada instruksi build dan contoh penggunaannya setelah fitur ini dirilis.
-
-### Cara Setting Prefix
-
-1. Tambahkan di `tailwind.config.js`:
-   ```js
-   module.exports = {
-     prefix: "mimin-",
-     // ...config lain
-   };
-   ```
-2. Ubah semua className di kode menjadi diawali `mimin-`, contoh:
-   ```jsx
-   <div className="mimin-bg-[#0096A2] mimin-rounded-md mimin-text-white">
-     ...
-   </div>
-   ```
-3. Build ulang CSS, lalu inject hasil build ke widget.
-
-> **Catatan:** Jika menggunakan CDN Tailwind standar, fitur prefix tidak tersedia. Solusi: build CSS sendiri lalu host di CDN kamu.
-
-## Development Notes
-
-- Widget menggunakan React 19 dengan TypeScript
-- Tailwind CSS untuk styling
-- FontAwesome untuk icons
-- Vite untuk build system
-- Modular architecture untuk maintainability
-- Hooks-based state management
-
-## Perbedaan dengan Vanilla JS Version
-
-1. **State Management**: Menggunakan React hooks alih-alih DOM manipulation
-2. **Component Structure**: Modular React components dengan props
-3. **Event Handling**: React event handlers alih-alih onclick attributes
-4. **Styling**: Tailwind CSS dengan inline styles untuk dynamic values
-5. **Type Safety**: Full TypeScript support dengan React types
+Semua class Tailwind menggunakan prefix `mimin-` agar tidak bentrok dengan style website client. Contoh: `mimin-flex`, `mimin-text-sm`, `mimin-bg-white`, `mimin-rounded-md`.
 
 ## License
 
