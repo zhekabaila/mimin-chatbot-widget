@@ -143,6 +143,7 @@ export interface Message {
     name: string;
     data: string;
   }[];
+  isError?: boolean;
 }
 
 export interface Pagination {

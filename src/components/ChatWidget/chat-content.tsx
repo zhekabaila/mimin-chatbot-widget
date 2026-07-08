@@ -8,7 +8,8 @@ export const ChatContent: React.FC<{
   loading: boolean;
   fetching: boolean;
   isWebsite?: boolean;
-}> = ({ messages, currentResponseMsg, loading, fetching, isWebsite }) => {
+  sessionActive?: boolean;
+}> = ({ messages, currentResponseMsg, loading, fetching, isWebsite, sessionActive }) => {
   const bottomRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -36,6 +37,7 @@ export const ChatContent: React.FC<{
                   media={msg.human.media}
                   isUser={true}
                   date={msg.date}
+                  isError={msg.human.isError}
                 />
               )}
               {msg.ai && (msg.ai.content || (msg.ai.media && msg.ai.media.length > 0)) && (
@@ -44,6 +46,7 @@ export const ChatContent: React.FC<{
                   media={msg.ai.media}
                   isUser={false}
                   date={msg.date}
+                  isError={msg.ai.isError}
                 />
               )}
             </div>
@@ -61,6 +64,15 @@ export const ChatContent: React.FC<{
           )}
         {loading && !currentResponseMsg && !isWebsite && (
           <BubbleChat thinking={true} date={new Date()} />
+        )}
+        {!sessionActive && !loading && !fetching && (
+          <div className="mimin-flex mimin-flex-col mimin-items-center mimin-gap-2 mimin-py-4 mimin-px-3 mimin-bg-amber-50 mimin-border mimin-border-amber-200 mimin-rounded-lg mimin-text-center">
+            <svg className="mimin-w-5 mimin-h-5 mimin-text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <p className="mimin-text-sm mimin-text-amber-700 mimin-font-medium">Sesi ini sudah berakhir</p>
+            <p className="mimin-text-xs mimin-text-amber-600">Kirim pesan untuk memulai sesi baru</p>
+          </div>
         )}
       </div>
       <div ref={bottomRef} id="bottom-ref" className="mimin-pb-9" />

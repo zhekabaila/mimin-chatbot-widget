@@ -81,7 +81,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             </div>
           </button>
         )}
-        <button
+        {/* <button
           className="mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
           style={{
             color: config?.theme?.chatWindow?.header?.refreshColorButton || "#ffffff",
@@ -96,7 +96,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             className="mimin-w-5 mimin-h-5"
             color={config?.theme?.chatWindow?.header?.refreshColorButton || "#ffffff"}
           />
-        </button>
+        </button> */}
         <button
           className="mimin-cursor-pointer mimin-disabled:opacity-50 mimin-disabled:cursor-not-allowed"
           style={{

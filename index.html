@@ -19,12 +19,12 @@
       Chatbot.init({
         widgetType: "website",
         credentials: {
-          apiKey: "aFIwif02340943efjkewEORQFQIR24302rGEIEHBRJFpiwhrf",
-          username: "akuntestomnichat",
-          websiteId: "akuntestomnichat-00190-79636",
-          apiUrl: "https://mimin-test.mimin.io/mimin-backend",
+          apiKey: import.meta.env.VITE_API_KEY || "YOUR_API_KEY",
+          username: import.meta.env.VITE_USERNAME || "YOUR_USERNAME",
+          websiteId: import.meta.env.VITE_WEBSITE_ID || "YOUR_WEBSITE_ID",
+          apiUrl: import.meta.env.VITE_API_URL || "YOUR_API_URL",
         },
-        baseUrl: "https://herotest.mimin.io",
+        baseUrl: import.meta.env.VITE_BASE_URL || "YOUR_BASE_URL",
         theme: {
           button: {
             backgroundColor: "#0093a3",

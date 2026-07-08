@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import type {
   ChatbotConfig,
-  ConversationsResponse,
   IESResponse,
+  Interaction,
+  Message,
 } from "../../types";
 import { useConfigStore } from "../../hooks/config-store";
-import { useInteractionsStore } from "../../hooks/interaction-store";
 import AuthWindow from "../Auth";
 import { ChatHeader } from "./header";
 import { ChatContent } from "./chat-content";
@@ -24,12 +24,44 @@ interface ChatWidgetProps {
   voiceAgent: 'elevenlabs' | 'openai';
 }
 
-const INIT_PAGINATION = {
-  limit: 10,
-  page: 0,
-  pages: 0,
-  size: 10,
-};
+interface ConversationMessage {
+  id: string;
+  direction: "incoming" | "outgoing";
+  text: string;
+  file: string;
+  file_name: string;
+  status: string;
+  from_chatbot: boolean;
+  created_at: string;
+}
+
+interface ConversationResponse {
+  session: {
+    started_at: string;
+    active: boolean;
+  };
+  messages: ConversationMessage[];
+}
+
+function base64ToBlobUrl(base64: string): string {
+  const [header, data] = base64.split(",");
+  const mimeMatch = header?.match(/data:([^;]+)/);
+  const mime = mimeMatch?.[1] || "application/octet-stream";
+  const byteCharacters = atob(data);
+  const byteArrays: BlobPart[] = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+    const slice = byteCharacters.slice(offset, offset + 1024);
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+    byteArrays.push(new Uint8Array(byteNumbers) as BlobPart);
+  }
+
+  const blob = new Blob(byteArrays, { type: mime });
+  return URL.createObjectURL(blob);
+}
 
 export const ChatWidget: React.FC<ChatWidgetProps> = ({
   config,
@@ -37,38 +69,26 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   voiceAgent
 }) => {
   const [loading, setLoading] = useState(false);
-  const [fetching, _setFetching] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [phoneOrIP, setPhoneOrIP] = useState<{ name: string, value: string } | null>(null);
-
-  // const [chatType, setChatType] = useState("");
   const [chatHistoryId, setChatHistoryId] = useState("");
   const [currentResponseMsg, setCurrentResponseMsg] = useState("");
-  const [pagination, setPagination] =
-    useState<Omit<ConversationsResponse, "data">>(INIT_PAGINATION);
-
-  const { setConfig: setConfigStore, setSignature: setSignatureStore } =
-    useConfigStore();
-
+  const [interactions, setInteractions] = useState<Interaction[]>([]);
+  const [chatType, setChatType] = useState("");
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [isCallVisible, setIsCallVisible] = useState(false);
   const [shouldRenderChat, setShouldRenderChat] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isFirstTime, setIsFirstTime] = useState(true);
+  const [sessionActive, setSessionActive] = useState(true);
 
-  const {
-    interactions,
-    addInteraction,
-    updateAiInteractionByIndex,
-    chatType,
-    setChatType,
-    loadSession,
-  } = useInteractionsStore();
+  const blobUrlsRef = useRef<string[]>([]);
+  const { setConfig: setConfigStore, setSignature: setSignatureStore } =
+    useConfigStore();
 
-  // Ref untuk menyimpan AbortController agar bisa diakses di luar handleSendMessage
   const abortControllerRef = useRef<AbortController | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
-  // Fungsi untuk membatalkan request yang sedang berjalan
   const cancelSendMessage = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -76,12 +96,45 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     }
   };
 
+  const addInteraction = (interaction: Interaction) => {
+    setInteractions((prev) => [interaction, ...prev]);
+  };
+
+  const updateInteractionByMessageId = (messageId: string, updates: Partial<Message>) => {
+    setInteractions((prev) =>
+      prev.map((item) => {
+        if (item.id !== messageId) return item;
+        if (item.human) {
+          return { ...item, human: { ...item.human, ...updates } };
+        }
+        if (item.ai) {
+          return { ...item, ai: { ...item.ai, ...updates } };
+        }
+        return item;
+      })
+    );
+  };
+
+  const updateAiInteractionByIndex = (index: number, message: Partial<Message>) => {
+    setInteractions((prev) => {
+      const next = [...prev];
+      const aiIndex = next.length - 1 - index;
+      if (next[aiIndex]?.ai) {
+        next[aiIndex] = {
+          ...next[aiIndex],
+          ai: { ...next[aiIndex].ai!, ...message },
+        };
+      }
+      return next;
+    });
+  };
+
   const handleToggleChatWindow = () => {
     if (isChatVisible) {
-      setIsChatVisible(false); // trigger exit
+      setIsChatVisible(false);
     } else {
-      setShouldRenderChat(true); // show component
-      setIsChatVisible(true); // trigger enter
+      setShouldRenderChat(true);
+      setIsChatVisible(true);
     }
   };
 
@@ -89,20 +142,120 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     setIsCallVisible(!isCallVisible);
   };
 
-  const handleSendMessage = async (message: string, media?: { type: string; name: string; data: string }[]) => {
-    console.log("handleSendMessage triggered", { message, media, phoneOrIP });
-    if (!phoneOrIP) {
-      console.warn("handleSendMessage aborted: phoneOrIP is falsy");
-      return;
+  const fetchConversations = async (fetchFrom: "send-message" | "global" = "global") => {
+    if (!config?.credentials?.username || !config?.credentials?.websiteId || !phoneOrIP?.value) return;
+
+    setFetching(true);
+    try {
+      const res = await API("fetch", "customer")(
+        `/v1/website/conversation/${config.credentials.username}?website_id=${config.credentials.websiteId}&phone=${phoneOrIP.value}`,
+        {
+          method: "GET",
+          headers: {
+            "x-api-key": config.credentials.apiKey || "",
+          },
+        }
+      );
+
+      if (!res.ok) return;
+
+      const data: ConversationResponse = await res.json();
+
+      setSessionActive(data.session?.active ?? true);
+
+      // Revoke blob URLs dari optimistic bubble sebelum replace dengan data real
+      blobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      blobUrlsRef.current = [];
+
+      const mappedInteractions: Interaction[] = data.messages
+        .slice()
+        .reverse()
+        .map((msg) => {
+          // Backend terbalik: incoming = dari customer (human), outgoing = dari agent (ai)
+          const isAgent = msg.direction === "outgoing";
+          const media = msg.file ? [{ type: "image", name: msg.file_name, data: msg.file }] : undefined;
+
+          return {
+            id: msg.id,
+            date: msg.created_at,
+            human: isAgent
+              ? undefined
+              : {
+                  content: msg.text,
+                  additional_kwargs: {},
+                  example: false,
+                  media,
+                },
+            ai: isAgent
+              ? {
+                  content: msg.text,
+                  additional_kwargs: {},
+                  example: false,
+                  media,
+                }
+              : undefined,
+          };
+        });
+
+      if (!data.session?.active && fetchFrom === "send-message") {
+        return;
+      }
+
+      setInteractions(mappedInteractions);
+    } catch (error) {
+      console.error("Failed to fetch conversations:", error);
+    } finally {
+      setFetching(false);
     }
+  };
+
+  const handleSendMessage = async (message: string, media?: { type: string; name: string; data: string }[]) => {
+    if (!phoneOrIP) return;
     cancelSendMessage();
     setLoading(true);
 
     const isWebsite = config?.widgetType === "website";
-
-    // Buat AbortController baru untuk request ini
+    const hasMedia = (media?.length ?? 0) > 0;
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
+
+    // Optimistic bubble: convert base64 ke blob URL agar tidak membebani state
+    const optimisticMedia = media?.map((m) => {
+      if (m.data.startsWith("data:")) {
+        const blobUrl = base64ToBlobUrl(m.data);
+        blobUrlsRef.current.push(blobUrl);
+        return { ...m, data: blobUrl };
+      }
+      return m;
+    });
+
+    // Jika sesi sudah berakhir, reset interactions lalu tambahkan optimistic bubble saja
+    if (!sessionActive) {
+      setInteractions([]);
+    }
+
+    let optimisticId: string | null = null;
+
+    if (message || optimisticMedia) {
+      optimisticId = crypto.randomUUID();
+      const optimisticInteraction: Interaction = {
+        human: {
+          content: message,
+          additional_kwargs: {},
+          example: false,
+          media: optimisticMedia,
+          isError: false,
+        },
+        date: new Date(),
+        id: optimisticId,
+      };
+
+      if (!sessionActive) {
+        setInteractions([optimisticInteraction]);
+      } else {
+        addInteraction(optimisticInteraction);
+      }
+    }
 
     try {
       let response: Response;
@@ -110,6 +263,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       if (isWebsite) {
         const token = localStorage.getItem(`mimin-token-${config?.credentials?.username}`);
         const name = phoneOrIP.name || phoneOrIP.value;
+
+        // Kirim base64 asli ke backend (bukan blob URL)
+        const rawMedia = media?.map((m) => {
+          if (m.data.startsWith("blob:")) {
+            return { ...m, data: "" };
+          }
+          return m;
+        });
 
         const websitePayload = {
           sender: {
@@ -124,7 +285,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             id: crypto.randomUUID(),
             reply_to: "",
             text: message,
-            media: media || [],
+            media: rawMedia || [],
           },
         };
 
@@ -153,7 +314,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           message_id: crypto.randomUUID(),
           message,
           media_type: mediaItem ? mediaItem.type : "text",
-          media: mediaItem ? mediaItem.data : "",
+          media: mediaItem?.data?.startsWith("blob:") ? "" : (mediaItem?.data || ""),
           type: chatType || "",
         };
 
@@ -173,6 +334,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       }
 
       if (!response.ok) {
+        if (optimisticId) {
+          updateInteractionByMessageId(optimisticId, { isError: true });
+        }
         console.error("Failed to send message");
         return;
       }
@@ -246,11 +410,21 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           });
         }
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+      // Refetch conversations setelah request selesai untuk mendapatkan data real dari backend
+      if (isWebsite && (!sessionActive || hasMedia)) {
+        await new Promise<void>((resolve) => {
+          setTimeout(() => {
+            fetchConversations("send-message");
+            resolve();
+          }, 10_000);
+        });
+      }
     } catch (err: any) {
-      if (err?.name === "AbortError") {
-        // Request dibatalkan, tidak perlu tampilkan error
-      } else {
+      if (err?.name !== "AbortError") {
+        if (optimisticId) {
+          updateInteractionByMessageId(optimisticId, { isError: true });
+        }
         console.error("Maaf, terjadi kesalahan sistem. Silakan coba lagi!");
       }
     } finally {
@@ -259,40 +433,19 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     }
   };
 
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     const target = event.target as HTMLElement;
-
-  //     if (
-  //       !target.closest("#mimin-widget-main") &&
-  //       !target.closest("#mimin-widget-btn-trigger")
-  //     ) {
-  //       handleToggleChatWindow();
-  //     }
-  //   };
-
-  //   if (isChatVisible) {
-  //     document.addEventListener("click", handleClickOutside);
-  //   }
-
-  //   return () => {
-  //     document.removeEventListener("click", handleClickOutside);
-  //   };
-  // }, [isChatVisible]);
-
   useEffect(() => {
     if (config?.widgetType !== "website") return;
     if (!chatHistoryId && !config?.credentials?.websiteId) return;
 
     const playNotificationSound = () => {
       try {
-        const audio = new Audio('/sounds/notification.mp3')
-        audio.volume = 1
-        audio.play().catch((error) => { })
-      } catch (error) {
+        const audio = new Audio('/sounds/notification.mp3');
+        audio.volume = 1;
+        audio.play().catch(() => {});
+      } catch {
       }
-    }
-    
+    };
+
     const socket = io(ENV.NEXT_PUBLIC_API_SOCKET, {
       path: ENV.NEXT_PUBLIC_API_SOCKET_PATHNAME,
       transports: ["websocket"],
@@ -307,7 +460,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     socket.on("connect", () => {
       if (socket.connected) {
         if (chatHistoryId) {
-          socket.emit("joinRoom", chatHistoryId); 
+          socket.emit("joinRoom", chatHistoryId);
         }
         if (config?.credentials?.websiteId && phoneOrIP?.value) {
           socket.emit("joinRoom", `${config.credentials.websiteId}-${phoneOrIP.value}`);
@@ -337,9 +490,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       setCurrentResponseMsg(msg);
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleWebsiteMessage = (data: any) => {
-      console.log("handleWebsiteMessage", data)
       const payload = data.payload || data;
       const message =
         payload.text ||
@@ -352,7 +503,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       const media = payload.media || payload.message?.media || [];
 
       if ((message && typeof message === "string") || (media && media.length > 0)) {
-        playNotificationSound()
+        playNotificationSound();
+        // Pesan dari socket = dari agent (outgoing/ai)
         addInteraction({
           human: undefined,
           ai: {
@@ -366,6 +518,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         });
         setCurrentResponseMsg(typeof message === "string" ? message : "");
       }
+
+      setTimeout(() => {
+        fetchConversations();
+      }, 7_000);
     };
 
     socket.on("endSession", handleEndSession);
@@ -378,15 +534,24 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       socket.off("websiteMessage", handleWebsiteMessage);
       socket.disconnect();
     };
-  }, [chatHistoryId, addInteraction, config?.credentials?.websiteId, phoneOrIP]);
+  }, [chatHistoryId, config?.credentials?.websiteId, phoneOrIP]);
 
   useEffect(() => {
     setConfigStore(config || null);
     setSignatureStore(signature || "");
-    // Cleanup: batalkan request jika komponen unmount
+
+    const revokeAllBlobs = () => {
+      blobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      blobUrlsRef.current = [];
+    };
+
+    window.addEventListener("beforeunload", revokeAllBlobs);
+
     return () => {
       cancelSendMessage();
       socketRef.current?.disconnect();
+      revokeAllBlobs();
+      window.removeEventListener("beforeunload", revokeAllBlobs);
     };
   }, []);
 
@@ -398,7 +563,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       setIsFirstTime(false);
     }
   }, [config]);
-
 
   useEffect(() => {
     if (!config) return;
@@ -427,7 +591,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               phoneOrIPState = { name: data.data.name, value: data.data.phone };
               setIsAuthenticated(true);
             }
-          } catch (error) {
+          } catch {
             throw Error('Failed to get customer data');
           }
         }
@@ -449,6 +613,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     })();
   }, [config]);
 
+  useEffect(() => {
+    if (config?.widgetType === "website" && phoneOrIP?.value && !isFirstTime) {
+      fetchConversations();
+    }
+  }, [config?.widgetType, phoneOrIP?.value, isFirstTime]);
+
   const backgroundButtonColor = isChatVisible
     ? config?.theme?.button?.backgroundColor
     : config?.theme?.button?.backgroundColor + "80" || "#ffffff";
@@ -460,7 +630,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   return (
     <AnimatePresence>
       <div className="mimin-fixed mimin-bottom-6 mimin-right-6 mimin-z-[9999]">
-        {/* Chat Button */}
         <button
           id="mimin-widget-btn-trigger"
           className="mimin-relative mimin-flex mimin-items-center mimin-gap-2.5 mimin-px-4 mimin-py-2 mimin-rounded-full mimin-border mimin-border-[#0096a2] mimin-shadow-md mimin-transition-all mimin-duration-300 mimin-ease-in-out mimin-cursor-pointer"
@@ -471,14 +640,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           onClick={handleToggleChatWindow}
         >
           <img
-            src={
-              config?.theme?.button?.iconSrc ||
-              "/icons/favicon.ico"
-            }
+            src={config?.theme?.button?.iconSrc || "/icons/favicon.ico"}
             onError={(e) => {
-              // Ganti gambar ke default jika error load gambar
               const target = e.target as HTMLImageElement;
-              target.onerror = null; // Hindari infinite loop jika default image juga error
+              target.onerror = null;
               target.src = "/icons/favicon.ico";
             }}
             alt=" "
@@ -488,7 +653,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             {config?.theme?.button?.tooltip || "Ask Mimin"}
           </span>
 
-          {/* Badge Notifikasi */}
           {isCallVisible && !isChatVisible && (
             <motion.div
               key="call-badge"
@@ -503,15 +667,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           )}
         </button>
 
-        {/* Chat Window */}
         {shouldRenderChat && (
           <motion.div
             id="mimin-widget-main"
             className="mimin-absolute mimin-bottom-full mimin-mb-4 mimin-right-0"
             initial={{ opacity: 0, y: 20 }}
-            animate={
-              isChatVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }
-            }
+            animate={isChatVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             onAnimationComplete={() => {
               if (!isChatVisible) {
@@ -524,8 +685,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               style={{
                 width: config?.theme?.chatWindow?.width || "330px",
                 height: config?.theme?.chatWindow?.height || "600px",
-                backgroundColor:
-                  config?.theme?.chatWindow?.body?.backgroundColor || "#ffffff",
+                backgroundColor: config?.theme?.chatWindow?.body?.backgroundColor || "#ffffff",
               }}
             >
               {(config?.theme?.chatWindow.enableLogin || false) &&
@@ -539,8 +699,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     token={""}
                   />
                 )}
-              {(isAuthenticated ||
-                !(config?.theme?.chatWindow.enableLogin || false)) &&
+              {(isAuthenticated || !(config?.theme?.chatWindow.enableLogin || false)) &&
                 !isFirstTime && (
                   <>
                     <ChatHeader
@@ -553,29 +712,17 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       loading={loading}
                       fetching={fetching}
                       isWebsite={config?.widgetType === "website"}
+                      sessionActive={sessionActive}
                     />
                     <ChatInput
                       onSendMessage={(message, media) => {
                         setCurrentResponseMsg("");
                         message = message.trim().replaceAll(/\n\n+/g, "\n\n");
-                        const newInteraction = {
-                          human: {
-                            content: message,
-                            additional_kwargs: {},
-                            example: false,
-                            media: media,
-                          },
-                          date: new Date(),
-                          id: crypto.randomUUID(),
-                        };
-
-                        addInteraction(newInteraction);
-
                         handleSendMessage(message, media);
                       }}
                       loading={loading}
                       fetching={fetching}
-                      onCancelSendMessage={cancelSendMessage} // Anda bisa teruskan ke ChatInput jika ingin tombol cancel
+                      onCancelSendMessage={cancelSendMessage}
                     />
                     {voiceAgent === 'openai' ? (
                       <OpenAiAgentVoiceLayout
@@ -591,15 +738,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     )}
                   </>
                 )}
-              {isFirstTime &&
-                (config?.theme?.chatWindow?.enableGreating || false) && (
-                  <StartChatSection
-                    onClickStartChat={() => {
-                      localStorage.setItem(`cu-greeting-${config?.credentials?.username}`, 'true');
-                      setIsFirstTime(false);
-                    }}
-                  />
-                )}
+              {isFirstTime && (config?.theme?.chatWindow?.enableGreating || false) && (
+                <StartChatSection
+                  onClickStartChat={() => {
+                    localStorage.setItem(`cu-greeting-${config?.credentials?.username}`, 'true');
+                    setIsFirstTime(false);
+                  }}
+                />
+              )}
             </div>
           </motion.div>
         )}

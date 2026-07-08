@@ -113,15 +113,18 @@ const BubbleChat: React.FC<{
   isUser?: boolean;
   thinking?: boolean;
   date: string | Date;
-}> = ({ message, media, isUser = false, thinking = false, date }) => {
+  isError?: boolean;
+}> = ({ message, media, isUser = false, thinking = false, date, isError = false }) => {
   const { config } = useConfigStore();
   const processMessage = (message: string, isOwn: boolean) => {
+    const userTextColor = config?.theme?.chatWindow?.userMessage?.textColor || "#ffffff";
+    const botTextColor = config?.theme?.chatWindow?.botMessage?.textColor || "#0096a2";
+    const linkColor = isOwn ? userTextColor : botTextColor;
+
     // Handle existing HTML tags first
     const htmlProcessed = message.replace(
       /<a href="([^"]+)"[^>]*>(.*?)<\/a>/g,
-      `<a href="$1" target="_blank" style="color: ${
-        isOwn ? "#ffffff" : "#1565c0"
-      }; text-decoration-line: underline; word-break: break-word; white-space: normal;" rel="noopener noreferrer">$2</a>`
+      `<a href="$1" target="_blank" style="color: ${linkColor}; text-decoration-line: underline; word-break: break-word; white-space: normal;" rel="noopener noreferrer">$2</a>`
     );
 
     // Replace *text* with <strong>text</strong>
@@ -130,20 +133,42 @@ const BubbleChat: React.FC<{
       "<strong>$1</strong>"
     );
 
+    // Replace _text_ with <em>text</em>
+    const italicProcessed = boldProcessed.replace(
+      /\_(.*?)\_/g,
+      "<em>$1</em>"
+    );
+
+    const isUserDark = userTextColor.toLowerCase() === "#ffffff" || userTextColor.toLowerCase() === "#fff";
+    const isBotDark = botTextColor.toLowerCase() === "#ffffff" || botTextColor.toLowerCase() === "#fff";
+
+    const codeStyle = isOwn
+      ? `background: ${isUserDark ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.06)"}; color: ${userTextColor}; border: 1px solid ${isUserDark ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.08)"};`
+      : `background: ${isBotDark ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)"}; color: ${botTextColor}; border: 1px solid ${isBotDark ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.05)"};`;
+
+    // Replace ```code``` or `code` with <code>code</code>
+    const codeProcessed = italicProcessed.replace(
+      /```([\s\S]*?)```|`([^`]+)`/g,
+      (_, block, inline) => {
+        const content = block || inline;
+        const isBlock = !!block;
+        const style = isBlock
+          ? `${codeStyle} padding: 6px 10px; border-radius: 4px; font-size: 0.85em; font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace; font-weight: 500; display: block; overflow-x: auto; white-space: pre-wrap; margin: 4px 0;`
+          : `${codeStyle} padding: 2px 6px; border-radius: 4px; font-size: 0.9em; font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace; font-weight: 500;`;
+        return `<code style="${style}">${content}</code>`;
+      }
+    );
+
     // Replace [text](url) with <a href="url">text</a>
-    const markdownLinkProcessed = boldProcessed.replace(
+    const markdownLinkProcessed = codeProcessed.replace(
       /\[(.*?)\]\((https?:\/\/[^\s]+)\)/g,
-      `<a href="$2" target="_blank" style="color: ${
-        isOwn ? "#ffffff" : "#1565c0"
-      }; text-decoration-line: underline; word-break: break-word; white-space: normal;" rel="noopener noreferrer">$1</a>`
+      `<a href="$2" target="_blank" style="color: ${linkColor}; text-decoration-line: underline; word-break: break-word; white-space: normal;" rel="noopener noreferrer">$1</a>`
     );
 
     // Replace plain URLs with clickable links, avoiding already transformed markdown links
     const linkProcessed = markdownLinkProcessed.replace(
       /(?<!href=")https?:\/\/[^\s"]+/g,
-      `<a href="$&" target="_blank" style="color: ${
-        isOwn ? "#ffffff" : "#1565c0"
-      }; text-decoration-line: underline; word-break: break-word; white-space: normal;" rel="noopener noreferrer">$&</a>`
+      `<a href="$&" target="_blank" style="color: ${linkColor}; text-decoration-line: underline; word-break: break-word; white-space: normal;" rel="noopener noreferrer">$&</a>`
     );
 
     // Replace \n with <br>
@@ -154,7 +179,7 @@ const BubbleChat: React.FC<{
     return (
       <div
         className={cn(
-          "mimin-relative mimin-flex mimin-w-fit mimin-max-w-[90%] mimin-border mimin-rounded-t-2xl mimin-py-3 mimin-px-3.5 mimin-rounded-br-2xl mimin-bg-white mimin-text-[#0096a2] mimin-border-[#0096a2] mimin-mr-auto mimin-justify-start"
+          "mimin-relative mimin-flex mimin-w-fit mimin-max-w-[90%] mimin-border mimin-rounded-t-xl mimin-py-2 mimin-px-2.5 mimin-rounded-br-xl mimin-bg-white mimin-text-[#0096a2] mimin-border-[#0096a2] mimin-mr-auto mimin-justify-start"
         )}
         style={{
           backgroundColor:
@@ -194,43 +219,62 @@ const BubbleChat: React.FC<{
   return (
     <div
       className={cn(
-        "mimin-relative mimin-flex mimin-w-fit mimin-max-w-[90%] mimin-border mimin-rounded-t-3xl mimin-py-3 mimin-px-3.5" +
-          (!isUser
-            ? " mimin-rounded-br-3xl mimin-bg-white mimin-text-[#0096a2] mimin-border-[#0096a2] mimin-mr-auto mimin-justify-start"
-            : " mimin-rounded-bl-3xl mimin-bg-white mimin-text-[#0096a2] mimin-border-[#0096a2] mimin-ml-auto mimin-justify-end")
+        "mimin-flex mimin-items-end mimin-gap-1.5" +
+          (isUser ? " mimin-flex-row-reverse" : " mimin-flex-row")
       )}
-      style={{
-        backgroundColor: isUser
-          ? config?.theme?.chatWindow?.userMessage?.backgroundColor || "#0096a2"
-          : config?.theme?.chatWindow?.botMessage?.backgroundColor || "#ffffff",
-        borderColor: isUser
-          ? config?.theme?.chatWindow?.userMessage?.borderColor || "#0096a2"
-          : config?.theme?.chatWindow?.botMessage?.borderColor || "#0096a2",
-      }}
     >
       <div
-        className={cn(
-          "mimin-flex mimin-items-end mimin-gap-3" +
-            (isUser ? " mimin-flex-row-reverse" : " mimin-flex-row")
-        )}
+        className="mimin-flex mimin-items-center mimin-justify-center mimin-w-6 mimin-h-6 mimin-rounded-full mimin-shrink-0"
+        style={{
+          backgroundColor: isError
+            ? "#DC2626"
+            : isUser
+              ? config?.theme?.chatWindow?.userMessage?.backgroundColor || "#0096a2"
+              : config?.theme?.chatWindow?.botMessage?.backgroundColor || "#ffffff",
+        }}
       >
-        <div className="mimin-flex mimin-items-end mimin-justify-center mimin-w-3 mimin-h-3">
-          {isUser ? (
-            <CircleUserRound
-              className="mimin-w-4 mimin-h-4 mimin-aspect-square"
-              color={
-                config?.theme?.chatWindow?.userMessage?.textColor || "#ffffff"
-              }
-            />
-          ) : (
-            <Bot
-              className="mimin-w-4 mimin-h-4 mimin-aspect-square"
-              color={
-                config?.theme?.chatWindow?.botMessage?.textColor || "#0096a2"
-              }
-            />
-          )}
-        </div>
+        {isUser ? (
+          <CircleUserRound
+            className="mimin-w-3.5 mimin-h-3.5 mimin-aspect-square"
+            color={
+              config?.theme?.chatWindow?.userMessage?.textColor || "#ffffff"
+            }
+          />
+        ) : config?.theme?.chatWindow?.header?.avatarSrc ? (
+          <img
+            src={config.theme.chatWindow.header.avatarSrc}
+            alt=""
+            className="mimin-w-3.5 mimin-h-3.5 mimin-rounded-full"
+          />
+        ) : (
+          <Bot
+            className="mimin-w-3.5 mimin-h-3.5 mimin-aspect-square"
+            color={
+              config?.theme?.chatWindow?.botMessage?.textColor || "#0096a2"
+            }
+          />
+        )}
+      </div>
+      <div
+        className={cn(
+          "mimin-relative mimin-flex mimin-w-fit mimin-max-w-[90%] mimin-border mimin-rounded-t-xl mimin-py-2 mimin-px-2.5" +
+            (!isUser
+              ? " mimin-rounded-br-xl mimin-bg-white mimin-text-[#0096a2] mimin-border-[#0096a2] mimin-mr-auto mimin-justify-start"
+              : " mimin-rounded-bl-xl mimin-bg-white mimin-text-[#0096a2] mimin-border-[#0096a2] mimin-ml-auto mimin-justify-end")
+        )}
+        style={{
+          backgroundColor: isError
+            ? "#DC2626"
+            : (isUser
+                ? config?.theme?.chatWindow?.userMessage?.backgroundColor || "#0096a2"
+                : config?.theme?.chatWindow?.botMessage?.backgroundColor || "#ffffff"),
+          borderColor: isError
+            ? "#DC2626"
+            : (isUser
+                ? config?.theme?.chatWindow?.userMessage?.borderColor || "#0096a2"
+                : config?.theme?.chatWindow?.botMessage?.borderColor || "#0096a2"),
+        }}
+      >
         <div
           className="mimin-text-sm mimin-flex-1 mimin-pb-2"
           style={{
@@ -254,16 +298,16 @@ const BubbleChat: React.FC<{
             </div>
           )}
         </div>
-      </div>
-      <div
-        className={cn(
-          "mimin-absolute mimin-top-full mimin-mt-0.5 mimin-w-fit" +
-            (isUser ? " mimin-right-0" : " mimin-left-0")
-        )}
-      >
-        <p className="mimin-text-[10px] mimin-font-light mimin-text-gray-500 mimin-w-max">
-          {format(new Date(date), "dd MMMM yyyy, HH:mm")}
-        </p>
+        <div
+          className={cn(
+            "mimin-absolute mimin-top-full mimin-mt-0.5 mimin-w-fit" +
+              (isUser ? " mimin-right-0" : " mimin-left-0")
+          )}
+        >
+          <p className="mimin-text-[10px] mimin-font-light mimin-text-gray-500 mimin-w-max">
+            {format(new Date(date), "dd MMMM yyyy, HH:mm")}
+          </p>
+        </div>
       </div>
     </div>
   );
